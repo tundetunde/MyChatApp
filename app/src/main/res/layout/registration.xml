@@ -56,12 +56,5 @@
         android:id="@+id/bt_reg"
         android:layout_gravity="center_horizontal" />
 
-    <ProgressBar
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/progressBar"
-        android:progressDrawable="@drawable/spinner_progress"
-        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
