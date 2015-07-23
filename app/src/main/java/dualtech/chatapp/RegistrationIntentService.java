@@ -40,10 +40,12 @@ public class RegistrationIntentService extends IntentService {
                 // are local.
                 // [START get_token]
                 InstanceID instanceID = InstanceID.getInstance(this);
-                String token = instanceID.getToken(PROJECT_NO,
-                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                String token = instanceID.getToken(PROJECT_NO, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                 // [END get_token]
                 Log.i(TAG, "GCM Registration Token: " + token);
+
+
+                ApplicationInit.setREGISTRATION_KEY(token);// Save the regid for global use - no need to register again.
 
                 // TODO: Implement this method to send any registration to your app's servers.
                 sendRegistrationToServer(token);
@@ -57,6 +59,7 @@ public class RegistrationIntentService extends IntentService {
                 sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
                 //API_KEY = token;
                 // [END register_for_gcm]
+
             }
         } catch (Exception e) {
             Log.d(TAG, "Failed to complete token refresh", e);
@@ -65,8 +68,12 @@ public class RegistrationIntentService extends IntentService {
             sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
+
+
         Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
+        Log.d(TAG, "LocalBROADCAST");
+
     }
 
     /**
@@ -98,4 +105,5 @@ public class RegistrationIntentService extends IntentService {
         }
     }
     // [END subscribe_topics]
+
 }

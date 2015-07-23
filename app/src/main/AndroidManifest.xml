@@ -5,22 +5,49 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
-    <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+
+    <application android:allowBackup="true" android:label="@string/app_name" android:name=".ApplicationInit"
+        android:icon="@mipmap/ic_launcher" android:theme="@style/AppTheme">
+
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
+            android:label="@string/app_name" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:name=".SplashScreen" android:noHistory="true">
+            <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".VerifyNumber">
+            <intent-filter >
+                <action android:name="dualtech.chatapp.VERIFY_NUMBER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".MobileReg">
+            <intent-filter >
+                <action android:name="dualtech.chatapp.REG" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:label="@string/app_name"
+            android:name=".MainActivity">
+            <intent-filter >
+                <action android:name="dualtech.chatapp.MAINACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ChatView"/>
+
+        <activity android:name=".FeedView"/>
+
+        <activity android:name=".ContactView"/>
 
         <!-- [START gcm_receiver] -->
         <receiver
