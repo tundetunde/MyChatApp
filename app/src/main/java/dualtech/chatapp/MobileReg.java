@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.SyncStateContract;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -51,18 +52,10 @@ public class MobileReg extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_reg:
-                phnNo = ApplicationInit.getMobile_number();
-                BroadcastActivity.phnNo = phnNo;
-                BroadcastActivity.regId = regId;
+                phnNo = String.valueOf(mobileNum.getText());
+                ApplicationInit.setMobile_number(phnNo);
                 Intent i = new Intent("dualtech.chatapp.BROADCASTACTIVITY");
                 startActivity(i);
-
-                /*LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                        new IntentFilter(QuickstartPreferences.REGISTRATION_COMPLETE));*/
-/*
-                IntentFilter filter = new IntentFilter();
-                filter.addAction("Reg_Receiver");
-                registerReceiver(mRegistrationBroadcastReceiver, filter);*/
         }
         }
 
@@ -71,8 +64,6 @@ public class MobileReg extends Activity implements View.OnClickListener {
         editor.putString(ApplicationInit.PROPERTY_REG_ID, regId);
         editor.putString(ApplicationInit.PROPERTY_MOB_ID, phnNo);
         editor.apply();
-
-        ApplicationInit.setMobile_number(phnNo);
     }
 
     private int msgId() {

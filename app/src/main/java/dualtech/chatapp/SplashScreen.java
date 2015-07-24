@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by Jesz on 18-Jul-15.
  */
 public class SplashScreen extends Activity {
-    GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
 
@@ -25,8 +24,6 @@ public class SplashScreen extends Activity {
        prefs = getSharedPreferences("SharedPref", Context.MODE_PRIVATE);
         setContentView(R.layout.main);
 
-
-        gcm = GoogleCloudMessaging.getInstance(this);
         ApplicationInit.setREGISTRATION_KEY(prefs.getString(ApplicationInit.PROPERTY_REG_ID, null));
         ApplicationInit.setMobile_number(prefs.getString(ApplicationInit.PROPERTY_MOB_ID, null));
 

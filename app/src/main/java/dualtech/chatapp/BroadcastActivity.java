@@ -40,23 +40,29 @@ public class BroadcastActivity extends Activity {
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //setContentView(R.layout.registration);
                 Log.d(TAG, "Entered onReceive");
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
                 boolean sentToken = sharedPreferences.getBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false);
                 Log.d(TAG, String.valueOf(sentToken));
                 if (sentToken) {
                     Toast.makeText(BroadcastActivity.this, "Activated", Toast.LENGTH_LONG).show();
+
+                    phnNo = ApplicationInit.getMobile_number();
+                    regId = ApplicationInit.getREGISTRATION_KEY();
+
+                    storePref();
+                    spinner.setVisibility(View.GONE);
+
+                    Intent i = new Intent("dualtech.chatapp.MAINACTIVITY");
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                    //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    finish();
                 } else {
                     Toast.makeText(BroadcastActivity.this,"Cannot activation -- Try again",Toast.LENGTH_LONG).show();
+                    onBackPressed();
+                    finish();
                 }
-                MobileReg.storePref();
-                /*Intent openMain = new Intent(context, MainActivity.class);
-                openMain.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                openMain.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                context.startActivity(openMain);*/
-
-                spinner.setVisibility(View.GONE);
 
             }
         };
@@ -66,8 +72,6 @@ public class BroadcastActivity extends Activity {
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-        Intent i = new Intent("dualtech.chatapp.MAINACTIVITY");
-        startActivity(i);
     }
 
     private boolean checkPlayServices() {
@@ -91,7 +95,6 @@ public class BroadcastActivity extends Activity {
         editor.putString(ApplicationInit.PROPERTY_MOB_ID, phnNo);
         editor.apply();
 
-        ApplicationInit.setMobile_number(phnNo);
     }
 
     @Override

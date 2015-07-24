@@ -12,6 +12,7 @@
     <string name="api_name">AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY</string>
     <string name="project_id">dual-digital-000</string>
     <string name="prompt">Choose Country code</string>
+    <string name="feed_hint">Share your thoughts</string>
     <string-array name="CountryCodes" >
         <item>93,AF</item>
         <item>355,AL</item>

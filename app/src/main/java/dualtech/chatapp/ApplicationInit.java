@@ -1,6 +1,8 @@
 package dualtech.chatapp;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 /**
  * Created by Jesz on 18-Jul-15.
@@ -14,7 +16,6 @@ public class ApplicationInit extends Application {
     public static final String PROPERTY_REG_ID = "registration_id";
     public static final String PROPERTY_MOB_ID = "mobile_number";
     public static final String SHARED_PREF = "SharedPref";
-    public static final String ACTION_REGISTER = "1";
     public static final String KEY_MSG_ID = "message_id";
     private static String REGISTRATION_KEY;
 
