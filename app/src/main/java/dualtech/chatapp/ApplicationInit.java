@@ -4,9 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/**
- * Created by Jesz on 18-Jul-15.
- */
 public class ApplicationInit extends Application {
 
     private static final String API_KEY = "AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY";
@@ -18,6 +15,9 @@ public class ApplicationInit extends Application {
     public static final String SHARED_PREF = "SharedPref";
     public static final String KEY_MSG_ID = "message_id";
     private static String REGISTRATION_KEY;
+    public static final int SERVER_PORT = 8080;
+    public static final String SERVER_ADDRESS = "http://192.168.1.12:8080/ChatServerDual/GCMServer";
+    //public static final String SERVER_ADDRESS = "http://92.20.66.4:8080/ChatServerDual/GCMServer";
 
     private static String mobile_number;
 

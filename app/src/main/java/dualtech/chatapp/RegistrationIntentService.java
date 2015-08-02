@@ -3,21 +3,26 @@ package dualtech.chatapp;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
-
-import org.apache.http.client.HttpClient;
-
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * Created by tunde_000 on 21/07/2015.
- */
+import javax.net.ssl.SSLSocketFactory;
+
 public class RegistrationIntentService extends IntentService {
     private static final String TAG = "RegIntentService";
     private static final String[] TOPICS = {"global"};
@@ -85,10 +90,30 @@ public class RegistrationIntentService extends IntentService {
      */
     private void sendRegistrationToServer(String token) {
         // Add custom implementation, as needed.
+        StringRequest postRequest = new StringRequest(Request.Method.POST, token,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
 
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                // the POST parameters:
+                params.put("RegNo", ApplicationInit.PROPERTY_REG_ID);
+                params.put("MobileNo", ApplicationInit.getMobile_number());
+                return params;
+            }
+        };
+        Volley.newRequestQueue(this).add(postRequest);
     }
-
-
 
     /**
      * Subscribe to any GCM topics of interest, as defined by the TOPICS constant.
