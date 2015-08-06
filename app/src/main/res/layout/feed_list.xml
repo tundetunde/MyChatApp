@@ -17,5 +17,27 @@
         android:layout_height="wrap_content"
         android:id="@+id/etUpdate"
         android:hint="@string/feed_hint"
+        android:imeOptions="actionDone"
         android:layout_gravity="center_horizontal" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Share"
+        android:id="@+id/btnGo"/>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/lt_feed"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+    </ScrollView>
 </LinearLayout>

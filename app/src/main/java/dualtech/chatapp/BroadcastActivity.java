@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,12 +18,32 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by tunde_000 on 23/07/2015.
  */
 public class BroadcastActivity extends Activity {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
-    private static final String TAG = "Note";
+    private static final String TAG = "BROADCAST";
+    static final String server_address = "http://localhost:8080/ChatServerDual/GCMServer";
     ProgressBar spinner;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     static String regId;
@@ -50,12 +71,14 @@ public class BroadcastActivity extends Activity {
                     phnNo = ApplicationInit.getMobile_number();
                     regId = ApplicationInit.getREGISTRATION_KEY();
 
+                    //SEND REGID TO SERVER VIA HTTP
+                    sendToServer(regId);
+
                     storePref();
                     spinner.setVisibility(View.GONE);
 
                     Intent i = new Intent("dualtech.chatapp.MAINACTIVITY");
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                    //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(i);
                     finish();
                 } else {
@@ -87,6 +110,55 @@ public class BroadcastActivity extends Activity {
             return false;
         }
         return true;
+    }
+
+    public void sendToServer(final String s){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                Log.d("C2DM", "Sending registration ID to my application server");
+                try {
+                    String r = "registering";
+                    String regValue = "RegNo=" + s + "&Register" + r;
+                    StringBuilder sb = new StringBuilder();
+                    URL url = new URL(server_address);
+                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+                    con.setRequestMethod("POST");
+                    con.setConnectTimeout(10000);
+                    con.setDoInput(true);
+                    con.setDoOutput(true);
+
+
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), "UTF-8"));
+                    writer.write(regValue);
+                    writer.flush();
+                    writer.close();
+
+                    int responseCode = con.getResponseCode();
+                    Log.d(TAG, "RESPONSE CODE: " + String.valueOf(responseCode));
+
+                    if (responseCode == 200) {
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                        String line;
+
+                        while ((line = reader.readLine()) != null)
+                            sb.append(line);
+                    }
+
+                    Log.d(TAG, sb.toString());
+                    return sb.toString();
+                }
+                catch (IOException io){
+                    System.out.println(io.toString());
+                    return "ASYNCTASK.........";
+                }
+            }
+            @Override
+            protected void onPostExecute(String msg) {
+
+            }
+        }.execute();
     }
 
     public static void storePref(){

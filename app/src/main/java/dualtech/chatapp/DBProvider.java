@@ -14,11 +14,11 @@ import android.util.Log;
  */
 public class DBProvider extends ContentProvider {
     //DATABASE HANDLER CLASS
-    Sqlite sql;
+    Sqlite contact_sql;
 
     @Override
     public boolean onCreate() {
-        sql = new Sqlite(getContext(), "Contact",null , 1);
+        contact_sql = new Sqlite(getContext(), "Contact",null , 1);
         return false;
     }
 
@@ -49,17 +49,20 @@ public class DBProvider extends ContentProvider {
 
     //SQL CLASS HELPER
     private static class Sqlite extends SQLiteOpenHelper {
+
+        String contact_table = "CREATE TABLE Contacts" + "("
+                + "reg_id" + " INTEGER PRIMARY KEY," + "reg_name" + " TEXT,"
+                + "phone_number" + " TEXT" + ")";
+        String feed_table = "CREATE TABLE Feed" + "("
+                + "id" + "INTEGER PRIMARY KEY autoincrement" + "status" + "TEXT" + ")";
         public Sqlite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
             super(context, name, factory, version);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            String create_table = "CREATE TABLE Contacts" + "("
-                    + "reg_id" + " INTEGER PRIMARY KEY," + "reg_name" + " TEXT,"
-                    + "phone_number" + " TEXT" + ")";;
-            db.execSQL(create_table);
-
+            //db.execSQL(contact_table);
+            db.execSQL(feed_table);
         }
 
         @Override
@@ -73,7 +76,4 @@ public class DBProvider extends ContentProvider {
             onCreate(db);
         }
     }
-/*
-    JSON message format accepted by GCM
-    String input = "{\"registration_ids\" : [\"Specify token you got from GCM\"],\"data\" : {\"message\": \"hai  welcome\"},}";*/
 }
