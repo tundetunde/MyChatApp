@@ -1,33 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/darker_gray">
 
-    <fragment
-        android:name="dualtech.chatapp.MessagesFragment"
-        android:id="@+id/msg_list"
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="0dip"
-        android:layout_weight="1" />
-    <!--<FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btn_send"
-        android:layout_alignParentTop="true">
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/msg_SV">
-
-        </ScrollView>
-
-    </FrameLayout>-->
-
+        android:layout_height="272dp"
+        android:id="@+id/lvChatHistory"
+         />
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white" >
+        android:layout_height="72dp"
+        android:background="@android:color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
         <Button
             android:id="@+id/send_btn"
             style="?android:attr/buttonStyleSmall"
@@ -43,4 +31,4 @@
             android:layout_toLeftOf="@+id/send_btn" >
         </EditText>
     </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

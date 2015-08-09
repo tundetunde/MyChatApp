@@ -20,25 +20,23 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class ChatList extends Activity implements View.OnClickListener{
+public class ChatList extends ListActivity implements View.OnClickListener{
     DbSqlite db;
-    ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.chat_list);
         db = new DbSqlite(this);
-        ArrayList<Collection> chatList = (ArrayList)db.getChatList();
-        ArrayAdapter<Collection> adapter = new ArrayAdapter<Collection>(this,
+        ArrayList<String> chatList = (ArrayList)db.getChatList();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, chatList);
-        initialize(adapter);
+        setListAdapter(adapter);
     }
 
-    private void initialize(ArrayAdapter<Collection> adapter){
+    /*private void initialize(ArrayAdapter<Collection> adapter){
         lv = (ListView)findViewById(R.id.lvChat);
         lv.setAdapter(adapter);
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,5 +63,12 @@ public class ChatList extends Activity implements View.OnClickListener{
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Intent intent = new Intent(this, ChatView.class);
+        intent.putExtra("TUNDE", String.valueOf(id));
+        startActivity(intent);
     }
 }

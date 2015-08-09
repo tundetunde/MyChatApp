@@ -17,6 +17,7 @@ public class ApplicationInit extends Application {
     public static final int SERVER_PORT = 8080;
     public static final String SERVER_ADDRESS = "http://192.168.1.12:8080/ChatServerDual/GCMServer";
     //public static final String SERVER_ADDRESS = "http://92.20.66.4:8080/ChatServerDual/GCMServer";
+    public static final String PROFILE_NAME = "TUNDE";
 
     private static String mobile_number;
 

@@ -22,7 +22,7 @@ public class DbSqlite extends SQLiteOpenHelper {
     final static String TABLE_CONTACTS = "contacts";
 
     String contact_table = "CREATE TABLE " + TABLE_CONTACTS + "("
-            + "regId" + " INTEGER PRIMARY KEY, " + "regName" + " TEXT,"
+            + "Id" + " INTEGER PRIMARY KEY," + " regID TEXT," + "regName" + " TEXT,"
             + " phoneNumber" + " TEXT" + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
             + "id" + " INTEGER PRIMARY KEY autoincrement, " + "status" + " TEXT" + ")";
@@ -53,6 +53,17 @@ public class DbSqlite extends SQLiteOpenHelper {
     }
 
     public void insert(String s){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("status", s);
+
+        db.insert(TABLE_FEED, null, values);
+        Log.d(TAG, "ADDED " + s);
+        db.close();
+    }
+
+    public void insertMessage(String s){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -104,6 +115,26 @@ public class DbSqlite extends SQLiteOpenHelper {
         return update;
     }
 
+    public List<String> getChatHistory(String from, String to){
+
+        List<String> update = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT msg FROM " + TABLE_MESSAGES + " WHERE (regName = '" + from + "' AND regName2 = '" + to + "')"
+                + " OR (regName = '" + to + "' AND regName2 = '" + from + "')";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding contact to list
+                update.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d(TAG, "CHAT HISTORY");
+        return update;
+    }
+
     private void insertDemo(SQLiteDatabase db){
         ContentValues values = new ContentValues();
         values.put("regId", 1);
@@ -118,13 +149,13 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.insert("contacts", null, values);
 
         values = new ContentValues();
-        values.put("msg", "hi");
+        values.put("msg", "hiiiiii");
         values.put("regName", "Jesz");
         values.put("regName2", "Tunde");
         db.insert("messages", null, values);
 
         values = new ContentValues();
-        values.put("msg", "hi");
+        values.put("msg", "hidddddd");
         values.put("regName", "Tunde");
         values.put("regName2", "Jesz");
         db.insert("messages", null, values);
