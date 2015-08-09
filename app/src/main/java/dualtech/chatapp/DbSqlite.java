@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created by Jesz on 04-Aug-15.
- */
-
 //SQL CLASS HELPER
 public class DbSqlite extends SQLiteOpenHelper {
 
@@ -23,9 +19,9 @@ public class DbSqlite extends SQLiteOpenHelper {
     final static int DB_VERSION = 1;
     final static String TABLE_FEED = "feed";
 
-/*    String contact_table = "CREATE TABLE Contacts" + "("
+    String contact_table = "CREATE TABLE Contacts" + "("
             + "reg_id" + " INTEGER PRIMARY KEY," + "reg_name" + " TEXT,"
-            + "phone_number" + " TEXT" + ")";*/
+            + "phone_number" + " TEXT" + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
             + "id" + " INTEGER PRIMARY KEY autoincrement, " + "status" + " TEXT" + ")";
 
@@ -37,6 +33,8 @@ public class DbSqlite extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //db.execSQL(contact_table);
         db.execSQL(feed_table);
+        //db.execSQL("create table Messages (_id integer primary key autoincrement, msg text, reg_name text, reg_name2 text, at datetime default current_timestamp);");
+        //insertDemo(db);
     }
 
     @Override
@@ -81,5 +79,31 @@ public class DbSqlite extends SQLiteOpenHelper {
         cursor.close();
         Log.d(TAG, "ALL FEED");
         return update;
+    }
+
+    private void insertDemo(SQLiteDatabase db){
+        ContentValues values = new ContentValues();
+        values.put("reg_id", 1);
+        values.put("reg_name", "tunde");
+        values.put("phone_number", "07944447710");
+        db.insert("Contacts", null, values);
+
+        values = new ContentValues();
+        values.put("reg_id", 2);
+        values.put("reg_name", "Jesz");
+        values.put("phone_number", "02077084296");
+        db.insert("Contacts", null, values);
+
+        values = new ContentValues();
+        values.put("msg", "hi");
+        values.put("reg_name", "Jesz");
+        values.put("reg_name2", "Tunde");
+        db.insert("Messages", null, values);
+
+        values = new ContentValues();
+        values.put("msg", "hi");
+        values.put("reg_name", "Tunde");
+        values.put("reg_name2", "Jesz");
+        db.insert("Messages", null, values);
     }
 }

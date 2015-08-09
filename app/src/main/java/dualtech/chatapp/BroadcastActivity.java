@@ -15,6 +15,11 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -35,11 +40,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Created by tunde_000 on 23/07/2015.
- */
 public class BroadcastActivity extends Activity {
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private static final String TAG = "BROADCAST";
@@ -110,6 +114,45 @@ public class BroadcastActivity extends Activity {
             return false;
         }
         return true;
+    }
+
+    private void sendRegistrationToServer(String token) {
+        // Add custom implementation, as needed.
+        // Request a string response
+        StringRequest postRequest = new StringRequest(Request.Method.POST, token,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        // Result handling
+                        /*try {
+                            JSONObject jsonResponse = new JSONObject(response).getJSONObject("form");
+                            String site = jsonResponse.getString("site"),
+                                    network = jsonResponse.getString("network");
+                            System.out.println("Site: "+site+"\nNetwork: "+network);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }*/
+                        //tvSignedIn.append("\nServer has received the RegID");
+                        Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                // the POST parameters:
+                params.put("RegNo", ApplicationInit.PROPERTY_REG_ID);
+                params.put("MobileNo", ApplicationInit.getMobile_number());
+                return params;
+            }
+        };
+        Volley.newRequestQueue(this).add(postRequest);
     }
 
     public void sendToServer(final String s){

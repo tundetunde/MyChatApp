@@ -2,6 +2,7 @@
     <string name="app_name">ChatApp</string>
 
     <string name="hello_world">Hello world!</string>
+    <string name="action_add">Add Contact</string>
     <string name="action_settings">Settings</string>
     <string name="gcm_send_message">Token retrieved and sent to server! You can now use gcmsender to
         send downstream messages to this app.</string>

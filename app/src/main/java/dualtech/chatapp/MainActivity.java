@@ -24,12 +24,12 @@ public class MainActivity extends TabActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.main);
 
-            tvSignedIn = (TextView) findViewById(R.id.tvSignedIn1);
-            sendRegistrationToServer(ApplicationInit.SERVER_ADDRESS);
+            tvSignedIn = (TextView) findViewById(R.id.tvSignedIn);
+            //sendRegistrationToServer(ApplicationInit.SERVER_ADDRESS);
             Resources res = getResources();
             TabHost tabHost = getTabHost();
 // Chat tab
-            Intent ChatIntent = new Intent().setClass(this, ChatView.class);
+            Intent ChatIntent = new Intent().setClass(this, ChatList.class);
             TabHost.TabSpec chatTab = tabHost
                     .newTabSpec("Chat")
                     .setIndicator("CHAT")
@@ -58,47 +58,5 @@ public class MainActivity extends TabActivity {
             tabHost.setCurrentTab(0);
 
         }
-
-
-
-
-    private void sendRegistrationToServer(String token) {
-        // Add custom implementation, as needed.
-        // Request a string response
-        StringRequest postRequest = new StringRequest(Request.Method.POST, token,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        // Result handling
-                        /*try {
-                            JSONObject jsonResponse = new JSONObject(response).getJSONObject("form");
-                            String site = jsonResponse.getString("site"),
-                                    network = jsonResponse.getString("network");
-                            System.out.println("Site: "+site+"\nNetwork: "+network);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }*/
-                        //tvSignedIn.append("\nServer has received the RegID");
-                        Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
-
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-        }){
-        @Override
-        protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<>();
-            // the POST parameters:
-            params.put("RegNo", ApplicationInit.PROPERTY_REG_ID);
-            params.put("MobileNo", ApplicationInit.getMobile_number());
-            return params;
-        }
-        };
-        Volley.newRequestQueue(this).add(postRequest);
-    }
 
 }
