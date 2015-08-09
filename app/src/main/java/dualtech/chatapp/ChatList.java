@@ -21,24 +21,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class ChatList extends Activity implements View.OnClickListener{
-    /*DbSqlite db;
-    ListView lv;*/
+    DbSqlite db;
+    ListView lv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_list);
-        /*db = new DbSqlite(this);
+        db = new DbSqlite(this);
         ArrayList<Collection> chatList = (ArrayList)db.getChatList();
         ArrayAdapter<Collection> adapter = new ArrayAdapter<Collection>(this,
                 android.R.layout.simple_list_item_1, chatList);
-        initialize(adapter);*/
+        initialize(adapter);
     }
 
-    /*private void initialize(ArrayAdapter<Collection> adapter){
+    private void initialize(ArrayAdapter<Collection> adapter){
         lv = (ListView)findViewById(R.id.lvChat);
         lv.setAdapter(adapter);
-    }*/
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

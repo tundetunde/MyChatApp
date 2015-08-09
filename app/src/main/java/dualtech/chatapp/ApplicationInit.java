@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class ApplicationInit extends Application {
-
     private static final String API_KEY = "AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY";
     private static final String PROJECT_ID = "dual-digital-000";
     private static final String PROJECT_NO = "25515784135";
