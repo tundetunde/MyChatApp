@@ -1,6 +1,7 @@
 package dualtech.chatapp;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.Intent;
@@ -12,64 +13,32 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ChatList extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-    private SimpleCursorAdapter adapter;
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class ChatList extends Activity implements View.OnClickListener{
+    /*DbSqlite db;
+    ListView lv;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        adapter = new SimpleCursorAdapter(this,
-                R.layout.list_row,
-                null,
-                new String[]{DBProvider.COL_NAME, DBProvider.COL_COUNT},
-                new int[]{R.id.txtFrom, R.id.txtTO},
-                0);
-        adapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                switch(view.getId()) {
-                    case R.id.txtTO:
-                        int count = cursor.getInt(columnIndex);
-                        if (count > 0) {
-                            ((TextView)view).setText(String.format("%d new message%s", count, count==1 ? "" : "s"));
-                        }
-                        return true;
-                }
-                return false;
-            }
-        });
-        setListAdapter(adapter);
-
-        //ActionBar actionBar = getActionBar();
-        //actionBar.setDisplayShowTitleEnabled(false);
-        getLoaderManager().initLoader(0, null, this);
+        setContentView(R.layout.chat_list);
+        /*db = new DbSqlite(this);
+        ArrayList<Collection> chatList = (ArrayList)db.getChatList();
+        ArrayAdapter<Collection> adapter = new ArrayAdapter<Collection>(this,
+                android.R.layout.simple_list_item_1, chatList);
+        initialize(adapter);*/
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        CursorLoader loader = new CursorLoader(this,
-                DBProvider.CONTENT_URI_PROFILE,
-                new String[]{DBProvider.COL_ID, DBProvider.COL_NAME, DBProvider.COL_COUNT},
-                null,
-                null,
-                DBProvider.COL_ID + " DESC");
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        adapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        adapter.swapCursor(null);
-    }
+    /*private void initialize(ArrayAdapter<Collection> adapter){
+        lv = (ListView)findViewById(R.id.lvChat);
+        lv.setAdapter(adapter);
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -94,9 +63,7 @@ public class ChatList extends ListActivity implements LoaderManager.LoaderCallba
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent intent = new Intent(this, ChatView.class);
-        intent.putExtra("TUNDE", String.valueOf(id));
-        startActivity(intent);
+    public void onClick(View v) {
+
     }
 }
