@@ -20,12 +20,19 @@ public class DbSqlite extends SQLiteOpenHelper {
     final static String TABLE_FEED = "feed";
     final static String TABLE_MESSAGES = "messages";
     final static String TABLE_CONTACTS = "contacts";
+    final static String TABLE_CHATLIST = "chat_list";
 
     String contact_table = "CREATE TABLE " + TABLE_CONTACTS + "("
-            + "Id" + " INTEGER PRIMARY KEY," + " regID TEXT," + "regName" + " TEXT,"
-            + " phoneNumber" + " TEXT" + ")";
+            + "regID TEXT," + "regName TEXT,"
+            + "phoneNumber TEXT" + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
-            + "id" + " INTEGER PRIMARY KEY autoincrement, " + "status" + " TEXT" + ")";
+            + "id INTEGER PRIMARY KEY autoincrement, " + "status TEXT" + ")";
+    String message_table = "CREATE TABLE " + TABLE_MESSAGES + "("
+            + "id integer PRIMARY KEY autoincrement," + "msg TEXT,"
+            + "sender TEXT," + "receiver TEXT," + "contact_id TEXT,"
+            + "datetime default current_timestamp," + "from_device INTEGER DEFAULT 0 NOT NULL" + ")";
+    String chatlist_table = "CREATE TABLE "
+             + TABLE_CHATLIST + "(" + "regName TEXT PRIMARY KEY" + ")";
 
     public DbSqlite(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -35,7 +42,8 @@ public class DbSqlite extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(feed_table);
         db.execSQL(contact_table);
-        db.execSQL("CREATE TABLE messages(_id integer primary key autoincrement, msg text, regName text, regName2 text, at datetime default current_timestamp);");
+        db.execSQL(chatlist_table);
+        db.execSQL(message_table);
         insertDemo(db);
     }
 
@@ -52,7 +60,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void insert(String s){
+    public void insertFeed(String s){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -63,14 +71,18 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertMessage(String s){
+    public void insertMessage(String s, String from, String to, String c, int from_device){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put("status", s);
+        values.put("msg", s);
+        values.put("sender", from);
+        values.put("receiver", to);
+        values.put("contact_id", c);
+        values.put("from_device", from_device);
 
-        db.insert(TABLE_FEED, null, values);
-        Log.d(TAG, "ADDED " + s);
+        db.insert(TABLE_MESSAGES, null, values);
+        Log.d(TAG, "ADDED MSG" + s);
         db.close();
     }
 
@@ -100,7 +112,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
         List<String> update = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT regName FROM " + TABLE_MESSAGES;
+        String selectQuery = "SELECT regName FROM " + TABLE_CHATLIST;
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -115,19 +127,18 @@ public class DbSqlite extends SQLiteOpenHelper {
         return update;
     }
 
-    public List<String> getChatHistory(String from, String to){
+    public List<chatDbProvider> getChatHistory(String c){
 
-        List<String> update = new ArrayList<>();
+        List<chatDbProvider> update = new ArrayList<>();;
         // Select All Query
-        String selectQuery = "SELECT msg FROM " + TABLE_MESSAGES + " WHERE (regName = '" + from + "' AND regName2 = '" + to + "')"
-                + " OR (regName = '" + to + "' AND regName2 = '" + from + "')";
+        String selectQuery = "SELECT msg,from_device, datetime FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 // Adding contact to list
-                update.add(cursor.getString(0));
+                update.add(new chatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2)));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -149,15 +160,45 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.insert("contacts", null, values);
 
         values = new ContentValues();
-        values.put("msg", "hiiiiii");
         values.put("regName", "Jesz");
-        values.put("regName2", "Tunde");
-        db.insert("messages", null, values);
+        db.insert(TABLE_CHATLIST, null, values);
 
         values = new ContentValues();
-        values.put("msg", "hidddddd");
         values.put("regName", "Tunde");
-        values.put("regName2", "Jesz");
-        db.insert("messages", null, values);
+        db.insert(TABLE_CHATLIST, null, values);
+
+
+        values = new ContentValues();
+        values.put("msg", "Hi Tunde");
+        values.put("sender", "Jesz");
+        values.put("receiver", "Tunde");
+        values.put("contact_id", "Jesz");
+        values.put("from_device", 1);
+        db.insert(TABLE_MESSAGES, null, values);
+
+        values = new ContentValues();
+        values.put("msg", "How you doing");
+        values.put("sender", "Tunde");
+        values.put("receiver", "Jesz");
+        values.put("contact_id", "Jesz");
+        db.insert(TABLE_MESSAGES, null, values);
+
+        values = new ContentValues();
+        values.put("msg", "Hello Tunde");
+        values.put("sender", "Jesz");
+        values.put("receiver", "Tunde");
+        values.put("contact_id", "Tunde");
+        values.put("from_device", 1);
+        db.insert(TABLE_MESSAGES, null, values);
+
+        values = new ContentValues();
+        values.put("msg", "Hi");
+        values.put("sender", "Tunde");
+        values.put("receiver", "Jesz");
+        values.put("contact_id", "Jesz");
+        db.insert(TABLE_MESSAGES, null, values);
+
+
+/*        new Timestamp(System.currentTimeMillis()*/
     }
 }

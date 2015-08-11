@@ -76,7 +76,7 @@ public class BroadcastActivity extends Activity {
                     regId = ApplicationInit.getREGISTRATION_KEY();
 
                     //SEND REGID TO SERVER VIA HTTP
-                    sendToServer(regId);
+                    //sendToServer(regId);
 
                     storePref();
                     spinner.setVisibility(View.GONE);
@@ -154,7 +154,7 @@ public class BroadcastActivity extends Activity {
         };
         Volley.newRequestQueue(this).add(postRequest);
     }
-
+/*
     public void sendToServer(final String s){
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -202,7 +202,7 @@ public class BroadcastActivity extends Activity {
 
             }
         }.execute();
-    }
+    }*/
 
     public static void storePref(){
         SharedPreferences.Editor editor = prefs.edit();

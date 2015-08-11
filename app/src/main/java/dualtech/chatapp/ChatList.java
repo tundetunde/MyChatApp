@@ -28,15 +28,10 @@ public class ChatList extends ListActivity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         db = new DbSqlite(this);
         ArrayList<String> chatList = (ArrayList)db.getChatList();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, chatList);
         setListAdapter(adapter);
     }
-
-    /*private void initialize(ArrayAdapter<Collection> adapter){
-        lv = (ListView)findViewById(R.id.lvChat);
-        lv.setAdapter(adapter);
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -68,7 +63,8 @@ public class ChatList extends ListActivity implements View.OnClickListener{
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(this, ChatView.class);
-        intent.putExtra("TUNDE", String.valueOf(id));
+        String s = l.getItemAtPosition(position).toString();
+        intent.putExtra("contact", s);
         startActivity(intent);
     }
 }

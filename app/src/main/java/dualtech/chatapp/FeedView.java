@@ -60,7 +60,7 @@ public class FeedView extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         update = String.valueOf(et_feed.getText());
         if(update != null){
-            db.insert(update);
+            db.insertFeed(update);
             refreshFeed();
             et_feed.setText("");
         }
