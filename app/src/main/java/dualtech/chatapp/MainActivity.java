@@ -15,7 +15,6 @@ public class MainActivity extends TabActivity {
             setContentView(R.layout.main);
 
             tvSignedIn = (TextView) findViewById(R.id.tvSignedIn);
-            //sendRegistrationToServer(ApplicationInit.SERVER_ADDRESS);
             Resources res = getResources();
             TabHost tabHost = getTabHost();
 // Chat tab

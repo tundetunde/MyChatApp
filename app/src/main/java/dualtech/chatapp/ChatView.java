@@ -24,12 +24,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class ChatView extends Activity implements View.OnClickListener{
     DbSqlite db;
@@ -42,6 +45,7 @@ public class ChatView extends Activity implements View.OnClickListener{
     String ch_contact;
     ArrayList chatList;
     ArrayAdapter<chatDbProvider> adapter;
+    GoogleCloudMessaging gcm;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,7 @@ public class ChatView extends Activity implements View.OnClickListener{
         Bundle bundle = getIntent().getExtras();
         ch_contact = bundle.getString("contact");
         db = new DbSqlite(this);
+        gcm = GoogleCloudMessaging.getInstance(ChatView.this);
         loadChat();
 
         //actionBar.setSubtitle("connecting ...");
@@ -104,7 +109,7 @@ public class ChatView extends Activity implements View.OnClickListener{
         initalize();
     }
 
-/**    private void send(final String txt) {
+    private void send(final String txt) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -112,18 +117,27 @@ public class ChatView extends Activity implements View.OnClickListener{
                 try {
                     //ServerUtilities.send(txt, profileEmail);
 
-                    ContentValues values = new ContentValues(2);
-                    values.put(DBProvider.COL_MSG, txt);
-                    values.put(DBProvider.COL_TO, profileEmail);
-                    getContentResolver().insert(DBProvider.CONTENT_URI_MESSAGES, values);
+                    Random rand = new Random();
 
+                    String id = Integer.toString(rand.nextInt(1000) + 1);
+                    Bundle data = new Bundle();
+                    data.putString("Type", "msg");
+                    data.putString("MSG-msg", et_msg);
+                    data.putString("MSG-sender", "");
+                    data.putString("MSG-receiver", "");
+                    data.putString("MSG-contact_id", "");
+                    data.putString("MSG-from_device", "");
+                        gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                        msg = "Sent message";
                 } catch (IOException ex) {
                     msg = "Message could not be sent";
                 }
-                ContentValues values = new ContentValues(2);
+
+                /*ContentValues values = new ContentValues(2);
                 values.put(DBProvider.COL_MSG, txt);
                 values.put(DBProvider.COL_TO, profileName);
                 getContentResolver().insert(DBProvider.CONTENT_URI_MESSAGES, values);
+                return msg;*/
                 return msg;
             }
 
@@ -134,7 +148,7 @@ public class ChatView extends Activity implements View.OnClickListener{
                 }
             }
         }.execute(null, null, null);
-    }*/
+    }
 
     @Override
     public void onClick(View v) {

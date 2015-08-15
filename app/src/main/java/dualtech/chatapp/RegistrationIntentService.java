@@ -35,7 +35,7 @@ public class RegistrationIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
+        String token = "";
         try {
             // In the (unlikely) event that multiple refresh operations occur simultaneously,
             // ensure that they are processed sequentially.
@@ -45,15 +45,12 @@ public class RegistrationIntentService extends IntentService {
                 // are local.
                 // [START get_token]
                 InstanceID instanceID = InstanceID.getInstance(this);
-                String token = instanceID.getToken(PROJECT_NO, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                token = instanceID.getToken(PROJECT_NO, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                 // [END get_token]
                 Log.i(TAG, "GCM Registration Token: " + token);
 
 
                 ApplicationInit.setREGISTRATION_KEY(token);// Save the regid for global use - no need to register again.
-
-                // TODO: Implement this method to send any registration to your app's servers.
-                sendRegistrationToServer(token);
 
                 // Subscribe to topic channels
                 subscribeTopics(token);
@@ -74,7 +71,8 @@ public class RegistrationIntentService extends IntentService {
         }
         // Notify UI that registration has completed, so the progress indicator can be hidden.
 
-
+// TODO: Implement this method to send any registration to your app's servers.
+        sendRegistrationToServer(token);
         Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
         LocalBroadcastManager.getInstance(this).sendBroadcast(registrationComplete);
 
@@ -88,9 +86,9 @@ public class RegistrationIntentService extends IntentService {
      *
      * @param token The new token.
      */
-    private void sendRegistrationToServer(String token) {
+    private void sendRegistrationToServer(final String token) {
         // Add custom implementation, as needed.
-        StringRequest postRequest = new StringRequest(Request.Method.POST, token,
+        StringRequest postRequest = new StringRequest(Request.Method.POST, ApplicationInit.SERVER_ADDRESS,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -109,6 +107,8 @@ public class RegistrationIntentService extends IntentService {
                 // the POST parameters:
                 params.put("RegNo", ApplicationInit.PROPERTY_REG_ID);
                 params.put("MobileNo", ApplicationInit.getMobile_number());
+                params.put("Register", "yes");
+                params.put("token", token);
                 return params;
             }
         };

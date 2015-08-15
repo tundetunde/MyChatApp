@@ -1,15 +1,22 @@
 package dualtech.chatapp;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -22,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -75,9 +83,6 @@ public class BroadcastActivity extends Activity {
                     phnNo = ApplicationInit.getMobile_number();
                     regId = ApplicationInit.getREGISTRATION_KEY();
 
-                    //SEND REGID TO SERVER VIA HTTP
-                    //sendToServer(regId);
-
                     storePref();
                     spinner.setVisibility(View.GONE);
 
@@ -116,44 +121,6 @@ public class BroadcastActivity extends Activity {
         return true;
     }
 
-    private void sendRegistrationToServer(String token) {
-        // Add custom implementation, as needed.
-        // Request a string response
-        StringRequest postRequest = new StringRequest(Request.Method.POST, token,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-
-                        // Result handling
-                        /*try {
-                            JSONObject jsonResponse = new JSONObject(response).getJSONObject("form");
-                            String site = jsonResponse.getString("site"),
-                                    network = jsonResponse.getString("network");
-                            System.out.println("Site: "+site+"\nNetwork: "+network);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }*/
-                        //tvSignedIn.append("\nServer has received the RegID");
-                        Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
-
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                // the POST parameters:
-                params.put("RegNo", ApplicationInit.PROPERTY_REG_ID);
-                params.put("MobileNo", ApplicationInit.getMobile_number());
-                return params;
-            }
-        };
-        Volley.newRequestQueue(this).add(postRequest);
-    }
 /*
     public void sendToServer(final String s){
         new AsyncTask<Void, Void, String>() {

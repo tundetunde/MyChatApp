@@ -57,7 +57,7 @@ public class MobileReg extends Activity implements View.OnClickListener {
                 Intent i = new Intent("dualtech.chatapp.BROADCASTACTIVITY");
                 startActivity(i);
         }
-        }
+    }
 
     public static void storePref(){
         SharedPreferences.Editor editor = prefs.edit();
