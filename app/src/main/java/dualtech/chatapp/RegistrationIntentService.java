@@ -108,7 +108,7 @@ public class RegistrationIntentService extends IntentService {
                 params.put("RegNo", ApplicationInit.PROPERTY_REG_ID);
                 params.put("MobileNo", ApplicationInit.getMobile_number());
                 params.put("Register", "yes");
-                params.put("token", token);
+                //params.put("token", token);
                 return params;
             }
         };
