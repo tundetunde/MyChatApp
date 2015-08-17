@@ -32,10 +32,9 @@ public class MobileReg extends Activity implements View.OnClickListener {
 
     EditText mobileNum;
     Button reg_next;
-    static String regId;
     static String phnNo;
     static SharedPreferences prefs;
-    private static final String TAG = "Note"/*MainActivity*/;
+    private static final String TAG = "MobileReg";
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,23 +53,10 @@ public class MobileReg extends Activity implements View.OnClickListener {
             case R.id.bt_reg:
                 phnNo = String.valueOf(mobileNum.getText());
                 ApplicationInit.setMobile_number(phnNo);
+                Log.d(TAG, phnNo);
                 Intent i = new Intent("dualtech.chatapp.BROADCASTACTIVITY");
                 startActivity(i);
         }
     }
 
-    public static void storePref(){
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(ApplicationInit.PROPERTY_REG_ID, regId);
-        editor.putString(ApplicationInit.PROPERTY_MOB_ID, phnNo);
-        editor.apply();
-    }
-
-    private int msgId() {
-        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
-        editor.apply();
-        return id;
-    }
 }

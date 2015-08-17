@@ -1,11 +1,9 @@
 package dualtech.chatapp;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.SharedPreferences;
 import android.database.DataSetObserver;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -46,25 +44,20 @@ public class ChatView extends Activity implements View.OnClickListener{
     ArrayList chatList;
     ArrayAdapter<chatDbProvider> adapter;
     GoogleCloudMessaging gcm;
+    SharedPreferences prefs;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chatbox);
         Bundle bundle = getIntent().getExtras();
+        prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         ch_contact = bundle.getString("contact");
         db = new DbSqlite(this);
         gcm = GoogleCloudMessaging.getInstance(ChatView.this);
         loadChat();
-
-        //actionBar.setSubtitle("connecting ...");
-        //TextView mb = (TextView) findViewById(R.id.mid);
-        //TextView rb = (TextView) findViewById(R.id.rid);
-
-        //mb.setText(mb.getText() + ApplicationInit.getMobile_number());
-        //rb.setText(rb.getText() + ApplicationInit.getREGISTRATION_KEY());
     }
 
-    private void initalize(){
+    private void initialize(){
         lv = (ListView)findViewById(R.id.lvChatHistory);
         lv.setAdapter(adapter);
 
@@ -77,6 +70,8 @@ public class ChatView extends Activity implements View.OnClickListener{
             }
         });
 
+        adapter.notifyDataSetChanged();
+        
         tv_header = (TextView) findViewById(R.id.tv_header);
         tv_header.setText(ch_contact);
         send = (Button)findViewById(R.id.send_btn);
@@ -106,38 +101,30 @@ public class ChatView extends Activity implements View.OnClickListener{
         for(Object c : chatList){
             adapter.add((chatDbProvider) c);
         }
-        initalize();
+        initialize();
     }
 
-    private void send(final String txt) {
+    private void sendMsg(final String txt, final String dt) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                String msg = "";
+                String msg;
                 try {
-                    //ServerUtilities.send(txt, profileEmail);
 
-                    Random rand = new Random();
 
-                    String id = Integer.toString(rand.nextInt(1000) + 1);
+                    String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
                     data.putString("Type", "msg");
-                    data.putString("MSG-msg", et_msg);
-                    data.putString("MSG-sender", "");
-                    data.putString("MSG-receiver", "");
-                    data.putString("MSG-contact_id", "");
-                    data.putString("MSG-from_device", "");
-                        gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
-                        msg = "Sent message";
+                    data.putString("GCM_msg", txt);
+                    data.putString("GCM_time", dt);
+                    data.putString("GCM_contactId", ch_contact);
+
+                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                    msg = "Sent message";
                 } catch (IOException ex) {
                     msg = "Message could not be sent";
                 }
 
-                /*ContentValues values = new ContentValues(2);
-                values.put(DBProvider.COL_MSG, txt);
-                values.put(DBProvider.COL_TO, profileName);
-                getContentResolver().insert(DBProvider.CONTENT_URI_MESSAGES, values);
-                return msg;*/
                 return msg;
             }
 
@@ -150,13 +137,36 @@ public class ChatView extends Activity implements View.OnClickListener{
         }.execute(null, null, null);
     }
 
+    private int msgId() {
+        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
+        editor.apply();
+        return id;
+    }
+
+    public void receivedMsg(Bundle data) {
+        int sender  = 0;
+        String message = data.getString("GCM_msg");
+        String contact = data.getString("GCM_contactId");
+        String time = data.getString("GCM_time");
+
+        adapter.add(new chatDbProvider(message, sender, time));
+        db.insertMessage(message, contact, sender);
+    }
+
+    public void reload(){
+        loadChat();
+    }
+
     @Override
     public void onClick(View v) {
         et_msg = String.valueOf(editText.getText());
         if(et_msg != null){
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             adapter.add(new chatDbProvider(et_msg, 1, d));
-            db.insertMessage(et_msg, "Me", ch_contact, ch_contact, 1);
+            sendMsg(et_msg, d);
+            db.insertMessage(et_msg, ch_contact, 1);
             editText.setText("");
         }
     }

@@ -28,7 +28,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class Note extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static final String TAG = "Note"/*MainActivity*/;
+    private static final String TAG = "Note";
     public static TextView tvSignedIn;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private ProgressBar mRegistrationProgressBar;

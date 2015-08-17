@@ -3,7 +3,6 @@ package dualtech.chatapp;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -21,7 +20,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.SSLSocketFactory;
 
 public class RegistrationIntentService extends IntentService {
     private static final String TAG = "RegIntentService";
@@ -105,10 +103,9 @@ public class RegistrationIntentService extends IntentService {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 // the POST parameters:
-                params.put("RegNo", ApplicationInit.PROPERTY_REG_ID);
+                params.put("RegNo", ApplicationInit.getREGISTRATION_KEY());
                 params.put("MobileNo", ApplicationInit.getMobile_number());
                 params.put("Register", "yes");
-                //params.put("token", token);
                 return params;
             }
         };

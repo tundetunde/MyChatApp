@@ -29,10 +29,27 @@ public class MyGcmListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
+        int sender = 0;
+        String message = data.getString("GCM_msg");
+        String type = data.getString("Type");
+        String contact = data.getString("GCM_contactId");
+        String time = data.getString("GCM_time");
+
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
+        Log.d(TAG, "Type: " + type);
+        Log.d(TAG, "Contact: " + contact);
+        Log.d(TAG, "Time: " + time);
 
+        if(type.equals("msg")){
+            ChatView cv = new ChatView();
+
+            //insert into db
+            DbSqlite db = new DbSqlite(this);
+            db.insertMessage(message, contact, sender);
+            //chat_view list reload
+            cv.reload();
+        }
         /**
          * Production applications would usually process the message here.
          * Eg: - Syncing with server.
@@ -44,6 +61,7 @@ public class MyGcmListenerService extends GcmListenerService {
          * In some cases it may be useful to show a notification indicating to the user
          * that a message was received.
          */
+
         sendNotification(message);
 
     }

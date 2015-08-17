@@ -29,8 +29,8 @@ public class DbSqlite extends SQLiteOpenHelper {
             + "id INTEGER PRIMARY KEY autoincrement, " + "status TEXT" + ")";
     String message_table = "CREATE TABLE " + TABLE_MESSAGES + "("
             + "id integer PRIMARY KEY autoincrement," + "msg TEXT,"
-            + "sender TEXT," + "receiver TEXT," + "contact_id TEXT,"
-            + "datetime default current_timestamp," + "from_device INTEGER DEFAULT 0 NOT NULL" + ")";
+            + "contact_id TEXT," + "datetime default current_timestamp,"
+            + "sender INTEGER DEFAULT 0 NOT NULL" + ")";
     String chatlist_table = "CREATE TABLE "
              + TABLE_CHATLIST + "(" + "regName TEXT PRIMARY KEY" + ")";
 
@@ -71,18 +71,16 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertMessage(String s, String from, String to, String c, int from_device){
+    public void insertMessage(String s, String c, int sender){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put("msg", s);
-        values.put("sender", from);
-        values.put("receiver", to);
         values.put("contact_id", c);
-        values.put("from_device", from_device);
+        values.put("sender", sender);
 
         db.insert(TABLE_MESSAGES, null, values);
-        Log.d(TAG, "ADDED MSG" + s);
+        Log.d(TAG, "ADDED MSG : " + s);
         db.close();
     }
 
@@ -129,7 +127,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
     public List<chatDbProvider> getChatHistory(String c){
 
-        List<chatDbProvider> update = new ArrayList<>();;
+        List<chatDbProvider> update = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT msg,from_device, datetime FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
         SQLiteDatabase db = this.getWritableDatabase();
@@ -156,7 +154,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         values = new ContentValues();
         values.put("regId", 2);
         values.put("regName", "Jesz");
-        values.put("phone_number", "02077084296");
+        values.put("phoneNumber", "02077084296");
         db.insert("contacts", null, values);
 
         values = new ContentValues();
@@ -170,35 +168,24 @@ public class DbSqlite extends SQLiteOpenHelper {
 
         values = new ContentValues();
         values.put("msg", "Hi Tunde");
-        values.put("sender", "Jesz");
-        values.put("receiver", "Tunde");
         values.put("contact_id", "Jesz");
-        values.put("from_device", 1);
+        values.put("sender", 1);
         db.insert(TABLE_MESSAGES, null, values);
 
         values = new ContentValues();
         values.put("msg", "How you doing");
-        values.put("sender", "Tunde");
-        values.put("receiver", "Jesz");
         values.put("contact_id", "Jesz");
         db.insert(TABLE_MESSAGES, null, values);
 
         values = new ContentValues();
         values.put("msg", "Hello Tunde");
-        values.put("sender", "Jesz");
-        values.put("receiver", "Tunde");
         values.put("contact_id", "Tunde");
-        values.put("from_device", 1);
+        values.put("sender", 1);
         db.insert(TABLE_MESSAGES, null, values);
 
         values = new ContentValues();
         values.put("msg", "Hi");
-        values.put("sender", "Tunde");
-        values.put("receiver", "Jesz");
         values.put("contact_id", "Jesz");
         db.insert(TABLE_MESSAGES, null, values);
-
-
-/*        new Timestamp(System.currentTimeMillis()*/
     }
 }
