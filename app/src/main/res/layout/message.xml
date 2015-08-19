@@ -7,23 +7,23 @@
     <LinearLayout android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:id="@+id/view">
+        android:layout_margin="5dp"
+        android:id="@+id/ct_bubble">
 
         <TextView
             android:id="@+id/msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dip"
-            android:paddingLeft="10dip"
+            android:textSize="20sp"
             android:layout_gravity="start"
             android:textColor="@android:color/primary_text_light"
-            android:text="hello"
+            android:text="Hello World"
             />
         <TextView
             android:id="@+id/msg_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dip"
+            android:textSize="12sp"
             android:layout_gravity="end"
             android:textColor="@android:color/primary_text_light"
             android:text="11/08/2015"

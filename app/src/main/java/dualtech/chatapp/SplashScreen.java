@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by Jesz on 18-Jul-15.
  */
 public class SplashScreen extends Activity {
-    AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
 
     @Override
@@ -26,6 +25,7 @@ public class SplashScreen extends Activity {
 
         ApplicationInit.setREGISTRATION_KEY(prefs.getString(ApplicationInit.PROPERTY_REG_ID, null));
         ApplicationInit.setMobile_number(prefs.getString(ApplicationInit.PROPERTY_MOB_ID, null));
+        ApplicationInit.setUser(prefs.getString(ApplicationInit.PROPERTY_USER_NAME, null));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);

@@ -41,6 +41,8 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "Contact: " + contact);
         Log.d(TAG, "Time: " + time);
 
+        Log.d(TAG, message);
+        System.out.println("MESSAGE RECEIVED: " + message);
         if(type.equals("msg")){
             ChatView cv = new ChatView();
 

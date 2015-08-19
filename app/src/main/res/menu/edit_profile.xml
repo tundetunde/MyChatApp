@@ -1,17 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/action_add"
+        android:id="@+id/edit_name"
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/action_add"/>
 
     <item
-        android:id="@+id/action_profile"
+        android:id="@+id/edit_dp"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/view_profile" />
 
-    <item
-        android:id="@+id/action_settings"
-        android:icon="@android:drawable/ic_menu_preferences"
-        android:title="@string/action_settings"/>
 
 </menu>

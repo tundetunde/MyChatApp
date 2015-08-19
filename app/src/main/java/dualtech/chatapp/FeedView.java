@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +27,7 @@ public class FeedView extends Activity implements View.OnClickListener {
     EditText et_feed;
     String update;
     LinearLayout lt_feed;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.feed_list);
@@ -55,6 +58,18 @@ public class FeedView extends Activity implements View.OnClickListener {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        menu.findItem(R.id.action_add).setVisible(false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        item.setOnMenuItemClickListener(new MenuItemListener(this));
+        return true;
+    }
 
     @Override
     public void onClick(View v) {

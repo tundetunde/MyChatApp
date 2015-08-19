@@ -129,7 +129,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
         List<chatDbProvider> update = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT msg,from_device, datetime FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
+        String selectQuery = "SELECT msg,sender, datetime FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list

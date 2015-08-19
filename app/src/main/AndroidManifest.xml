@@ -67,9 +67,11 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChatView" />
+        <activity android:name=".ChatView"
+            android:configChanges="orientation|screenSize" />
         <activity android:name=".FeedView" />
         <activity android:name=".ContactView" />
+        <activity android:name=".ProfilePage" />
 
         <!-- [START gcm_receiver] -->
         <receiver

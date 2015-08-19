@@ -84,7 +84,7 @@ public class BroadcastActivity extends Activity {
         return true;
     }
 
-/*
+/**
     public void sendToServer(final String s){
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -132,7 +132,8 @@ public class BroadcastActivity extends Activity {
 
             }
         }.execute();
-    }*/
+    }
+ **/
 
     public static void storePref(){
         SharedPreferences.Editor editor = prefs.edit();

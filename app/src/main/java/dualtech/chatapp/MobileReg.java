@@ -30,9 +30,9 @@ import java.io.IOException;
  */
 public class MobileReg extends Activity implements View.OnClickListener {
 
-    EditText mobileNum;
+    EditText mobileNum, name;
     Button reg_next;
-    static String phnNo;
+    static String phnNo, user_Nm;
     static SharedPreferences prefs;
     private static final String TAG = "MobileReg";
 
@@ -42,9 +42,16 @@ public class MobileReg extends Activity implements View.OnClickListener {
         setContentView(R.layout.registration);
 
         mobileNum = (EditText) findViewById(R.id.phone_num);
+        name = (EditText) findViewById(R.id.user_name);
         mobileNum.setText(VerifyNumber.getNO());
         reg_next = (Button) findViewById(R.id.bt_reg);
         reg_next.setOnClickListener(this);
+    }
+
+    public static void storePref(){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ApplicationInit.PROPERTY_USER_NAME, "");
+        editor.apply();
     }
 
     @Override
@@ -52,7 +59,13 @@ public class MobileReg extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.bt_reg:
                 phnNo = String.valueOf(mobileNum.getText());
+                user_Nm = String.valueOf(name.getText());
+
                 ApplicationInit.setMobile_number(phnNo);
+                ApplicationInit.setUser(user_Nm);
+
+                storePref();
+
                 Log.d(TAG, phnNo);
                 Intent i = new Intent("dualtech.chatapp.BROADCASTACTIVITY");
                 startActivity(i);
