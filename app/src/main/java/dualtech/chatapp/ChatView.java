@@ -102,15 +102,11 @@ public class ChatView extends Activity implements View.OnClickListener{
             protected String doInBackground(Void... params) {
                 String msg;
                 try {
-
-
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
-                    data.putString("Type", "msg");
                     data.putString("GCM_msg", txt);
                     data.putString("GCM_time", dt);
                     data.putString("GCM_contactId", ch_contact);
-
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent message";
                 } catch (IOException ex) {

@@ -12,9 +12,6 @@ import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
 
-/**
- * Created by tunde_000 on 21/07/2015.
- */
 public class MyGcmListenerService extends GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
@@ -42,15 +39,13 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "Time: " + time);
 
         Log.d(TAG, message);
-        System.out.println("MESSAGE RECEIVED: " + message);
         if(type.equals("msg")){
-            ChatView cv = new ChatView();
-
+            //ChatView cv = new ChatView();
             //insert into db
             DbSqlite db = new DbSqlite(this);
             db.insertMessage(message, contact, sender);
             //chat_view list reload
-            cv.reload();
+            //cv.reload();
         }
         /**
          * Production applications would usually process the message here.
@@ -64,7 +59,7 @@ public class MyGcmListenerService extends GcmListenerService {
          * that a message was received.
          */
 
-        sendNotification(message);
+        sendNotification(message, contact);
 
     }
     // [END receive_message]
@@ -74,16 +69,17 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message) {
+    private void sendNotification(String message, String contactID) {
         Intent intent = new Intent(this, ChatView.class);
+        intent.putExtra("contact", contactID);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                //.setSmallIcon(R.drawable.hero_02)
-                .setContentTitle("GCM Message")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(contactID)
                 .setContentText(message)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
