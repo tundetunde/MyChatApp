@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="@color/menu_top"
         android:id="@+id/rLayout">
         <TextView
             android:id="@+id/tv_header"
@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rLayout"
         android:gravity="center"
+        android:padding="10dp"
         android:orientation="vertical"
         android:id="@+id/linearLayout2">
 
@@ -56,29 +57,48 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linearLayout3"
-        android:layout_margin="10dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/linearLayout2" >
+        android:layout_below="@+id/linearLayout2">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/linearLayout3"
+            android:layout_margin="10dp" >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Mobile number: "
-            android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/tvNum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="07400000000"
-            android:layout_margin="15dp"
-            android:textSize="20sp"/>
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mobile number: "
+                android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/tvNum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="07400000000"
+                android:layout_margin="15dp"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="STATUS"
+                android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sharing with others"
+                android:layout_margin="15dp"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+    </ScrollView>
+
 
 
 </RelativeLayout>

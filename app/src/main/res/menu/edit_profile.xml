@@ -1,13 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
         android:id="@+id/edit_name"
-        android:icon="@android:drawable/ic_menu_add"
-        android:title="@string/action_add"/>
+        android:icon="@android:drawable/sym_contact_card"
+        android:title="@string/chg_name"/>
 
     <item
         android:id="@+id/edit_dp"
-        android:icon="@android:drawable/ic_menu_edit"
-        android:title="@string/view_profile" />
+        android:icon="@android:drawable/picture_frame"
+        android:title="@string/chg_photo" />
 
 
 </menu>

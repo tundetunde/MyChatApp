@@ -21,7 +21,6 @@ public class SplashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // Make sure the app is registered with GCM and with the server
        prefs = getSharedPreferences("SharedPref", Context.MODE_PRIVATE);
-        setContentView(R.layout.main);
 
         ApplicationInit.setREGISTRATION_KEY(prefs.getString(ApplicationInit.PROPERTY_REG_ID, null));
         ApplicationInit.setMobile_number(prefs.getString(ApplicationInit.PROPERTY_MOB_ID, null));

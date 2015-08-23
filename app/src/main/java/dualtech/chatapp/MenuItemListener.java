@@ -1,11 +1,10 @@
 package dualtech.chatapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.provider.MediaStore;
-import android.text.InputType;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.PopupMenu;
@@ -34,7 +33,7 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
                 context.startActivity(i);
                 return true;
             case R.id.action_settings:
-                i = new Intent().setClass(context, ProfilePage.class);
+                i = new Intent().setClass(context, SettingsPage.class);
                 context.startActivity(i);
                 return true;
             case R.id.edit_name:
@@ -57,7 +56,9 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
                         .show();
                 return true;
             case R.id.edit_dp:
-                //selectPicture();
+
+                i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                ((Activity)context).startActivityForResult(Intent.createChooser(i, "Choose Profile Pictures"), 1);
                 return true;
             default:
                 return false;

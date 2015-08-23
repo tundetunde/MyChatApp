@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -21,8 +24,7 @@ public class ProfilePage extends Activity implements View.OnClickListener{
     Button et_profile;
     ImageView dp;
     static SharedPreferences prefs;
-    static TextView tv_user, tv_mobi;
-    private static int SELECT_IMG = 1;
+    static TextView tv_user, tv_mobi, tv_status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +34,11 @@ public class ProfilePage extends Activity implements View.OnClickListener{
         et_profile = (Button) findViewById(R.id.pro_edit);
         tv_mobi = (TextView) findViewById(R.id.tvNum);
         tv_user = (TextView) findViewById(R.id.tvName);
+        tv_status = (TextView) findViewById(R.id.tvStatus);
         dp = (ImageView) findViewById(R.id.dpView);
         tv_mobi.setText(ApplicationInit.getMobile_number());
+        et_profile.setOnClickListener(this);
+        tv_status.setText(prefs.getString(ApplicationInit.PROPERTY_STATUS, "Hello there!!!"));
         apply();
     }
 
@@ -53,6 +58,7 @@ public class ProfilePage extends Activity implements View.OnClickListener{
 
     public static void setName(String s){
         ApplicationInit.setUser(s);
+
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(ApplicationInit.PROPERTY_USER_NAME, s);
         editor.apply();
@@ -60,17 +66,20 @@ public class ProfilePage extends Activity implements View.OnClickListener{
         apply();
     }
 
-    public void selectPicture(){
-        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(i, SELECT_IMG);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK && requestCode == SELECT_IMG){
-            Bundle extras = data.getExtras();
-            Bitmap bmp = (Bitmap) extras.get("data");
+        if(resultCode == RESULT_OK /*&& requestCode == SELECT_IMG*/){
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            Bitmap bmp = BitmapFactory.decodeFile(picturePath);
+            System.out.println("SELECT IMAGE");
             dp.setImageBitmap(bmp);
         }
     }

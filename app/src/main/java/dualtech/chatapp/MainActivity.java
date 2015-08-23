@@ -1,51 +1,71 @@
+
 package dualtech.chatapp;
 
-import android.app.TabActivity;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.widget.TabHost;
-import android.widget.TextView;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
-public class MainActivity extends TabActivity {
 
-    public static TextView tvSignedIn;
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.main);
+public class MainActivity extends AppCompatActivity{
 
-            tvSignedIn = (TextView) findViewById(R.id.tvSignedIn);
-            Resources res = getResources();
-            TabHost tabHost = getTabHost();
-// Chat tab
-            Intent ChatIntent = new Intent().setClass(this, ChatList.class);
-            TabHost.TabSpec chatTab = tabHost
-                    .newTabSpec("Chat")
-                    .setIndicator("CHAT")
-                            //.setIndicator("", res.getDrawable(R.drawable.icon_android_config))
-                    .setContent(ChatIntent);
-// Feed tab
-            Intent FeedIntent = new Intent().setClass(this,FeedView.class);
-            TabHost.TabSpec feedTab = tabHost
-                    .newTabSpec("Feed")
-                    .setIndicator("FEED")
-                            //.setIndicator("", res.getDrawable(R.drawable.icon_apple_config))
-                    .setContent(FeedIntent);
-// Contact tab
-            Intent contactIntent = new Intent().setClass(this,ContactView.class);
-            TabHost.TabSpec contactTab = tabHost
-                    .newTabSpec("Contacts")
-                    .setIndicator("CONTACTS")
-                            //.setIndicator("", res.getDrawable(R.drawable.icon_windows_config))
-                    .setContent(contactIntent);
+    Toolbar toolbar;
+    ViewPager pager;
+    PagerView adapter;
+    SlidingTabLayout tabs;
+    CharSequence Titles[]={"Chat","Feed", "Contact"};
+    int Numboftabs  = Titles.length;
 
-            tabHost.addTab(chatTab);
-            tabHost.addTab(feedTab);
-            tabHost.addTab(contactTab);
 
-//set Chat tab as default (zero based)
-            tabHost.setCurrentTab(0);
+    @Override
 
-        }
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        // Creating The Toolbar and setting it as the Toolbar for the activity
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        adapter =  new PagerView(getSupportFragmentManager(),Titles,Numboftabs);
+
+
+        // Assigning ViewPager View and setting the adapter
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(adapter);
+
+
+        // Assiging the Sliding Tab Layout View
+        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tab_indicator);
+            }
+        });
+
+        // Setting the ViewPager For the SlidingTabsLayout
+        tabs.setViewPager(pager);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        item.setOnMenuItemClickListener(new MenuItemListener(this));
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }

@@ -1,45 +1,30 @@
 package dualtech.chatapp;
 
-import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,33 +32,34 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
-public class ContactView extends ListActivity {
+public class ContactView extends ListFragment {
     private static final String TAG = "CONTACTVIEW";
     ProgressBar loader;
     List<Map<String, String>> cc;
     GoogleCloudMessaging gcm;
     String answer;
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.contact_list);
-        gcm = GoogleCloudMessaging.getInstance(ContactView.this);
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.contact_list, container, false);
+
+        gcm = GoogleCloudMessaging.getInstance(getActivity());
         cc = new ArrayList<>();
-        loader = (ProgressBar) findViewById(R.id.contact_load);
+        loader = (ProgressBar) v.findViewById(R.id.contact_load);
         loader.setVisibility(View.VISIBLE);
-        read_contact();
+        //read_contact();
+        return v;
     }
 
-    public void read_contact (){
+    public void read_contact() {
 
-        new AsyncTask<Void, Void, String> (){
+        new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 Log.d("CONTACTVIEW", "doInBack");
                 HashMap<String, String> data /*= new HashMap<>(2)*/;
-                ContentResolver CR = getContentResolver();
+                ContentResolver CR = getActivity().getContentResolver();
                 Cursor contact_details = CR.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
                 contact_details.moveToFirst();
 
@@ -97,21 +83,20 @@ public class ContactView extends ListActivity {
                     }
                 }
                 contact_details.close();
-                Log.d("CONTACTVIEW" ,"Done");
+                Log.d("CONTACTVIEW", "Done");
                 return "DONE";
-        }
+            }
 
 
+            @Override
+            protected void onPostExecute(String msg) {
+                Log.d("CONTACTVIEW", "Done list");
+                loader.setVisibility(View.GONE);
+                list_adapter();
+            }
+        }.execute();
 
-        @Override
-        protected void onPostExecute (String msg) {
-            Log.d("CONTACTVIEW", "Done list");
-            loader.setVisibility(View.GONE);
-            list_adapter();
-        }
-    }.execute();
-
-}
+    }
 
     private void sendContact(final String reg) {
         // Add custom implementation, as needed.
@@ -132,7 +117,7 @@ public class ContactView extends ListActivity {
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
@@ -144,7 +129,7 @@ public class ContactView extends ListActivity {
                 return params;
             }
         };
-        Volley.newRequestQueue(this).add(postRequest);
+        Volley.newRequestQueue(getActivity()).add(postRequest);
     }
 
     public Comparator<Map<String, String>> mapComparator = new Comparator<Map<String, String>>() {
@@ -154,29 +139,29 @@ public class ContactView extends ListActivity {
     };
 
 
-    public void list_adapter(){
+    public void list_adapter() {
         Collections.sort(cc, mapComparator);
         ArrayList<String> listPhoneNumber = new ArrayList<String>();
-        for(Map<String, String> s: cc){
-            Iterator<Map.Entry<String, String>> iterator = s.entrySet().iterator() ;
-            while(iterator.hasNext()){
+        for (Map<String, String> s : cc) {
+            Iterator<Map.Entry<String, String>> iterator = s.entrySet().iterator();
+            while (iterator.hasNext()) {
                 Map.Entry<String, String> x = iterator.next();
                 listPhoneNumber.add(x.getValue());
 
             }
         }
         ArrayList<String> a = new ArrayList<String>();
-        for(String x: listPhoneNumber){
+        for (String x : listPhoneNumber) {
             sendContact(x);
             a.add(answer);
         }
-        SpecialAdapter adapter =  new SpecialAdapter(this, cc, android.R.layout.simple_list_item_2,
-                new String[] {"name", "phone"}, new int[] {android.R.id.text1, android.R.id.text2,}, false, a);
+        SpecialAdapter adapter = new SpecialAdapter(getActivity(), cc, android.R.layout.simple_list_item_2,
+                new String[]{"name", "phone"}, new int[]{android.R.id.text1, android.R.id.text2,}, false, a);
         setListAdapter(adapter);
     }
 
     public class SpecialAdapter extends SimpleAdapter {
-        private int[] colors = new int[] { 0x30FF0000, 0x300000FF };
+        private int[] colors = new int[]{0x30FF0000, 0x300000FF};
         boolean inApp;
         ArrayList<String> x;
 
@@ -189,7 +174,7 @@ public class ContactView extends ListActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            if(x.get(position).equals("y"))
+            if (x.get(position).equals("y"))
                 view.setBackgroundColor(colors[0]);
             else
                 view.setBackgroundColor(colors[1]);

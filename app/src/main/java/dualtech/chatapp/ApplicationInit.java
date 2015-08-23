@@ -11,20 +11,14 @@ public class ApplicationInit extends Application {
     public static final String PROPERTY_REG_ID = "registration_id";
     public static final String PROPERTY_MOB_ID = "mobile_number";
     public static final String PROPERTY_USER_NAME = "user_name";
+    public static final String PROPERTY_STATUS = "feed_status";
     public static final String SHARED_PREF = "SharedPref";
     public static final String KEY_MSG_ID = "message_id";
-    public static final String SERVER_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/GCMServer";
-    //public static final String SERVER_ADDRESS = "http://92.20.27.58:8080/ChatServerDual/GCMServer";
-
-    //public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer";
-    public static final String PROFILE_NAME = "TUNDE";
+    //public static final String SERVER_ADDRESS = "http://192.168.1.12:8080/ChatServerDual/GCMServer";
+    public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer";
     private static String REGISTRATION_KEY;
     private static String MOBILE_NUMBER;
     private static String USER;
-
-    public static String getApi(){
-        return API_KEY;
-    }
 
     public static String getProjectNO(){ return PROJECT_NO;}
 

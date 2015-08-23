@@ -3,6 +3,7 @@ package dualtech.chatapp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -58,14 +60,7 @@ public class ChatView extends Activity implements View.OnClickListener{
     private void initialize(){
         lv = (ListView)findViewById(R.id.lvChatHistory);
 
-        /*lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        adapter.registerDataSetObserver(new DataSetObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                lv.setSelection(adapter.getCount() - 1);
-            }
-        });*/
+        lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
         tv_header = (TextView) findViewById(R.id.tv_header);
         tv_header.setText(ch_contact);

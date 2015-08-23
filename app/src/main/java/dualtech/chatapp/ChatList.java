@@ -1,58 +1,30 @@
 package dualtech.chatapp;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.ListActivity;
-import android.app.LoaderManager;
 import android.content.Intent;
-import android.content.Loader;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.content.CursorLoader;
-import android.support.v4.widget.SimpleCursorAdapter;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
-public class ChatList extends ListActivity implements View.OnClickListener{
+public class ChatList extends ListFragment implements View.OnClickListener{
     DbSqlite db;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        db = new DbSqlite(this);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.chat_list, container, false);
+
+        db = new DbSqlite(getActivity());
         ArrayList<String> chatList = (ArrayList)db.getChatList();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, chatList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatList);
         setListAdapter(adapter);
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_add:
-                //AddContactDialog dialog = new AddContactDialog();
-                //dialog.show(getFragmentManager(), "AddContactDialog");
-                return true;
-
-            case R.id.action_settings:
-                //Intent intent = new Intent(this, SettingsActivity.class);
-                //startActivity(intent);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return v;
     }
 
     @Override
@@ -61,8 +33,8 @@ public class ChatList extends ListActivity implements View.OnClickListener{
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent intent = new Intent(this, ChatView.class);
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Intent intent = new Intent(getActivity(), ChatView.class);
         String s = l.getItemAtPosition(position).toString();
         intent.putExtra("contact", s);
         startActivity(intent);

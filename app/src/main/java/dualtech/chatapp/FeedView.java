@@ -1,16 +1,18 @@
 package dualtech.chatapp;
 
-import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,19 +23,22 @@ import java.util.List;
 /**
  * Created by Jesz on 18-Jul-15.
  */
-public class FeedView extends Activity implements View.OnClickListener {
-    DbSqlite db = new DbSqlite(this);
+public class FeedView extends Fragment implements View.OnClickListener {
+    DbSqlite db;
     Button btn_share;
     EditText et_feed;
     String update;
     LinearLayout lt_feed;
+    static SharedPreferences prefs;
 
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.feed_list);
 
-        lt_feed = (LinearLayout) findViewById(R.id.lt_feed);
-        btn_share = (Button) findViewById(R.id.btnGo);
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.feed_list, container, false);
+        db = new DbSqlite(getActivity());
+        prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
+        lt_feed = (LinearLayout) v.findViewById(R.id.lt_feed);
+        btn_share = (Button) v.findViewById(R.id.btnGo);
         btn_share.setOnClickListener(this);
 
         TextWatcher text_watch = new TextWatcher() {
@@ -52,23 +57,11 @@ public class FeedView extends Activity implements View.OnClickListener {
             }
         };
 
-        et_feed = (EditText) findViewById(R.id.etUpdate);
+        et_feed = (EditText) v.findViewById(R.id.etUpdate);
         et_feed.addTextChangedListener(text_watch);
         refreshFeed();
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        menu.findItem(R.id.action_add).setVisible(false);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        item.setOnMenuItemClickListener(new MenuItemListener(this));
-        return true;
+        return v;
     }
 
     @Override
@@ -76,6 +69,9 @@ public class FeedView extends Activity implements View.OnClickListener {
         update = String.valueOf(et_feed.getText());
         if(update != null){
             db.insertFeed(update);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString(ApplicationInit.PROPERTY_STATUS, update);
+            editor.apply();
             refreshFeed();
             et_feed.setText("");
         }
@@ -92,10 +88,11 @@ public class FeedView extends Activity implements View.OnClickListener {
             List list = new ArrayList(c);
             String tv_text = (String) list.get(1);
 
-            TextView tv = new TextView(this);
+            TextView tv = new TextView(getActivity());
             tv.setText(tv_text);
             tv.setTextSize(12);
             lt_feed.addView(tv);//add TextView to layout
         }
     }
+
 }

@@ -44,13 +44,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".ChatList" >
-            <intent-filter>
-                <action android:name="dualtech.chatapp.CHATLIST" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity android:name=".BroadcastActivity" >
             <intent-filter>
                 <action android:name="dualtech.chatapp.BROADCASTACTIVITY" />
@@ -68,10 +61,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".ChatView"
+            android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|screenSize" />
-        <activity android:name=".FeedView" />
-        <activity android:name=".ContactView" />
         <activity android:name=".ProfilePage" />
+        <activity android:name=".SettingsPage" />
 
         <!-- [START gcm_receiver] -->
         <receiver
