@@ -1,7 +1,7 @@
 package dualtech.chatapp;
 
 import android.content.ContentResolver;
-import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,11 +12,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleAdapter;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,11 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -59,12 +55,24 @@ public class ContactView extends Fragment implements View.OnClickListener{
         return v;
     }
 
-    private void initialize(View v){
+    private void initialize(final View v){
         loader = (ProgressBar) v.findViewById(R.id.contact_load);
         loader.setVisibility(View.VISIBLE);
         lvAppContacts = (ListView) v.findViewById(R.id.lvAppContacts);
         ArrayAdapter adapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_list_item_1, appContacts);
         lvAppContacts.setAdapter(adapter);
+
+        lvAppContacts.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,int position, long arg3)
+            {
+                Intent newActivity = new Intent(v.getContext(), ChatView.class);
+                String s = arg0.getItemAtPosition(position).toString();
+                newActivity.putExtra("contact", s);
+                startActivity(newActivity);
+            }
+        });
         lvPhoneContacts = (ListView)v.findViewById(R.id.lvPhoneContacts);
         ArrayAdapter adapter2 = new ArrayAdapter(v.getContext(), android.R.layout.simple_list_item_1, cc);
         lvPhoneContacts.setAdapter(adapter2);

@@ -46,6 +46,10 @@ public class MyGcmListenerService extends GcmListenerService {
             db.insertMessage(message, contact, sender);
             //chat_view list reload
             //cv.reload();
+        }else if(type.equals("Feed")){
+            String text = data.getString("msg");
+
+            //Add the string to the feed HERE!!!!!!!!!!!!!!!!!!!!!!!
         }
         /**
          * Production applications would usually process the message here.

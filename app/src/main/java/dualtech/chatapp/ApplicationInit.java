@@ -14,8 +14,8 @@ public class ApplicationInit extends Application {
     public static final String PROPERTY_STATUS = "feed_status";
     public static final String SHARED_PREF = "SharedPref";
     public static final String KEY_MSG_ID = "message_id";
-    //public static final String SERVER_ADDRESS = "http://192.168.1.12:8080/ChatServerDual/GCMServer";
-    public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer";
+    public static final String SERVER_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/GCMServer";
+    //public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer";
     private static String REGISTRATION_KEY;
     private static String MOBILE_NUMBER;
     private static String USER;
