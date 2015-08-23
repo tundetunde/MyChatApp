@@ -106,6 +106,25 @@ public class DbSqlite extends SQLiteOpenHelper {
         return update;
     }
 
+    public List<String> getAllContacts(){
+
+        List<String> update = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT regName FROM " + TABLE_CONTACTS;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding contact to list
+                update.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d(TAG, "ALL CONTACTS");
+        return update;
+    }
+
     public List<String> getChatList(){
 
         List<String> update = new ArrayList<>();

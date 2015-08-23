@@ -7,11 +7,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 
@@ -26,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -33,23 +37,37 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ContactView extends ListFragment {
+public class ContactView extends Fragment implements View.OnClickListener{
     private static final String TAG = "CONTACTVIEW";
     ProgressBar loader;
-    List<Map<String, String>> cc;
+    List<String> cc;
     GoogleCloudMessaging gcm;
     String answer;
+    DbSqlite db;
+    List<String> appContacts;
+    ListView lvAppContacts, lvPhoneContacts;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.contact_list, container, false);
-
         gcm = GoogleCloudMessaging.getInstance(getActivity());
         cc = new ArrayList<>();
+        db = new DbSqlite(getActivity());
+        read_contact();
+        appContacts = db.getAllContacts();
+        initialize(v);
+        return v;
+    }
+
+    private void initialize(View v){
         loader = (ProgressBar) v.findViewById(R.id.contact_load);
         loader.setVisibility(View.VISIBLE);
-        //read_contact();
-        return v;
+        lvAppContacts = (ListView) v.findViewById(R.id.lvAppContacts);
+        ArrayAdapter adapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_list_item_1, appContacts);
+        lvAppContacts.setAdapter(adapter);
+        lvPhoneContacts = (ListView)v.findViewById(R.id.lvPhoneContacts);
+        ArrayAdapter adapter2 = new ArrayAdapter(v.getContext(), android.R.layout.simple_list_item_1, cc);
+        lvPhoneContacts.setAdapter(adapter2);
     }
 
     public void read_contact() {
@@ -79,7 +97,7 @@ public class ContactView extends ListFragment {
                         data = new HashMap<>(2);
                         data.put("name", contactName);
                         data.put("phone", phoneNumber);
-                        cc.add(data);
+                        cc.add(contactName + "   " + phoneNumber);
                     }
                 }
                 contact_details.close();
@@ -92,7 +110,7 @@ public class ContactView extends ListFragment {
             protected void onPostExecute(String msg) {
                 Log.d("CONTACTVIEW", "Done list");
                 loader.setVisibility(View.GONE);
-                list_adapter();
+                //list_adapter();
             }
         }.execute();
 
@@ -138,51 +156,11 @@ public class ContactView extends ListFragment {
         }
     };
 
-
-    public void list_adapter() {
-        Collections.sort(cc, mapComparator);
-        ArrayList<String> listPhoneNumber = new ArrayList<String>();
-        for (Map<String, String> s : cc) {
-            Iterator<Map.Entry<String, String>> iterator = s.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, String> x = iterator.next();
-                listPhoneNumber.add(x.getValue());
-
-            }
-        }
-        ArrayList<String> a = new ArrayList<String>();
-        for (String x : listPhoneNumber) {
-            sendContact(x);
-            a.add(answer);
-        }
-        SpecialAdapter adapter = new SpecialAdapter(getActivity(), cc, android.R.layout.simple_list_item_2,
-                new String[]{"name", "phone"}, new int[]{android.R.id.text1, android.R.id.text2,}, false, a);
-        setListAdapter(adapter);
-    }
-
-    public class SpecialAdapter extends SimpleAdapter {
-        private int[] colors = new int[]{0x30FF0000, 0x300000FF};
-        boolean inApp;
-        ArrayList<String> x;
-
-        public SpecialAdapter(Context context, List<Map<String, String>> items, int resource, String[] from, int[] to, boolean inApp, ArrayList<String> a) {
-            super(context, items, resource, from, to);
-            this.inApp = inApp;
-            x = a;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view = super.getView(position, convertView, parent);
-            if (x.get(position).equals("y"))
-                view.setBackgroundColor(colors[0]);
-            else
-                view.setBackgroundColor(colors[1]);
-            /*if(inApp)
-                view.setBackgroundColor(colors[0]);
-            else
-                view.setBackgroundColor(colors[1]);*/
-            return view;
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.lvAppContacts:
+                break;
         }
     }
 }
