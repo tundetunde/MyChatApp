@@ -1,7 +1,10 @@
 package dualtech.chatapp;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
@@ -21,7 +24,10 @@ public class ChatList extends ListFragment implements View.OnClickListener{
 
         db = new DbSqlite(getActivity());
         ArrayList<String> chatList = (ArrayList)db.getChatList();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatList);
+        ArrayList<Contact> chatName = new ArrayList<>();
+        for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
+        //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatList);
+        ArrayAdapter<Contact> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
         setListAdapter(adapter);
 
         return v;
@@ -36,7 +42,37 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     public void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(getActivity(), ChatView.class);
         String s = l.getItemAtPosition(position).toString();
-        intent.putExtra("contact", s);
+        Contact c = (Contact) l.getItemAtPosition(position);
+        intent.putExtra("display", s);
+        intent.putExtra("contact", c.number);
         startActivity(intent);
+    }
+
+    public String getContactName(String num){
+        String name = num;
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(num));
+        Cursor cursor = getActivity().getContentResolver().query(uri, new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
+
+        if(cursor != null){
+            if(cursor.moveToFirst()){
+                name = cursor.getString(cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME));
+            }
+            cursor.close();
+        }
+        return name;
+    }
+
+    public class Contact{
+        String number , name;
+
+        Contact(String n, String num){
+            number = num;
+            name = n;
+        }
+
+        @Override
+        public String toString(){
+            return name;
+        }
     }
 }

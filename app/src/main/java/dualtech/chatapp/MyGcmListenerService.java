@@ -40,12 +40,10 @@ public class MyGcmListenerService extends GcmListenerService {
 
         Log.d(TAG, message);
         if(type.equals("msg")){
-            //ChatView cv = new ChatView();
             //insert into db
             DbSqlite db = new DbSqlite(this);
             db.insertMessage(message, contact, sender);
-            //chat_view list reload
-            //cv.reload();
+            db.insertChatList(contact);
         }else if(type.equals("Feed")){
             String text = data.getString("msg");
 

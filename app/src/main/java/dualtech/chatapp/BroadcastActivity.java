@@ -55,7 +55,7 @@ public class BroadcastActivity extends Activity {
                     finish();
                 } else {
                     Toast.makeText(BroadcastActivity.this,"Cannot activation -- Try again",Toast.LENGTH_LONG).show();
-                    onBackPressed();
+                    //onBackPressed();
                     finish();
                 }
 
@@ -154,5 +154,10 @@ public class BroadcastActivity extends Activity {
     protected void onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
         super.onPause();
+    }
+
+    @Override
+    public void onBackPressed(){
+
     }
 }
