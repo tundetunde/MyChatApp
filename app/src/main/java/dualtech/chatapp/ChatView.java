@@ -47,7 +47,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     String et_msg, ch_contact, ch_display;
     ArrayList chatList;
     ArrayAdapter<chatDbProvider> adapter;
-    GoogleCloudMessaging gcm;
+    //GoogleCloudMessaging gcm;
     SharedPreferences prefs;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
         db = new DbSqlite(this);
-        gcm = GoogleCloudMessaging.getInstance(ChatView.this);
+        //gcm = GoogleCloudMessaging.getInstance(ChatView.this);
         initialize();
         loadChat();
     }
@@ -113,9 +113,11 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             @Override
             protected String doInBackground(Void... params) {
                 String msg;
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(ChatView.this);;
                 try {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
+                    data.putString("Type", "msg");
                     data.putString("GCM_msg", txt);
                     data.putString("GCM_time", dt);
                     data.putString("GCM_contactId", ch_contact);

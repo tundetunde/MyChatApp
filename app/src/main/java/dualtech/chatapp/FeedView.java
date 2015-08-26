@@ -62,6 +62,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         btn_share = (Button) v.findViewById(R.id.btnGo);
         btn_share.setOnClickListener(this);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
+        //gcm = GoogleCloudMessaging.getInstance(context);
         TextWatcher text_watch = new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {

@@ -1,13 +1,16 @@
 package dualtech.chatapp;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -23,10 +27,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -37,29 +44,39 @@ public class ContactView extends Fragment implements View.OnClickListener{
     private static final String TAG = "CONTACTVIEW";
     ProgressBar loader;
     List<String> cc;
+    List<String> numbers;
     GoogleCloudMessaging gcm;
     String answer;
     DbSqlite db;
-    List<String> appContacts;
+    static ArrayList<String> appContacts;
     ListView lvAppContacts, lvPhoneContacts;
+    SharedPreferences prefs;
+    static ArrayAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.contact_list, container, false);
+        prefs = v.getContext().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         gcm = GoogleCloudMessaging.getInstance(getActivity());
         cc = new ArrayList<>();
+        numbers = new ArrayList<>();
         db = new DbSqlite(getActivity());
         read_contact();
-        appContacts = db.getAllContacts();
+        appContacts = new ArrayList<String>();
+        sendContact();
         initialize(v);
         return v;
+    }
+
+    public void writeContactsToDatabase(){
+
     }
 
     private void initialize(final View v){
         loader = (ProgressBar) v.findViewById(R.id.contact_load);
         loader.setVisibility(View.VISIBLE);
         lvAppContacts = (ListView) v.findViewById(R.id.lvAppContacts);
-        ArrayAdapter adapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_list_item_1, appContacts);
+        adapter = new ArrayAdapter(v.getContext(), android.R.layout.simple_list_item_1, appContacts);
         lvAppContacts.setAdapter(adapter);
 
         lvAppContacts.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -106,6 +123,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
                         data.put("name", contactName);
                         data.put("phone", phoneNumber);
                         cc.add(contactName + "   " + phoneNumber);
+                        numbers.add(phoneNumber);
                     }
                 }
                 contact_details.close();
@@ -124,38 +142,34 @@ public class ContactView extends Fragment implements View.OnClickListener{
 
     }
 
-    private void sendContact(final String reg) {
+    private void sendContact() {
         // Add custom implementation, as needed.
-        StringRequest postRequest = new StringRequest(Request.Method.POST, ApplicationInit.SERVER_ADDRESS,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        JSONObject jsonResponse;
-                        try {
-                            jsonResponse = new JSONObject(response);
-                            answer = jsonResponse.getString("Contacts");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        new AsyncTask<Void, Void, String>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
+            protected String doInBackground(Void... params) {
+                String msg;
+
+                try {
+                    String id = String.valueOf(msgId());
+                    Bundle data = new Bundle();
+                    Gson gson = new Gson();
+                    String jsonPhoneList = gson.toJson(numbers);
+                    data.putString("Type", "Contacts");
+                    data.putString("List", jsonPhoneList);
+                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                    msg = "Sent message";
+                } catch (IOException ex) {
+                    msg = "Message could not be sent";
+                }
+
+                return msg;
             }
-        }) {
+
             @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                // the POST parameters:
-                params.put("RegNo", ApplicationInit.getREGISTRATION_KEY());
-                params.put("", ApplicationInit.getMobile_number());
-                params.put("Contacts", "yes");
-                //params.put("token", token);
-                return params;
+            protected void onPostExecute(String msg) {
+                //Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
             }
-        };
-        Volley.newRequestQueue(getActivity()).add(postRequest);
+        }.execute(null, null, null);
     }
 
     public Comparator<Map<String, String>> mapComparator = new Comparator<Map<String, String>>() {
@@ -170,5 +184,13 @@ public class ContactView extends Fragment implements View.OnClickListener{
             case R.id.lvAppContacts:
                 break;
         }
+    }
+
+    private int msgId() {
+        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
+        editor.apply();
+        return id;
     }
 }

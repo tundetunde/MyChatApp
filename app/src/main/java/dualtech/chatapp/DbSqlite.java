@@ -75,6 +75,19 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void insertContacts(String u, String s, String t){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("user", u);
+        values.put("status", s);
+        values.put("date_time", t);
+
+        db.insert(TABLE_FEED, null, values);
+        Log.d(TAG, "ADDED " + s);
+        db.close();
+    }
+
     public List<List> getAllFeed(){
 
         List<List> update = new ArrayList<>();
@@ -209,7 +222,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
     public void deleteChatHistory(String c){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_MESSAGES, "contact_id = '" + c + "'", null );
+        db.delete(TABLE_MESSAGES, "contact_id = '" + c + "'", null);
         db.delete(TABLE_CHATLIST, "contact = '" + c + "'", null);
     }
 

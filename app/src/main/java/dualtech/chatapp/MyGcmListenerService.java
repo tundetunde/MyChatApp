@@ -11,6 +11,11 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyGcmListenerService extends GcmListenerService {
 
@@ -47,6 +52,14 @@ public class MyGcmListenerService extends GcmListenerService {
             String text = data.getString("msg");
 
             //Add the string to the feed HERE!!!!!!!!!!!!!!!!!!!!!!!
+        }else if(type.equals("Contacts")){
+            String listString = data.getString("Contacts");
+            ArrayList list = new ArrayList();
+            Gson gson = new Gson();
+            TypeToken<List<String>> token = new TypeToken<List<String>>() {};
+            list = gson.fromJson(listString, token.getType());
+            ContactView.appContacts = list;
+            ContactView.adapter.notifyDataSetChanged();
         }
         /**
          * Production applications would usually process the message here.
