@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="10dp"
+        android:padding="5dp"
+        android:id="@+id/fd_bubble">
+
+        <TextView
+            android:id="@+id/fd_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_gravity="start"
+            android:textColor="@android:color/primary_text_light"
+            android:text="Hello World"
+            />
+        <TextView
+            android:id="@+id/fd_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:layout_gravity="end"
+            android:textColor="@android:color/primary_text_light"
+            android:text="11/08/2015"
+            />
+        <TextView
+            android:id="@+id/fd_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="start"
+            android:textColor="@android:color/primary_text_light"
+            android:text="Hello World MSG"
+            />
+    </LinearLayout>
+
+</LinearLayout>

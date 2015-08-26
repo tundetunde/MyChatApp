@@ -43,7 +43,6 @@ public class MyGcmListenerService extends GcmListenerService {
             //insert into db
             DbSqlite db = new DbSqlite(this);
             db.insertMessage(message, contact, sender);
-            db.insertChatList(contact);
         }else if(type.equals("Feed")){
             String text = data.getString("msg");
 

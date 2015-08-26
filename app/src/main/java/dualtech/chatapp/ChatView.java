@@ -1,6 +1,8 @@
 package dualtech.chatapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -42,8 +44,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     Button send;
     EditText editText;
     TextWatcher text_watch;
-    String et_msg;
-    String ch_contact, ch_display;
+    String et_msg, ch_contact, ch_display;
     ArrayList chatList;
     ArrayAdapter<chatDbProvider> adapter;
     GoogleCloudMessaging gcm;
@@ -154,6 +155,29 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         switch(item.getItemId()){
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.action_ch_info:
+                Intent i = new Intent().setClass(this, ContactProfile.class);
+                i.putExtra("number", ch_contact);
+                i.putExtra("name", ch_display);
+                startActivity(i);
+                return true;
+            case R.id.action_ch_delete:
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete history")
+                        .setMessage("Do you want to permanently delete this history?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                db.deleteChatHistory(ch_contact);
+                                onBackPressed();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                            }
+                        })
+                        .show();
+
                 return true;
             default:
                 item.setOnMenuItemClickListener(new MenuItemListener(this));

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/menu_top"
+        android:id="@+id/rLayout">
+        <TextView
+            android:id="@+id/ch_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PROFILE"
+            android:textSize="25sp"
+            android:layout_margin="5dp"/>
+        <Button
+            android:id="@+id/pro_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rLayout"
+        android:gravity="center"
+        android:padding="10dp"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout2">
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/ppg"
+            android:id="@+id/ch_dpView"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/linearLayout2">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/linearLayout3"
+            android:layout_margin="10dp" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mobile number: "
+                android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/ch_tvNum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="07400000000"
+                android:layout_margin="15dp"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="STATUS"
+                android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/ch_tvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sharing with others"
+                android:layout_margin="15dp"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+</RelativeLayout>

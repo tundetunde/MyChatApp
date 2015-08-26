@@ -26,7 +26,6 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         ArrayList<String> chatList = (ArrayList)db.getChatList();
         ArrayList<Contact> chatName = new ArrayList<>();
         for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
-        //ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatList);
         ArrayAdapter<Contact> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
         setListAdapter(adapter);
 

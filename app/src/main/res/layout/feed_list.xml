@@ -3,19 +3,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="FEED"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
-
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/etUpdate"
+        android:layout_marginTop="10dp"
         android:hint="@string/feed_hint"
         android:imeOptions="actionDone"
         android:layout_gravity="center_horizontal" />
@@ -28,16 +20,11 @@
         android:text="Share"
         android:id="@+id/btnGo"/>
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/lt_feed"
-            android:orientation="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@android:id/list"
+        android:divider="@null"
+        android:layout_weight="1" />
 
-        </LinearLayout>
-
-    </ScrollView>
 </LinearLayout>

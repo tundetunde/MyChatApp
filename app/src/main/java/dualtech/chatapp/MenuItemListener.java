@@ -25,6 +25,7 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
     public boolean onMenuItemClick(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_add:
+                ContactView c = new ContactView();
                 i = new Intent().setClass(context, ProfilePage.class);
                 context.startActivity(i);
                 return true;
@@ -56,7 +57,6 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
                         .show();
                 return true;
             case R.id.edit_dp:
-
                 i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 ((Activity)context).startActivityForResult(Intent.createChooser(i, "Choose Profile Pictures"), 1);
                 return true;

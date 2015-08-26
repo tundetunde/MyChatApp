@@ -65,6 +65,7 @@
             android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|screenSize" />
         <activity android:name=".ProfilePage" />
+        <activity android:name=".ContactProfile" />
         <activity android:name=".SettingsPage" />
 
         <!-- [START gcm_receiver] -->
