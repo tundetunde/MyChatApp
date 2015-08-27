@@ -23,8 +23,7 @@
             android:id="@+id/lvChatHistory"
             android:divider="@null"
             android:dividerHeight="0dp"
-            android:transcriptMode="alwaysScroll"
-            android:stackFromBottom="true"/>
+            android:transcriptMode="alwaysScroll"/>
     </LinearLayout>
 
     <RelativeLayout

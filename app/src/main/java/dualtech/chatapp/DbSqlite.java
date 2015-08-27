@@ -117,7 +117,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        if(!checkChatList(c)){
+        if(checkChatList(c)){
             insertChatList(c);
         }
 
@@ -152,21 +152,15 @@ public class DbSqlite extends SQLiteOpenHelper {
 
     public boolean checkChatList(String s){
 
-        List<String> update = new ArrayList<>();
+        Boolean check = false;
         // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE_CHATLIST + " WHERE (contact = '" + s + "')";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                // Adding contact to list
-                update.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-        }
+        if (cursor.getCount() < 1){check = true;}
         cursor.close();
         Log.d(TAG, "CHAT LIST");
-        return update.isEmpty();
+        return check;
     }
 
     public void insertChatList(String c) {

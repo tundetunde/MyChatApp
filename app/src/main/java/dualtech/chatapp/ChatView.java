@@ -103,7 +103,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
 
     private void loadChat() {
         chatList = (ArrayList) db.getChatHistory(ch_contact);
-        Collections.reverse(chatList);
+        //Collections.reverse(chatList);
         adapter = new ChatViewAdapter(this, R.layout.message, chatList);
         lv.setAdapter(adapter);
     }
