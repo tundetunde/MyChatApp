@@ -25,6 +25,8 @@ public class RegistrationIntentService extends IntentService {
     private static final String TAG = "RegIntentService";
     private static final String[] TOPICS = {"global"};
     private static final String PROJECT_NO = "25515784135";
+    private static final String REG_RESPONSE = "REGISTERED";
+    private static final String ERROR_RESPONSE = "ERROR";
     Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
     LocalBroadcastManager broadcastManager;
     SharedPreferences sharedPreferences;
@@ -67,7 +69,6 @@ public class RegistrationIntentService extends IntentService {
             Log.d(TAG, "Failed to complete token refresh", e);
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
-            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
             broadcastManager.sendBroadcast(registrationComplete);
         }
     }
@@ -87,32 +88,17 @@ public class RegistrationIntentService extends IntentService {
                     @Override
                     public void onResponse(String response) {
                         Log.d(TAG, "Response: " + response);
-
-                        /** You should store a boolean that indicates whether the generated token has been
-                         * sent to your server. If the boolean is false, send the token to your server,
-                         * otherwise your server should have already received the token.
-                         */
-                        System.out.println("Done check");
                         sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
                         broadcastManager.sendBroadcast(registrationComplete);
                         Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
-
-                        /*if("REGISTERED".equals(response)) {
-                            System.out.println("Done check");
-                            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
-                            broadcastManager.sendBroadcast(registrationComplete);
-                            Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
-                        }else{
-                            System.out.println("Done check failed");
-                            sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, false).apply();
-                            broadcastManager.sendBroadcast(registrationComplete);
-                            Toast.makeText(getApplicationContext(), "Server returned error response", Toast.LENGTH_SHORT).show();
-                        }*/
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                Log.d(TAG, error.toString());
+                broadcastManager.sendBroadcast(registrationComplete);
+                Toast.makeText(getApplicationContext(), "Server failed to receive the RegID", Toast.LENGTH_SHORT).show();
             }
         }){
             @Override

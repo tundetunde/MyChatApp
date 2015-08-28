@@ -44,10 +44,9 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     Button send;
     EditText editText;
     TextWatcher text_watch;
-    String et_msg, ch_contact, ch_display;
+    String et_msg, ch_contact, ch_display, ch_sender;
     ArrayList chatList;
     ArrayAdapter<chatDbProvider> adapter;
-    //GoogleCloudMessaging gcm;
     SharedPreferences prefs;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -64,8 +63,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
+        ch_sender = ApplicationInit.getMobile_number();
         db = new DbSqlite(this);
-        //gcm = GoogleCloudMessaging.getInstance(ChatView.this);
         initialize();
         loadChat();
     }
@@ -73,6 +72,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     private void initialize() {
         getSupportActionBar().setTitle(ch_display);
         //getSupportActionBar().setIcon(R.drawable.ppg);
+
 
         lv = (ListView) findViewById(R.id.lvChatHistory);
         lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
@@ -103,9 +103,17 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
 
     private void loadChat() {
         chatList = (ArrayList) db.getChatHistory(ch_contact);
-        //Collections.reverse(chatList);
         adapter = new ChatViewAdapter(this, R.layout.message, chatList);
         lv.setAdapter(adapter);
+
+        if(ch_contact.equals(ApplicationInit.getMobile_number())){
+            editText.setClickable(false);
+            editText.setFocusable(false);
+            String msg = "You cannot send messages to your self";
+            String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+            chatList.add(new chatDbProvider(msg, 2, d));
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void sendMsg(final String txt, final String dt) {
@@ -120,7 +128,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                     data.putString("Type", "msg");
                     data.putString("GCM_msg", txt);
                     data.putString("GCM_time", dt);
-                    data.putString("GCM_contactId", ch_contact);
+                    data.putString("GCM_contactId", ch_sender);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent message";
                 } catch (IOException ex) {

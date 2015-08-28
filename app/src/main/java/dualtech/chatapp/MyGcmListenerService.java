@@ -84,7 +84,9 @@ public class MyGcmListenerService extends GcmListenerService {
      * @param message GCM message received.
      */
     private void sendNotification(String message, String contactID) {
+        ChatList c = new ChatList();
         Intent intent = new Intent(this, ChatView.class);
+        intent.putExtra("display", c.getContactName(contactID));
         intent.putExtra("contact", contactID);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
