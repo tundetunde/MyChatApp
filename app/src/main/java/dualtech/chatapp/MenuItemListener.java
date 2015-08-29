@@ -5,9 +5,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 /**
  * Created by Jesz on 19-Aug-15.
@@ -28,6 +30,10 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
                 ContactView c = new ContactView();
                 i = new Intent().setClass(context, ProfilePage.class);
                 context.startActivity(i);
+                return true;
+            case R.id.action_refresh:
+                //ContactView.refresh();
+                Toast.makeText(context, "Contact refreshed!!!", Toast.LENGTH_SHORT);
                 return true;
             case R.id.action_profile:
                 i = new Intent().setClass(context, ProfilePage.class);

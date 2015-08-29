@@ -17,6 +17,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -83,6 +84,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         et_feed.addTextChangedListener(text_watch);
         refreshFeed();
 
+        setHasOptionsMenu(true);
         return v;
     }
 
@@ -98,6 +100,12 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         }
         et_feed.setText("");
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu){
+        menu.findItem(R.id.action_add).setVisible(false).setEnabled(false);
+        menu.findItem(R.id.action_refresh).setVisible(false).setEnabled(false);
     }
 
     public void storeUpdate(String  s){

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ public class DbSqlite extends SQLiteOpenHelper {
     final static String TABLE_CHATLIST = "chat_list";
 
     String contact_table = "CREATE TABLE " + TABLE_CONTACTS + "("
-            + "regID TEXT," + "regName TEXT,"
             + "phoneNumber TEXT" + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
             + "id INTEGER PRIMARY KEY autoincrement, " + "user TEXT,"
@@ -75,43 +76,19 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertContacts(String u, String s, String t){
+    public void insertContacts(ArrayList arr){
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
+        ContentValues values;
+        db.delete(TABLE_CONTACTS, null, null);
 
-        values.put("user", u);
-        values.put("status", s);
-        values.put("date_time", t);
-
-        db.insert(TABLE_FEED, null, values);
-        Log.d(TAG, "ADDED " + s);
+        for(Object n : arr) {
+            values = new ContentValues();
+            values.put("phoneNumber", n.toString());
+            db.insert(TABLE_CONTACTS, null, values);
+            Log.d(TAG, "ADDED " + n);
+        }
         db.close();
     }
-
-    public List<List> getAllFeed(){
-
-        List<List> update = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_FEED;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                List c = new ArrayList<>();
-                c.add(cursor.getString(1));
-                c.add(cursor.getString(2));
-                c.add(cursor.getString(3));
-                // Adding contact to list
-                update.add(c);
-            } while (cursor.moveToNext());
-        }
-        System.out.println("FEED: " + cursor.getCount());
-        cursor.close();
-        Log.d(TAG, "ALL FEED");
-        return update;
-    }
-
 
     public void insertMessage(String s, String c, int sender){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -130,6 +107,16 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void insertChatList(String c) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("contact", c);
+        db.insert(TABLE_CHATLIST, null, values);
+
+        Log.d(TAG, "UPDATED CHATLIST");
+        db.close();
+    }
 
     public List<String> getChatList(){
 
@@ -163,29 +150,16 @@ public class DbSqlite extends SQLiteOpenHelper {
         return check;
     }
 
-    public void insertChatList(String c) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        values.put("contact", c);
-        db.insert(TABLE_CHATLIST, null, values);
-
-        Log.d(TAG, "UPDATED CHATLIST");
-        db.close();
-    }
-
-
     public List<String> getAllContacts(){
 
         List<String> update = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT regName FROM " + TABLE_CONTACTS;
+        String selectQuery = "SELECT phoneNumber FROM " + TABLE_CONTACTS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                // Adding contact to list
                 update.add(cursor.getString(0));
             } while (cursor.moveToNext());
         }
@@ -194,6 +168,29 @@ public class DbSqlite extends SQLiteOpenHelper {
         return update;
     }
 
+    public List<List> getAllFeed(){
+
+        List<List> update = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + TABLE_FEED;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                List c = new ArrayList<>();
+                c.add(cursor.getString(1));
+                c.add(cursor.getString(2));
+                c.add(cursor.getString(3));
+                // Adding contact to list
+                update.add(c);
+            } while (cursor.moveToNext());
+        }
+        System.out.println("FEED: " + cursor.getCount());
+        cursor.close();
+        Log.d(TAG, "ALL FEED");
+        return update;
+    }
 
     public List<chatDbProvider> getChatHistory(String c){
 
@@ -222,17 +219,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
 
     private void insertDemo(SQLiteDatabase db){
-        ContentValues values = new ContentValues();
-        values.put("regId", 1);
-        values.put("regName", "Tunde");
-        values.put("phoneNumber", "07944447710");
-        db.insert(TABLE_CONTACTS, null, values);
-
-        values = new ContentValues();
-        values.put("regId", 2);
-        values.put("regName", "Jesz");
-        values.put("phoneNumber", "08132229044");
-        db.insert(TABLE_CONTACTS, null, values);
+        ContentValues values;
 
         values = new ContentValues();
         values.put("contact", "08132229044");
@@ -265,4 +252,5 @@ public class DbSqlite extends SQLiteOpenHelper {
         values.put("contact_id", "07944447710");
         db.insert(TABLE_MESSAGES, null, values);
     }
+
 }

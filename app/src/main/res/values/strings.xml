@@ -471,6 +471,7 @@
     <string name="view_profile">View My Profile</string>
     <string name="chg_photo">Change Photo</string>
     <string name="chg_name">Change Name</string>
+    <string name="action_refresh">Refresh Contact</string>
 
 </resources>
 

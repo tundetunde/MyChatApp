@@ -8,6 +8,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -29,12 +30,18 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         ArrayAdapter<Contact> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
         setListAdapter(adapter);
 
+        setHasOptionsMenu(true);
         return v;
     }
 
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu){
+        menu.findItem(R.id.action_refresh).setVisible(false).setEnabled(false);
     }
 
     @Override
@@ -61,17 +68,4 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         return name;
     }
 
-    public class Contact{
-        String number , name;
-
-        Contact(String n, String num){
-            number = num;
-            name = n;
-        }
-
-        @Override
-        public String toString(){
-            return name;
-        }
-    }
 }

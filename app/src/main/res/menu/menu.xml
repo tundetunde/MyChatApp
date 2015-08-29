@@ -6,13 +6,16 @@
         android:icon="@android:drawable/ic_menu_add"
         android:title="@string/action_add"
         app:showAsAction="ifRoom"/>
-
+    <item
+        android:id="@+id/action_refresh"
+        android:icon="@android:drawable/ic_menu_rotate"
+        android:title="@string/action_refresh"
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_profile"
         android:icon="@android:drawable/ic_menu_edit"
         android:title="@string/view_profile"
         app:showAsAction="ifRoom" />
-
     <item
         android:id="@+id/action_settings"
         android:icon="@android:drawable/ic_menu_preferences"

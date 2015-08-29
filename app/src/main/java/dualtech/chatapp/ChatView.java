@@ -73,7 +73,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         getSupportActionBar().setTitle(ch_display);
         //getSupportActionBar().setIcon(R.drawable.ppg);
 
-
         lv = (ListView) findViewById(R.id.lvChatHistory);
         lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
@@ -128,7 +127,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                     data.putString("Type", "msg");
                     data.putString("GCM_msg", txt);
                     data.putString("GCM_time", dt);
-                    data.putString("GCM_contactId", ch_sender);
+                    data.putString("GCM_contactId", ch_contact);
+                    data.putString("GCM_sender", ch_sender);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent message";
                 } catch (IOException ex) {
