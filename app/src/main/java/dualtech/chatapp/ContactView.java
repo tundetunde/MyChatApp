@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static com.google.android.gms.internal.zzhl.runOnUiThread;
 
 public class ContactView extends Fragment implements View.OnClickListener{
     private static final String TAG = "CONTACTVIEW";
@@ -37,11 +38,12 @@ public class ContactView extends Fragment implements View.OnClickListener{
     List<String> cc, numbers;
     GoogleCloudMessaging gcm;
     DbSqlite db;
-    static ArrayList<Contact> appContacts;
-    ArrayList<Map<String, String>> contact_map;
+    static ArrayList<String> appContacts;
     ListView lvAppContacts, lvPhoneContacts;
     SharedPreferences prefs;
-    static ArrayAdapter<Contact> adapter;
+    static ArrayList<Contact> app_contact;
+    static ContactViewAdapter adapter;
+    ArrayAdapter<String> adapter2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,10 +63,13 @@ public class ContactView extends Fragment implements View.OnClickListener{
         loader = (ProgressBar) v.findViewById(R.id.contact_load);
         loader.setVisibility(View.VISIBLE);
         lvAppContacts = (ListView) v.findViewById(R.id.lvAppContacts);
-        /*ArrayList<String> contactName = (ArrayList<String>) db.getAllContacts();
-        for (String s : contactName){appContacts.add(new Contact(getContactName(s), s));}
-        adapter = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, appContacts);
+        appContacts = (ArrayList<String>) db.getAllContacts();
+        app_contact = new ArrayList<>();
+        System.out.println("CONTACTVIEW.....");
+        adapter = new ContactViewAdapter(v.getContext(), android.R.layout.simple_list_item_1, app_contact);
+        System.out.println("CONTACTVIEW2...");
         lvAppContacts.setAdapter(adapter);
+        System.out.println("CONTACTVIEW3...");
 
         lvAppContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -76,9 +81,9 @@ public class ContactView extends Fragment implements View.OnClickListener{
                 newActivity.putExtra("contact", c.number);
                 startActivity(newActivity);
             }
-        });*/
+        });
         lvPhoneContacts = (ListView)v.findViewById(R.id.lvPhoneContacts);
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, cc);
+        adapter2 = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, cc);
         lvPhoneContacts.setAdapter(adapter2);
     }
 
@@ -105,6 +110,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
                    //     contact_map.add(data);
                         cc.add(contactName + "   " + phoneNumber);
                         numbers.add(phoneNumber);
+                        System.out.println(data);
                     }
                 }
                 contact_details.close();
@@ -114,6 +120,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
 
             @Override
             protected void onPostExecute(String msg) {
+                adapter2.notifyDataSetChanged();
                 Log.d(TAG, "Done list");
                 sendContact();
                 loader.setVisibility(View.GONE);
@@ -147,6 +154,9 @@ public class ContactView extends Fragment implements View.OnClickListener{
 
             @Override
             protected void onPostExecute(String msg) {
+                for (String s : appContacts){app_contact.add(new Contact(getContactName(s), s));}
+                adapter.notifyDataSetChanged();
+                System.out.println("APP_CONTACT: " + app_contact);
                 Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
             }
         }.execute(null, null, null);
@@ -164,6 +174,19 @@ public class ContactView extends Fragment implements View.OnClickListener{
             cursor.close();
         }
         return name;
+    }
+
+    public static void updateList(final ArrayList<Contact> list){
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("CONTACTVIEW4...");
+                        app_contact = list;
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+        );
     }
 
     @Override
@@ -184,4 +207,24 @@ public class ContactView extends Fragment implements View.OnClickListener{
         menu.findItem(R.id.action_add).setVisible(false).setEnabled(false);
     }
 
+    private class ContactViewAdapter extends ArrayAdapter<Contact> {
+        private List<Contact> lt_contact = new ArrayList<>();
+
+        public ContactViewAdapter(Context context, int resource, ArrayList<Contact> arr) {
+            super(context, resource, arr);
+            lt_contact = arr;
+        }
+
+        @Override
+        public void add(Contact s){
+            lt_contact.add(s);
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public Contact getItem(int position) {
+            return lt_contact.get(position);
+        }
+
+    }
 }

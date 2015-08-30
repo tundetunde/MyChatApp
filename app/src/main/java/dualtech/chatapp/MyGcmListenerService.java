@@ -65,6 +65,10 @@ public class MyGcmListenerService extends GcmListenerService {
             System.out.println("Returned List: " + list);
             DbSqlite db = new DbSqlite(this);
             db.insertContacts(list);
+            ArrayList<Contact> lista = new ArrayList<>();
+            for (Object s : list){lista.add(new Contact(getContactName(s.toString()), s.toString()));}
+            System.out.println("LIST RETURNED");
+            ContactView.updateList(lista);
         }
 
         /**
