@@ -51,6 +51,9 @@ public class MyGcmListenerService extends GcmListenerService {
             db.insertMessage(message, sender, 0);
         }else if(type.equals("Feed")){
             String text = data.getString("msg");
+            String user = data.getString("GCM_FROM");
+            DbSqlite db = new DbSqlite(this);
+            db.insertFeed(text, user, time);
 
             //Add the string to the feed HERE!!!!!!!!!!!!!!!!!!!!!!!
         }else if(type.equals("Contacts")){

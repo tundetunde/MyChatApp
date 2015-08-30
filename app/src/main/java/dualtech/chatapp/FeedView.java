@@ -40,9 +40,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by Jesz on 18-Jul-15.
- */
 public class FeedView extends ListFragment implements View.OnClickListener {
     DbSqlite db;
     Button btn_share;
@@ -52,6 +49,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     GoogleCloudMessaging gcm;
     ArrayList e;
     ArrayList<Feed> feed_query = new ArrayList<>();
+    ArrayList<String> contacts;
     FeedAdapter adapter;
 
     @Override
@@ -59,6 +57,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.feed_list, container, false);
         db = new DbSqlite(getActivity());
         e = (ArrayList)db.getAllContacts();
+        contacts = (ArrayList)db.getAllContacts();
         prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         btn_share = (Button) v.findViewById(R.id.btnGo);
         btn_share.setOnClickListener(this);
@@ -95,6 +94,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         if(update!=null) {
             storeUpdate(update);
             String name = getContactName(prefs.getString(ApplicationInit.PROPERTY_MOB_ID, null));
+            send(update, time);
             db.insertFeed(name, update, time);
             feed_query.add(0, new Feed(name,update, time));
         }
@@ -128,7 +128,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         return id;
     }
 
-    private void send(final String text){
+    private void send(final String text, final String time){
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -138,6 +138,8 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                     Bundle data = new Bundle();
                     data.putString("Type", "Feed");
                     data.putString("GCM_Feed", listToJSON(e));
+                    data.putString("GCM_time", time);
+                    data.putString("Contacts", listToJSON(contacts));
                     data.putString("msg", text);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent message";
