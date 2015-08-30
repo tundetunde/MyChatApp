@@ -65,11 +65,8 @@ public class ContactView extends Fragment implements View.OnClickListener{
         lvAppContacts = (ListView) v.findViewById(R.id.lvAppContacts);
         appContacts = (ArrayList<String>) db.getAllContacts();
         app_contact = new ArrayList<>();
-        System.out.println("CONTACTVIEW.....");
         adapter = new ContactViewAdapter(v.getContext(), android.R.layout.simple_list_item_1, app_contact);
-        System.out.println("CONTACTVIEW2...");
         lvAppContacts.setAdapter(adapter);
-        System.out.println("CONTACTVIEW3...");
 
         lvAppContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,26 +89,24 @@ public class ContactView extends Fragment implements View.OnClickListener{
             @Override
             protected String doInBackground(Void... params) {
                 Log.d(TAG, "doInBack");
-                HashMap<String, String> data;
                 ContentResolver CR = getActivity().getContentResolver();
-                Cursor contact_details = CR.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-                contact_details.moveToFirst();
+                Cursor contact_details = CR.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                        ContactsContract.Contacts.HAS_PHONE_NUMBER + " = 1", null,
+                        "UPPER (" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC");
 
-                while (contact_details.moveToNext()) {
-                    String contactName = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    String phoneNumber;
+                if (contact_details.moveToFirst()) {
+                    do {
+                        String contactName = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                        String phoneNumber;
 
-                    if (Integer.parseInt(contact_details.getString(contact_details.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                        //Get all associated numbers
-                        phoneNumber = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        data = new HashMap<>(2);
-                        data.put("name", contactName);
-                        data.put("phone", phoneNumber);
-                   //     contact_map.add(data);
-                        cc.add(contactName + "   " + phoneNumber);
-                        numbers.add(phoneNumber);
-                        System.out.println(data);
-                    }
+                        if (Integer.parseInt(contact_details.getString(contact_details.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                            //Get all associated numbers
+                            phoneNumber = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                            cc.add(contactName + "   " + phoneNumber);
+                            numbers.add(phoneNumber);
+                        }
+                    } while (contact_details.moveToNext());
                 }
                 contact_details.close();
                 Log.d(TAG, "Done");
@@ -156,7 +151,6 @@ public class ContactView extends Fragment implements View.OnClickListener{
             protected void onPostExecute(String msg) {
                 for (String s : appContacts){app_contact.add(new Contact(getContactName(s), s));}
                 adapter.notifyDataSetChanged();
-                System.out.println("APP_CONTACT: " + app_contact);
                 Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
             }
         }.execute(null, null, null);
@@ -181,7 +175,6 @@ public class ContactView extends Fragment implements View.OnClickListener{
                 new Runnable() {
                     @Override
                     public void run() {
-                        System.out.println("CONTACTVIEW4...");
                         app_contact = list;
                         adapter.notifyDataSetChanged();
                     }
