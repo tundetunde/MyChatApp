@@ -2,16 +2,19 @@ package dualtech.chatapp;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -29,7 +32,6 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
         ArrayAdapter<Contact> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
         setListAdapter(adapter);
-
         setHasOptionsMenu(true);
         return v;
     }

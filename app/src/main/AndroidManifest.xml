@@ -63,6 +63,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ChatBackgroundSetting"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="dualtech.chatapp.CHATBACKGROUND" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".LoadContacts"
             android:label="@string/app_name"
             android:configChanges="orientation|screenSize">

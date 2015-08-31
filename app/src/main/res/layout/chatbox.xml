@@ -10,12 +10,20 @@
         android:layout_width="match_parent"
         />
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/ivBGPic"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/darker_gray"
         android:layout_below="@+id/chat_toolbar"
-        android:layout_above="@+id/relativeLayout">
+        android:layout_above="@+id/relativeLayout"
+        android:id="@+id/Lin">
 
         <ListView
             android:layout_width="match_parent"

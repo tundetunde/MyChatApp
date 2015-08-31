@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,6 +44,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     DbSqlite db;
     Toolbar toolbar;
     ListView lv;
+    static LinearLayout lin;
     Button send;
     EditText editText;
     TextWatcher text_watch;
@@ -48,6 +52,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     ArrayList chatList;
     ArrayAdapter<chatDbProvider> adapter;
     SharedPreferences prefs;
+    static Bitmap bmp;
+    static ImageView iv;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,10 +78,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     private void initialize() {
         getSupportActionBar().setTitle(ch_display);
         //getSupportActionBar().setIcon(R.drawable.ppg);
-
+        lin = (LinearLayout)findViewById(R.id.Lin);
         lv = (ListView) findViewById(R.id.lvChatHistory);
         lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-
+        iv = (ImageView) findViewById(R.id.ivBGPic);
         send = (Button) findViewById(R.id.send_btn);
         send.setOnClickListener(this);
         text_watch = new TextWatcher() {
@@ -98,6 +104,12 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         };
         editText = (EditText) findViewById(R.id.msg_edit);
         editText.addTextChangedListener(text_watch);
+        /*if(bmp == null){
+            iv.setVisibility(View.INVISIBLE);
+        }else{
+            iv.setVisibility(View.VISIBLE);
+            lin.setBackgroundColor(Color.TRANSPARENT);
+        }*/
     }
 
     private void loadChat() {
