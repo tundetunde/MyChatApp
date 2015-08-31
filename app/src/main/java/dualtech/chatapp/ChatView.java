@@ -43,7 +43,7 @@ import java.util.Locale;
 public class ChatView extends AppCompatActivity implements View.OnClickListener {
     DbSqlite db;
     Toolbar toolbar;
-    ListView lv;
+    static ListView lv;
     static LinearLayout lin;
     Button send;
     EditText editText;
@@ -53,7 +53,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     ArrayAdapter<chatDbProvider> adapter;
     SharedPreferences prefs;
     static Bitmap bmp;
-    static ImageView iv;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,10 +77,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     private void initialize() {
         getSupportActionBar().setTitle(ch_display);
         //getSupportActionBar().setIcon(R.drawable.ppg);
-        lin = (LinearLayout)findViewById(R.id.Lin);
         lv = (ListView) findViewById(R.id.lvChatHistory);
         lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        iv = (ImageView) findViewById(R.id.ivBGPic);
         send = (Button) findViewById(R.id.send_btn);
         send.setOnClickListener(this);
         text_watch = new TextWatcher() {

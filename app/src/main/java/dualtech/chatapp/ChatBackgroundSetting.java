@@ -6,7 +6,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -85,10 +88,15 @@ public class ChatBackgroundSetting extends Activity{
 
             backgroundPic = BitmapFactory.decodeFile(picturePath);
             img.setImageBitmap(backgroundPic);
-            ChatView.bmp = backgroundPic;
-            ChatView.iv.setImageBitmap(ChatView.bmp);
-            ChatView.iv.setVisibility(View.VISIBLE);
-            ChatView.lin.setBackgroundColor(Color.TRANSPARENT);
+            Drawable drawable = new BitmapDrawable(getResources(), backgroundPic);
+            //ChatView.lin.setBackgroundDrawable(this, drawable);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                //ChatView.lin.setBackgroundDrawable(drawable);
+                ChatView.lv.setBackgroundDrawable(drawable);
+            } else {
+                //ChatView.lin.setBackground(drawable);
+                ChatView.lv.setBackground(drawable);
+            }
             //l1.setBackgroundResource(this, backgroundPic);
         }
     }
