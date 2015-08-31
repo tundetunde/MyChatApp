@@ -46,7 +46,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.execSQL(contact_table);
         db.execSQL(chatlist_table);
         db.execSQL(message_table);
-        insertDemo(db);
+        //insertDemo(db);
     }
 
     @Override

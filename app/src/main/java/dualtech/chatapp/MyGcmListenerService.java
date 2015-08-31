@@ -3,8 +3,11 @@ package dualtech.chatapp;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +19,10 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,16 +89,6 @@ public class MyGcmListenerService extends GcmListenerService {
                 db3.insertContacts(listOfContacts);
                 break;
         }
-        if(type.equals("msg")){
-            //insert into db
-
-        }else if(type.equals("Feed")){
-
-
-            //Add the string to the feed HERE!!!!!!!!!!!!!!!!!!!!!!!
-        }else if(type.equals("Contacts")){
-
-        }
 
         /**
          * In some cases it may be useful to show a notification indicating to the user
@@ -103,6 +100,42 @@ public class MyGcmListenerService extends GcmListenerService {
 
     }
     // [END receive_message]
+
+
+    private Bitmap loadImageFromStorage(String path, String image)
+    {
+        Bitmap b = null;
+        try {
+            File f=new File(path, image);
+            b = BitmapFactory.decodeStream(new FileInputStream(f));
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
+    private String saveToInternalSorage(Bitmap bitmapImage){
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,"profile.jpg");
+
+        FileOutputStream fos = null;
+        try {
+
+            fos = new FileOutputStream(mypath);
+
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return directory.getAbsolutePath();
+    }
 
     public String getContactName(String num){
         String name = num;
