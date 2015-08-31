@@ -62,6 +62,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LoadContacts"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize">
+            <intent-filter>
+                <action android:name="dualtech.chatapp.LOADCONTACT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".ChatView"
             android:windowSoftInputMode="stateHidden"
             android:configChanges="orientation|screenSize" />

@@ -49,7 +49,7 @@ public class BroadcastActivity extends Activity {
                     storePref();
                     spinner.setVisibility(View.GONE);
 
-                    Intent i = new Intent("dualtech.chatapp.MAINACTIVITY");
+                    Intent i = new Intent("dualtech.chatapp.LOADCONTACT");
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     finish();

@@ -62,7 +62,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         btn_share = (Button) v.findViewById(R.id.btnGo);
         btn_share.setOnClickListener(this);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
-        //gcm = GoogleCloudMessaging.getInstance(context);
         TextWatcher text_watch = new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -89,17 +88,22 @@ public class FeedView extends ListFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        update = String.valueOf(et_feed.getText());
-        String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-        if(update!=null) {
-            storeUpdate(update);
-            String name = getContactName(prefs.getString(ApplicationInit.PROPERTY_MOB_ID, null));
-            send(update, time);
-            db.insertFeed(name, update, time);
-            feed_query.add(0, new Feed(name,update, time));
+        switch (v.getId()){
+            case R.id.btnGo:
+                update = String.valueOf(et_feed.getText());
+                String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                if(update!=null) {
+                    storeUpdate(update);
+                    String name = getContactName(prefs.getString(ApplicationInit.PROPERTY_MOB_ID, null));
+                    send(update, time);
+                    db.insertFeed(name, update, time);
+                    feed_query.add(0, new Feed(name,update, time));
+                }
+                et_feed.setText("");
+                adapter.notifyDataSetChanged();
+                break;
         }
-        et_feed.setText("");
-        adapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -137,7 +141,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
                     data.putString("Type", "Feed");
-                    data.putString("GCM_Feed", listToJSON(e));
+                    data.putString("GCM_FROM", ApplicationInit.getMobile_number());
                     data.putString("GCM_time", time);
                     data.putString("Contacts", listToJSON(contacts));
                     data.putString("msg", text);
@@ -157,11 +161,22 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         }.execute(null, null, null);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshFeed();
+    }
+
     public void refreshFeed(){
         List<List> query = db.getAllFeed();
         Collections.reverse(query);//reverse the result
 
-        for (List s : query){feed_query.add(new Feed(getContactName(s.get(0).toString()), s.get(1).toString(), s.get(2).toString()));}
+        for (List s : query) {
+            Log.d("Feedlist1", s.get(0).toString());
+            Log.d("Feedlist1", s.get(1).toString());
+            Log.d("Feedlist1", s.get(2).toString());
+            feed_query.add(new Feed(getContactName(s.get(0).toString()), s.get(1).toString(), s.get(2).toString()));
+        }
         adapter = new FeedAdapter(getActivity(), R.layout.feed_box, feed_query);
         setListAdapter(adapter);
     }

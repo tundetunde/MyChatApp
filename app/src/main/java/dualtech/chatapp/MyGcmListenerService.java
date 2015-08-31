@@ -45,30 +45,52 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "Contact: " + contact);
         Log.d(TAG, "Time: " + time);
 
+        switch (type){
+            case "msg":
+                DbSqlite db = new DbSqlite(this);
+                db.insertMessage(message, sender, 0);
+                break;
+            case "Feed":
+                String text = data.getString("msg");
+                String user = data.getString("GCM_FROM");
+                Log.d("CHECK FEED", user);
+                DbSqlite db1 = new DbSqlite(this);
+                db1.insertFeed(user, text, time);
+                break;
+            case "Contact":
+                String listString = data.getString("Contacts");
+                ArrayList list;
+                Gson gson = new Gson();
+                TypeToken<List<String>> token = new TypeToken<List<String>>() {};
+                list = gson.fromJson(listString, token.getType());
+                System.out.println("Returned List: " + list);
+                DbSqlite db2 = new DbSqlite(this);
+                db2.insertContacts(list);
+                ArrayList<Contact> lista = new ArrayList<>();
+                for (Object s : list){lista.add(new Contact(getContactName(s.toString()), s.toString()));}
+                System.out.println("LIST RETURNED");
+                ContactView.updateList(lista);
+                break;
+            case "MainContact":
+                String theList = data.getString("MainContact");
+                ArrayList listOfContacts;
+                Gson gsons = new Gson();
+                TypeToken<List<String>> token1 = new TypeToken<List<String>>() {};
+                listOfContacts = gsons.fromJson(theList, token1.getType());
+                System.out.println("Returned List: " + listOfContacts);
+                DbSqlite db3 = new DbSqlite(this);
+                db3.insertContacts(listOfContacts);
+                break;
+        }
         if(type.equals("msg")){
             //insert into db
-            DbSqlite db = new DbSqlite(this);
-            db.insertMessage(message, sender, 0);
+
         }else if(type.equals("Feed")){
-            String text = data.getString("msg");
-            String user = data.getString("GCM_FROM");
-            DbSqlite db = new DbSqlite(this);
-            db.insertFeed(text, user, time);
+
 
             //Add the string to the feed HERE!!!!!!!!!!!!!!!!!!!!!!!
         }else if(type.equals("Contacts")){
-            String listString = data.getString("Contacts");
-            ArrayList list;
-            Gson gson = new Gson();
-            TypeToken<List<String>> token = new TypeToken<List<String>>() {};
-            list = gson.fromJson(listString, token.getType());
-            System.out.println("Returned List: " + list);
-            DbSqlite db = new DbSqlite(this);
-            db.insertContacts(list);
-            ArrayList<Contact> lista = new ArrayList<>();
-            for (Object s : list){lista.add(new Contact(getContactName(s.toString()), s.toString()));}
-            System.out.println("LIST RETURNED");
-            ContactView.updateList(lista);
+
         }
 
         /**
