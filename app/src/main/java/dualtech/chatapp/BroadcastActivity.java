@@ -84,57 +84,6 @@ public class BroadcastActivity extends Activity {
         return true;
     }
 
-/**
-    public void sendToServer(final String s){
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                Log.d("C2DM", "Sending registration ID to my application server");
-                try {
-                    String r = "registering";
-                    String regValue = "RegNo=" + s + "&Register" + r;
-                    StringBuilder sb = new StringBuilder();
-                    URL url = new URL(server_address);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
-                    con.setRequestMethod("POST");
-                    con.setConnectTimeout(10000);
-                    con.setDoInput(true);
-                    con.setDoOutput(true);
-
-
-                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream(), "UTF-8"));
-                    writer.write(regValue);
-                    writer.flush();
-                    writer.close();
-
-                    int responseCode = con.getResponseCode();
-                    Log.d(TAG, "RESPONSE CODE: " + String.valueOf(responseCode));
-
-                    if (responseCode == 200) {
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                        String line;
-
-                        while ((line = reader.readLine()) != null)
-                            sb.append(line);
-                    }
-
-                    Log.d(TAG, sb.toString());
-                    return sb.toString();
-                }
-                catch (IOException io){
-                    System.out.println(io.toString());
-                    return "ASYNCTASK.........";
-                }
-            }
-            @Override
-            protected void onPostExecute(String msg) {
-
-            }
-        }.execute();
-    }
- **/
-
     public static void storePref(){
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(ApplicationInit.PROPERTY_REG_ID, regId);

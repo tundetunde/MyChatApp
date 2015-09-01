@@ -50,7 +50,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     TextWatcher text_watch;
     String et_msg, ch_contact, ch_display, ch_sender;
     ArrayList chatList;
-    ArrayAdapter<chatDbProvider> adapter;
+    ArrayAdapter<ChatDbProvider> adapter;
     SharedPreferences prefs;
     static Bitmap bmp;
 
@@ -119,7 +119,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             editText.setFocusable(false);
             String msg = "You cannot send messages to your self";
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            chatList.add(new chatDbProvider(msg, 2, d));
+            chatList.add(new ChatDbProvider(msg, 2, d));
             adapter.notifyDataSetChanged();
         }
     }
@@ -217,7 +217,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         et_msg = String.valueOf(editText.getText());
         if (et_msg != null) {
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            chatList.add(new chatDbProvider(et_msg, 1, d));
+            chatList.add(new ChatDbProvider(et_msg, 1, d));
             sendMsg(et_msg, d);
             db.insertMessage(et_msg, ch_contact, 1);
             editText.setText("");
@@ -228,12 +228,12 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     /**
      * Adapter inner class
      */
-    private class ChatViewAdapter extends ArrayAdapter<chatDbProvider> {
-        private List<chatDbProvider> chat_list = new ArrayList<>();
+    private class ChatViewAdapter extends ArrayAdapter<ChatDbProvider> {
+        private List<ChatDbProvider> chat_list = new ArrayList<>();
         private Context context;
         LinearLayout msg_bubble;
 
-        public ChatViewAdapter(Context context, int resource, ArrayList<chatDbProvider> arr) {
+        public ChatViewAdapter(Context context, int resource, ArrayList<ChatDbProvider> arr) {
             super(context, resource, arr);
             this.context = context;
             chat_list = arr;
@@ -251,7 +251,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         }
 
         @Override
-        public chatDbProvider getItem(int position) {
+        public ChatDbProvider getItem(int position) {
             // TODO Auto-generated method stub
             return chat_list.get(position);
         }
@@ -270,7 +270,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 holder = (BHolder) cv.getTag();
             }
 
-            chatDbProvider p = getItem(position);
+            ChatDbProvider p = getItem(position);
             String Message = p.msg;
             int sender = p.s_id;
             String Date = p.date;

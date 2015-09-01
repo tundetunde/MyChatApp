@@ -37,8 +37,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class FeedView extends ListFragment implements View.OnClickListener {
     DbSqlite db;
@@ -57,7 +59,11 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.feed_list, container, false);
         db = new DbSqlite(getActivity());
         e = (ArrayList)db.getAllContacts();
-        contacts = (ArrayList)db.getAllContacts();
+        //[removes duplicate numbers]
+        Set<String> s = new HashSet<>(db.getAllContacts());
+        contacts = new ArrayList<>(s);
+        contacts.remove(ApplicationInit.getMobile_number()); //removes device mobile number if exists
+        //[End of duplicate removal]
         prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         btn_share = (Button) v.findViewById(R.id.btnGo);
         btn_share.setOnClickListener(this);
@@ -170,6 +176,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     public void refreshFeed(){
         List<List> query = db.getAllFeed();
         Collections.reverse(query);//reverse the result
+        feed_query.clear();
 
         for (List s : query) {
             Log.d("Feedlist1", s.get(0).toString());
