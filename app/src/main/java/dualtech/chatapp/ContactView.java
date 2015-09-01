@@ -15,9 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -27,23 +29,34 @@ import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.google.android.gms.internal.zzhl.runOnUiThread;
 
 public class ContactView extends Fragment implements View.OnClickListener{
     private static final String TAG = "CONTACTVIEW";
+    static ArrayList<String> appContacts;
+    static ArrayList<Contact> app_contact;
+    static ContactViewAdapter adapter;
     ProgressBar loader;
     List<String> cc, numbers;
     GoogleCloudMessaging gcm;
     DbSqlite db;
-    static ArrayList<String> appContacts;
     ListView lvAppContacts, lvPhoneContacts;
     SharedPreferences prefs;
-    static ArrayList<Contact> app_contact;
-    static ContactViewAdapter adapter;
     ArrayAdapter<String> adapter2;
+
+    public static void updateList(final ArrayList<Contact> list){
+        runOnUiThread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        app_contact = list;
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+        );
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,6 +95,9 @@ public class ContactView extends Fragment implements View.OnClickListener{
         lvPhoneContacts = (ListView)v.findViewById(R.id.lvPhoneContacts);
         adapter2 = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, cc);
         lvPhoneContacts.setAdapter(adapter2);
+
+        //ListUtils.setDynamicHeight(lvAppContacts);
+        //ListUtils.setDynamicHeight(lvPhoneContacts);
     }
 
     public void read_contact() {
@@ -170,18 +186,6 @@ public class ContactView extends Fragment implements View.OnClickListener{
         return name;
     }
 
-    public static void updateList(final ArrayList<Contact> list){
-        runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        app_contact = list;
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-        );
-    }
-
     @Override
     public void onClick(View v) {
 
@@ -198,6 +202,27 @@ public class ContactView extends Fragment implements View.OnClickListener{
     @Override
     public void onPrepareOptionsMenu(Menu menu){
         menu.findItem(R.id.action_add).setVisible(false).setEnabled(false);
+    }
+
+    public static class ListUtils{
+        public static void setDynamicHeight(ListView list){
+            ListAdapter la = list.getAdapter();
+            if(la == null){
+                return;
+            }
+            int height = 0;
+            int desiredHeight = MeasureSpec.makeMeasureSpec(list.getWidth(), MeasureSpec.UNSPECIFIED);
+
+            for(int i = 0; i < la.getCount(); i++){
+                View listItem = la.getView(i,null, list);
+                listItem.measure(desiredHeight, MeasureSpec.UNSPECIFIED);
+                height += listItem.getMeasuredHeight();
+            }
+            ViewGroup.LayoutParams param = list.getLayoutParams();
+            param.height = height + (list.getDividerHeight() * (la.getCount()-1));
+            list.setLayoutParams(param);
+            list.requestLayout();
+        }
     }
 
     private class ContactViewAdapter extends ArrayAdapter<Contact> {
