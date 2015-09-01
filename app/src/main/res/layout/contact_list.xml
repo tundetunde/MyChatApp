@@ -1,44 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <RelativeLayout android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/contact_load"
+        android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
-    </RelativeLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Contacts With App"
-        android:id="@+id/tvAppContacts" />
+    <ScrollView
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:fillViewport="true" android:layout_below="@+id/contact_load">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/lvAppContacts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Contacts With App"
+                android:gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:id="@+id/tvAppContacts" />
 
-    </ListView>
+            <ListView
+                android:id="@+id/lvAppContacts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Contacts on Phone"
-        android:id="@+id/tvContacts" />
+            </ListView>
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lvPhoneContacts" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Contacts on Phone"
+                android:gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:id="@+id/tvContacts" />
 
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:id="@+id/lvPhoneContacts" />
 
-</LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
+

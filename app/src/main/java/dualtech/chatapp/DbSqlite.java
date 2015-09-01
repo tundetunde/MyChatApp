@@ -192,9 +192,9 @@ public class DbSqlite extends SQLiteOpenHelper {
         return update;
     }
 
-    public List<chatDbProvider> getChatHistory(String c){
+    public List<ChatDbProvider> getChatHistory(String c){
 
-        List<chatDbProvider> update = new ArrayList<>();
+        List<ChatDbProvider> update = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT msg,sender, datetime FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
         SQLiteDatabase db = this.getReadableDatabase();
@@ -203,7 +203,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 // Adding contact to list
-                update.add(new chatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2)));
+                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2)));
             } while (cursor.moveToNext());
         }
         cursor.close();
