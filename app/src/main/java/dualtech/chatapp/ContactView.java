@@ -117,43 +117,9 @@ public class ContactView extends Fragment implements View.OnClickListener{
             protected void onPostExecute(String msg) {
                 adapter2.notifyDataSetChanged();
                 Log.d(TAG, "Done list");
-                sendContact();
                 loader.setVisibility(View.GONE);
             }
         }.execute();
-    }
-
-    private void sendContact() {
-        // Add custom implementation, as needed.
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg;
-
-                try {
-                    String id = String.valueOf(msgId());
-                    Bundle data = new Bundle();
-                    Gson gson = new Gson();
-                    String jsonPhoneList = gson.toJson(numbers);
-                    data.putString("Type", "Contacts");
-                    data.putString("List", jsonPhoneList);
-                    data.putString("Phone", prefs.getString(ApplicationInit.PROPERTY_REG_ID,null));
-                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
-                    msg = "Sent Contact";
-                } catch (IOException ex) {
-                    msg = "Contact could not be sent";
-                }
-
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                for (String s : appContacts){app_contact.add(new Contact(getContactName(s), s));}
-                adapter.notifyDataSetChanged();
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
-            }
-        }.execute(null, null, null);
     }
 
     public String getContactName(String num){
