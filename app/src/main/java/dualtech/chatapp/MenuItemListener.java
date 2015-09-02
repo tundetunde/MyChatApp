@@ -32,7 +32,9 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
                 context.startActivity(i);
                 return true;
             case R.id.action_refresh:
-                //ContactView.refresh();
+                i = new Intent().setClass(context, LoadContacts.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(i);
                 Toast.makeText(context, "Contact refreshed!!!", Toast.LENGTH_SHORT);
                 return true;
             case R.id.action_profile:

@@ -15,11 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -51,12 +49,31 @@ public class ContactView extends Fragment implements View.OnClickListener{
                 new Runnable() {
                     @Override
                     public void run() {
+                        app_contact.clear();
                         app_contact = list;
                         adapter.notifyDataSetChanged();
                     }
                 }
         );
     }
+
+   public static void setDynamicHeight(ListView list){
+        ArrayAdapter adapter = (ArrayAdapter) list.getAdapter();
+        if(adapter == null){
+            return;
+        }
+        int height = 0;
+
+        for(int i = 0; i < adapter.getCount(); i++){
+            View listItem = adapter.getView(i,null, list);
+            listItem.measure(0,0);
+            height += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams param = list.getLayoutParams();
+        param.height = height + (list.getDividerHeight() * (adapter.getCount()-1));
+        list.setLayoutParams(param);
+        list.requestLayout();
+   }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,6 +95,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
         lvAppContacts = (ListView) v.findViewById(R.id.lvAppContacts);
         appContacts = (ArrayList<String>) db.getAllContacts();
         app_contact = new ArrayList<>();
+        for(String s: appContacts){app_contact.add(new Contact(getContactName(s), s));}
         adapter = new ContactViewAdapter(v.getContext(), android.R.layout.simple_list_item_1, app_contact);
         lvAppContacts.setAdapter(adapter);
 
@@ -96,8 +114,8 @@ public class ContactView extends Fragment implements View.OnClickListener{
         adapter2 = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, cc);
         lvPhoneContacts.setAdapter(adapter2);
 
-        //ListUtils.setDynamicHeight(lvAppContacts);
-        //ListUtils.setDynamicHeight(lvPhoneContacts);
+        setDynamicHeight(lvAppContacts);
+        setDynamicHeight(lvPhoneContacts);
     }
 
     public void read_contact() {
@@ -157,38 +175,9 @@ public class ContactView extends Fragment implements View.OnClickListener{
 
     }
 
-    private int msgId() {
-        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
-        editor.apply();
-        return id;
-    }
-
     @Override
     public void onPrepareOptionsMenu(Menu menu){
         menu.findItem(R.id.action_add).setVisible(false).setEnabled(false);
-    }
-
-    public static class ListUtils{
-        public static void setDynamicHeight(ListView list){
-            ListAdapter la = list.getAdapter();
-            if(la == null){
-                return;
-            }
-            int height = 0;
-            int desiredHeight = MeasureSpec.makeMeasureSpec(list.getWidth(), MeasureSpec.UNSPECIFIED);
-
-            for(int i = 0; i < la.getCount(); i++){
-                View listItem = la.getView(i,null, list);
-                listItem.measure(desiredHeight, MeasureSpec.UNSPECIFIED);
-                height += listItem.getMeasuredHeight();
-            }
-            ViewGroup.LayoutParams param = list.getLayoutParams();
-            param.height = height + (list.getDividerHeight() * (la.getCount()-1));
-            list.setLayoutParams(param);
-            list.requestLayout();
-        }
     }
 
     private class ContactViewAdapter extends ArrayAdapter<Contact> {

@@ -27,11 +27,11 @@ import java.util.ArrayList;
  * Created by tunde_000 on 31/08/2015.
  */
 public class LoadContacts extends Activity{
+    private static final String TAG = "LOADCONTACTS";
     static ArrayList<String> numbers;
     GoogleCloudMessaging gcm;
     SharedPreferences prefs;
     private ProgressBar spinner;
-    private static final String TAG = "LOADCONTACTS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +43,8 @@ public class LoadContacts extends Activity{
         read_contact();
         numbers = new ArrayList<>();
         gcm = GoogleCloudMessaging.getInstance(this);
-        getContactsfromServer();
     }
+
     private void getContactsfromServer(){
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -58,7 +58,6 @@ public class LoadContacts extends Activity{
                     String jsonPhoneList = gson.toJson(numbers);
                     data.putString("Type", "Contacts");
                     data.putString("List", jsonPhoneList);
-                    data.putString("Main", "y");
                     data.putString("Phone", prefs.getString(ApplicationInit.PROPERTY_REG_ID,null));
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent Contact";
@@ -73,6 +72,7 @@ public class LoadContacts extends Activity{
             protected void onPostExecute(String msg) {
                 Toast.makeText(LoadContacts.this, msg, Toast.LENGTH_LONG).show();
                 Intent openMain = new Intent("dualtech.chatapp.MAINACTIVITY");
+                openMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(openMain);
             }
         }.execute(null, null, null);
@@ -116,6 +116,7 @@ public class LoadContacts extends Activity{
             @Override
             protected void onPostExecute(String msg) {
                 Log.d(TAG, "Done list");
+                getContactsfromServer();
             }
         }.execute();
     }
