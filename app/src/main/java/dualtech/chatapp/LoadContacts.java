@@ -45,7 +45,7 @@ public class LoadContacts extends Activity{
         gcm = GoogleCloudMessaging.getInstance(this);
     }
 
-    private void getContactsfromServer(){
+    private void getContactsFromServer(){
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -116,7 +116,7 @@ public class LoadContacts extends Activity{
             @Override
             protected void onPostExecute(String msg) {
                 Log.d(TAG, "Done list");
-                getContactsfromServer();
+                getContactsFromServer();
             }
         }.execute();
     }

@@ -114,6 +114,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
         adapter2 = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, cc);
         lvPhoneContacts.setAdapter(adapter2);
 
+
         setDynamicHeight(lvAppContacts);
         setDynamicHeight(lvPhoneContacts);
     }

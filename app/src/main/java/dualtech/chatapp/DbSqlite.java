@@ -91,12 +91,12 @@ public class DbSqlite extends SQLiteOpenHelper {
     }
 
     public void insertMessage(String s, String c, int sender){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
         if(checkChatList(c)){
             insertChatList(c);
         }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
         values.put("msg", s);
         values.put("contact_id", c);
@@ -216,41 +216,4 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.delete(TABLE_MESSAGES, "contact_id = '" + c + "'", null);
         db.delete(TABLE_CHATLIST, "contact = '" + c + "'", null);
     }
-
-
-    private void insertDemo(SQLiteDatabase db){
-        ContentValues values;
-
-        values = new ContentValues();
-        values.put("contact", "08132229044");
-        db.insert(TABLE_CHATLIST, null, values);
-
-        values = new ContentValues();
-        values.put("contact", "07944447710");
-        db.insert(TABLE_CHATLIST, null, values);
-
-
-        values = new ContentValues();
-        values.put("msg", "Hi Tunde");
-        values.put("contact_id", "08132229044");
-        values.put("sender", 1);
-        db.insert(TABLE_MESSAGES, null, values);
-
-        values = new ContentValues();
-        values.put("msg", "How you doing");
-        values.put("contact_id", "08132229044");
-        db.insert(TABLE_MESSAGES, null, values);
-
-        values = new ContentValues();
-        values.put("msg", "Hello Tunde");
-        values.put("contact_id", "07944447710");
-        values.put("sender", 1);
-        db.insert(TABLE_MESSAGES, null, values);
-
-        values = new ContentValues();
-        values.put("msg", "Hi");
-        values.put("contact_id", "07944447710");
-        db.insert(TABLE_MESSAGES, null, values);
-    }
-
 }

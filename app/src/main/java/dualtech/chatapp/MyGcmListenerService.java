@@ -12,6 +12,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -24,7 +25,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MyGcmListenerService extends GcmListenerService {
 
@@ -45,6 +48,7 @@ public class MyGcmListenerService extends GcmListenerService {
         String contact = data.getString("GCM_contactId");
         String sender = data.getString("GCM_sender");
         String time = data.getString("GCM_time");
+        String user = data.getString("GCM_FROM");
 
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
@@ -52,41 +56,49 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "Contact: " + contact);
         Log.d(TAG, "Time: " + time);
 
+        DbSqlite db = new DbSqlite(this);
+        Gson gson;
         switch (type){
             case "msg":
-                DbSqlite db = new DbSqlite(this);
                 db.insertMessage(message, sender, 0);
                 break;
             case "Feed":
                 String text = data.getString("msg");
-                String user = data.getString("GCM_FROM");
                 Log.d("CHECK FEED", user);
-                DbSqlite db1 = new DbSqlite(this);
-                db1.insertFeed(user, text, time);
+                db.insertFeed(user, text, time);
                 break;
             case "Contact":
                 String listString = data.getString("Contacts");
                 ArrayList list;
-                Gson gson = new Gson();
+                gson = new Gson();
                 TypeToken<List<String>> token = new TypeToken<List<String>>() {};
                 list = gson.fromJson(listString, token.getType());
                 System.out.println("Returned List: " + list);
-                DbSqlite db2 = new DbSqlite(this);
-                db2.insertContacts(list);
-                ArrayList<Contact> lista = new ArrayList<>();
+                db.insertContacts(list);
+                /*ArrayList<Contact> lista = new ArrayList<>();
                 for (Object s : list){lista.add(new Contact(getContactName(s.toString()), s.toString()));}
                 System.out.println("LIST RETURNED");
                 ContactView.updateList(lista);
+                */
                 break;
-            case "MainContact":
-                String theList = data.getString("MainContact");
-                ArrayList listOfContacts;
-                Gson gsons = new Gson();
-                TypeToken<List<String>> token1 = new TypeToken<List<String>>() {};
-                listOfContacts = gsons.fromJson(theList, token1.getType());
-                System.out.println("Returned List: " + listOfContacts);
-                DbSqlite db3 = new DbSqlite(this);
-                db3.insertContacts(listOfContacts);
+            case "Photo":
+                String image = data.getString("msg");
+                byte[] byt = image.getBytes();
+                saveToInternalStorage(user, byt);
+                break;
+            case "ContactsPhoto":
+                String photolist = data.getString("ListPhoto");
+                ArrayList photo;
+                gson = new Gson();
+                TypeToken<List<Map<String, byte[]>>> photo_token = new TypeToken<List<Map<String, byte[]>>>() {};
+                photo = gson.fromJson(photolist, photo_token.getType());
+                System.out.println("Returned Photo List");
+                for(Object m : photo){
+                    HashMap<String, byte[]> map = (HashMap<String, byte[]>) m;
+                    String key = map.keySet().toArray()[0].toString();
+                    byte[] value = map.get(key);
+                    saveToInternalStorage(key, value);
+                }
                 break;
         }
 
@@ -97,44 +109,26 @@ public class MyGcmListenerService extends GcmListenerService {
         if(type.equals("msg")){
             sendNotification(message, sender);
         }
-
     }
     // [END receive_message]
 
-
-    private Bitmap loadImageFromStorage(String path, String image)
-    {
-        Bitmap b = null;
-        try {
-            File f=new File(path, image);
-            b = BitmapFactory.decodeStream(new FileInputStream(f));
-        }
-        catch (FileNotFoundException e)
-        {
-            e.printStackTrace();
-        }
-        return b;
-    }
-
-    private String saveToInternalSorage(Bitmap bitmapImage){
+    private void saveToInternalStorage(String user, byte[] imgByte){
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         // Create imageDir
-        File mypath=new File(directory,"profile.jpg");
+        File mypath = new File(directory, "profile_" + user + ".jpg");
 
         FileOutputStream fos = null;
+        Bitmap bitmapImage = BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
         try {
-
             fos = new FileOutputStream(mypath);
-
             // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return directory.getAbsolutePath();
     }
 
     public String getContactName(String num){
