@@ -146,22 +146,17 @@ public class ProfilePage extends Activity implements View.OnClickListener{
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
                 byte[] bArray = bos.toByteArray();
-                String ByteString = Base64.encodeToString(bArray, Base64.DEFAULT);
-                System.out.println("ARRAY IMAGE: " + bArray);
-                System.out.println("ARRAYSTRING IMAGE: " + ByteString);
-                System.out.println("ARRAYBYTE IMAGE: " + Base64.decode(ByteString, Base64.DEFAULT));
-                System.out.println("ARRAYBYTE IMAGE: " + ByteString.getBytes());
 
                 try {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
                     Gson gson = new Gson();
                     String jsonPhoneList = gson.toJson(db.getAllContacts());
+                    String byteString = Base64.encodeToString(bArray, Base64.DEFAULT);
                     data.putString("Type", "Photo");
                     data.putString("ContactList", jsonPhoneList);
                     data.putString("UserOwner", ApplicationInit.getMobile_number());
-                    //data.getString("ProfilePic", ByteString);
-                    data.putByteArray("ProfilePic", bArray);
+                    data.putString("ProfilePic", byteString);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent profile picture";
                 } catch (IOException ex) {
@@ -173,7 +168,7 @@ public class ProfilePage extends Activity implements View.OnClickListener{
             @Override
             protected void onPostExecute(String msg) {
                 Toast.makeText(getBaseContext(), "UPLOADED PHOTO...", Toast.LENGTH_LONG).show();
-                Log.d(TAG, "MESSAGE SENT");
+                Log.d(TAG, "PROFILE PICTURE SENT");
             }
         }.execute(null, null, null);
     }

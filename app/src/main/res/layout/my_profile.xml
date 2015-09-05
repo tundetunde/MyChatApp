@@ -27,9 +27,11 @@
 
     <LinearLayout
         android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rLayout"
+        android:layout_centerHorizontal="true"
+        android:background="#000000"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="10dp">
@@ -38,6 +40,7 @@
             android:id="@+id/dpView"
             android:layout_width="250dp"
             android:layout_height="250dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ppg"/>
     </LinearLayout>
 
