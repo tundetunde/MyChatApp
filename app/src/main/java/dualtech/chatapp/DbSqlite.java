@@ -91,12 +91,12 @@ public class DbSqlite extends SQLiteOpenHelper {
     }
 
     public void insertMessage(String s, String c, int sender){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
         if(checkChatList(c)){
             insertChatList(c);
         }
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
         values.put("msg", s);
         values.put("contact_id", c);
@@ -215,5 +215,36 @@ public class DbSqlite extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MESSAGES, "contact_id = '" + c + "'", null);
         db.delete(TABLE_CHATLIST, "contact = '" + c + "'", null);
+    }
+
+    public void deleteAllChatHistory(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        //db.delete(TABLE_MESSAGES, null, null);
+        db.execSQL("delete from " + TABLE_MESSAGES);
+
+    }
+
+    public String countChat(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String total = "";
+        String selectQuery = "SELECT Count(*) FROM " + TABLE_MESSAGES;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                total = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d(TAG, "COUNT TIME");
+        return total;
+    }
+
+    public void deactivateDatabase(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MESSAGES, null, null);
+        db.delete(TABLE_CHATLIST, null, null);
+        db.delete(TABLE_CONTACTS, null, null);
+        db.delete(TABLE_FEED, null, null);
     }
 }

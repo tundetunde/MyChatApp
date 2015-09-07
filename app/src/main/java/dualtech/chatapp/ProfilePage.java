@@ -77,7 +77,7 @@ public class ProfilePage extends Activity implements View.OnClickListener{
         tv_user = (TextView) findViewById(R.id.tvName);
         tv_status = (TextView) findViewById(R.id.tvStatus);
         dp = (ImageView) findViewById(R.id.dpView);
-        gcm = GoogleCloudMessaging.getInstance(this.getApplicationContext());
+        gcm = GoogleCloudMessaging.getInstance(this);
         db = new DbSqlite(this);
 
         tv_mobi.setText(ApplicationInit.getMobile_number());
@@ -153,10 +153,10 @@ public class ProfilePage extends Activity implements View.OnClickListener{
                     Gson gson = new Gson();
                     String jsonPhoneList = gson.toJson(db.getAllContacts());
                     String byteString = Base64.encodeToString(bArray, Base64.DEFAULT);
-                    data.putString("Type", "Photo");
+                    data.putString("Type", "ProfilePhoto");
                     data.putString("ContactList", jsonPhoneList);
                     data.putString("UserOwner", ApplicationInit.getMobile_number());
-                    data.putString("ProfilePic", byteString);
+                    //data.putString("ProfilePic", byteString);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent profile picture";
                 } catch (IOException ex) {

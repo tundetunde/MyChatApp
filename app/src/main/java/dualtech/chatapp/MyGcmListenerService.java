@@ -100,6 +100,15 @@ public class MyGcmListenerService extends GcmListenerService {
                     saveToInternalStorage(key, value);
                 }
                 break;
+            case "Deactivate":
+                String confirm = data.getString("Confirm");
+                DbSqlite db4 = new DbSqlite(this);
+                if(confirm.equals("y")){
+                    db4.deactivateDatabase();
+                    Intent i = new Intent("dualtech.chatapp.REG");
+                    startActivity(i);
+                }
+                break;
         }
 
         /**

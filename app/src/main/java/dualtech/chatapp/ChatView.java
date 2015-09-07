@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -107,6 +110,17 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             iv.setVisibility(View.VISIBLE);
             lin.setBackgroundColor(Color.TRANSPARENT);
         }*/
+    }
+
+    public void changeBackground(Bitmap bitmap){
+        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+            //ChatView.lin.setBackgroundDrawable(drawable);
+            lv.setBackgroundDrawable(drawable);
+        } else {
+            //ChatView.lin.setBackground(drawable);
+            lv.setBackground(drawable);
+        }
     }
 
     private void loadChat() {

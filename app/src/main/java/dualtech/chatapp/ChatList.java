@@ -32,6 +32,9 @@ import java.util.ArrayList;
 
 public class ChatList extends ListFragment implements View.OnClickListener{
     DbSqlite db;
+    ArrayList<String> chatList;
+    ArrayList<Contact> chatName;
+    ArrayAdapter<Contact> adapter;
     GoogleCloudMessaging gcm;
     SharedPreferences prefs;
 
@@ -42,10 +45,10 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
         db = new DbSqlite(getActivity());
-        ArrayList<String> chatList = (ArrayList)db.getChatList();
-        ArrayList<Contact> chatName = new ArrayList<>();
+        chatList = (ArrayList)db.getChatList();
+        chatName = new ArrayList<>();
         for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
-        ArrayAdapter<Contact> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
+        adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
         setListAdapter(adapter);
         setHasOptionsMenu(true);
         return v;
@@ -54,6 +57,14 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        chatList.clear();
+        chatList = (ArrayList)db.getChatList();
+        adapter.notifyDataSetChanged();
     }
 
     private int msgId() {

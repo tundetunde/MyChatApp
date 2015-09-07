@@ -32,6 +32,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".DeactivateAcct" >
+            <intent-filter>
+                <action android:name="dualtech.chatapp.DEACTIVATE" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".VerifyNumber" >
             <intent-filter>
                 <action android:name="dualtech.chatapp.VERIFY_NUMBER" />
@@ -47,8 +54,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".BroadcastActivity" >
+        <intent-filter>
+            <action android:name="dualtech.chatapp.BROADCASTACTIVITY" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        </activity>
+        <activity android:name=".AboutUs" >
             <intent-filter>
-                <action android:name="dualtech.chatapp.BROADCASTACTIVITY" />
+                <action android:name="dualtech.chatapp.ABOUTUS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

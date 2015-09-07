@@ -89,14 +89,9 @@ public class ChatBackgroundSetting extends Activity{
             backgroundPic = BitmapFactory.decodeFile(picturePath);
             img.setImageBitmap(backgroundPic);
             Drawable drawable = new BitmapDrawable(getResources(), backgroundPic);
+            //ChatView.changeBackground(drawable);
             //ChatView.lin.setBackgroundDrawable(this, drawable);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-                //ChatView.lin.setBackgroundDrawable(drawable);
-                ChatView.lv.setBackgroundDrawable(drawable);
-            } else {
-                //ChatView.lin.setBackground(drawable);
-                ChatView.lv.setBackground(drawable);
-            }
+
             //l1.setBackgroundResource(this, backgroundPic);
         }
     }
