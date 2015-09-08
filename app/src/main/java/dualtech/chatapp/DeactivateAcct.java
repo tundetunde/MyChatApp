@@ -2,9 +2,11 @@ package dualtech.chatapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -90,12 +92,26 @@ public class DeactivateAcct extends AppCompatActivity implements View.OnClickLis
             case R.id.btnDeactivate:
                 Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT);
                 if(ApplicationInit.getMobile_number().equals(editText.getText().toString()))
-                    deleteRequest();
+                    deactivateCompleteDialog();
                 else
                     Toast.makeText(this, "Mobile number is incorrect", Toast.LENGTH_SHORT);
                 break;
 
         }
+    }
+
+    private void deactivateCompleteDialog(){
+        new AlertDialog.Builder(this)
+                .setTitle("Deactivation")
+                .setMessage("After deactivation, you will be sent to the Registration Page")
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        deleteRequest();
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private int msgId() {

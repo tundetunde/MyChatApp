@@ -72,4 +72,9 @@ public class MobileReg extends Activity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Log.d("back presseed", "Do Nothing");
+    }
+
 }
