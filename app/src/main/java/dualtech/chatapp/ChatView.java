@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -44,10 +45,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class ChatView extends AppCompatActivity implements View.OnClickListener {
+    static ListView lv;
+    static LinearLayout BGlv;
+    static Bitmap bmp;
     DbSqlite db;
     Toolbar toolbar;
-    static ListView lv;
-    static LinearLayout lin;
     Button send;
     EditText editText;
     TextWatcher text_watch;
@@ -55,7 +57,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     ArrayList chatList;
     ArrayAdapter<ChatDbProvider> adapter;
     SharedPreferences prefs;
-    static Bitmap bmp;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +65,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.chat_toolbar);
         setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
@@ -78,6 +80,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void initialize() {
+        assert getSupportActionBar() != null;
         getSupportActionBar().setTitle(ch_display);
         //getSupportActionBar().setIcon(R.drawable.ppg);
         lv = (ListView) findViewById(R.id.lvChatHistory);
@@ -104,22 +107,19 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         };
         editText = (EditText) findViewById(R.id.msg_edit);
         editText.addTextChangedListener(text_watch);
-        /*if(bmp == null){
-            iv.setVisibility(View.INVISIBLE);
-        }else{
-            iv.setVisibility(View.VISIBLE);
-            lin.setBackgroundColor(Color.TRANSPARENT);
-        }*/
+        BGlv = (LinearLayout) findViewById(R.id.Lin);
+        changeBackground();
     }
 
-    public void changeBackground(Bitmap bitmap){
-        Drawable drawable = new BitmapDrawable(getResources(), bitmap);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
-            //ChatView.lin.setBackgroundDrawable(drawable);
-            lv.setBackgroundDrawable(drawable);
-        } else {
-            //ChatView.lin.setBackground(drawable);
-            lv.setBackground(drawable);
+    public void changeBackground(){
+        if (ApplicationInit.getChatBgURL() != null){
+            Bitmap bm = BitmapFactory.decodeFile(ApplicationInit.getChatBgURL());
+            BitmapDrawable bmDraw = new BitmapDrawable(this.getResources(), bm);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN){
+                BGlv.setBackgroundDrawable(bmDraw);
+            }else{
+                BGlv.setBackground(bmDraw);
+            }
         }
     }
 
@@ -243,25 +243,14 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
      * Adapter inner class
      */
     private class ChatViewAdapter extends ArrayAdapter<ChatDbProvider> {
+        LinearLayout msg_bubble;
         private List<ChatDbProvider> chat_list = new ArrayList<>();
         private Context context;
-        LinearLayout msg_bubble;
 
         public ChatViewAdapter(Context context, int resource, ArrayList<ChatDbProvider> arr) {
             super(context, resource, arr);
             this.context = context;
             chat_list = arr;
-        }
-
-        /**
-         * To cache views of item
-         */
-        private class BHolder {
-            private TextView vh_msg;
-            private TextView vh_time;
-
-            BHolder() {
-            }
         }
 
         @Override
@@ -304,6 +293,17 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             }
 
             return cv;
+        }
+
+        /**
+         * To cache views of item
+         */
+        private class BHolder {
+            private TextView vh_msg;
+            private TextView vh_time;
+
+            BHolder() {
+            }
         }
     }
 }

@@ -2,13 +2,16 @@ package dualtech.chatapp;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.widget.TextView;
 
 /**
  * Created by tunde_000 on 03/09/2015.
  */
-public class AboutUs extends Activity {
+public class AboutUs extends AppCompatActivity {
+    Toolbar toolbar;
     TextView tv;
     String text1 = "PhoMix Filter is a photo editing app enabling you to design and edit your photos with complete control. " +
             "You may create photo grids combining multiple pictures into one or you may use the built in editor which boasts " +
@@ -24,6 +27,15 @@ public class AboutUs extends Activity {
         super.onCreate(savedInstanceState);
         //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.about_us);
+
+        // Creating The Toolbar and setting it as the Toolbar for the activity
+        toolbar = (Toolbar) findViewById(R.id.about_toolbar);
+        setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("ABOUT US");
+
         tv = (TextView) findViewById(R.id.textDescription);
         tv.setText(text1);
         tv.append("\n\n" + text2);

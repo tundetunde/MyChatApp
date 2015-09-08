@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/de_toolbar"
+        layout="@layout/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="DEACTIVATE ACCOUNT"
-        android:id="@+id/textView3"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
         android:id="@+id/tvInfoDeactivate"
-        android:layout_gravity="center_horizontal" />
-
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_gravity="center_horizontal"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/tvConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Please Confirm Your Number below"
-        android:id="@+id/tvConfirm" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
+        android:id="@+id/etNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="phone"
         android:ems="04444"
-        android:id="@+id/etNumber" />
+        android:inputType="phone" />
 
     <Button
+        android:id="@+id/btnDeactivate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Deactivate"
-        android:id="@+id/btnDeactivate"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:text="Deactivate" />
 </LinearLayout>

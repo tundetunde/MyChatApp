@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,19 +21,30 @@ import java.io.IOException;
 /**
  * Created by tunde_000 on 03/09/2015.
  */
-public class DeactivateAcct extends Activity implements View.OnClickListener{
+public class DeactivateAcct extends AppCompatActivity implements View.OnClickListener{
+    static SharedPreferences prefs;
+    Toolbar toolbar;
     DbSqlite db;
     EditText editText;
     TextView tvInfo;
     Button deactivateButton;
     GoogleCloudMessaging gcm;
-    static SharedPreferences prefs;
-    String text = "Please beaware that deactivating your account will result in the deletion of all chats\n and will need " +
-            "to register again in order to use this app";
+    String text = "Please beware that deactivating your account will result in the deletion of all chats\n and will need " +
+            "to register again in order to use this app\n" +
+            "THIS CANNOT BE UNDONE";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.deactivate);
+
+        // Creating The Toolbar and setting it as the Toolbar for the activity
+        toolbar = (Toolbar) findViewById(R.id.de_toolbar);
+        setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("DEACTIVATE ACCOUNT");
+
         db = new DbSqlite(this);
         gcm = GoogleCloudMessaging.getInstance(this);
         prefs = this.getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);

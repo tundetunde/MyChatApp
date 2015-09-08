@@ -219,9 +219,8 @@ public class DbSqlite extends SQLiteOpenHelper {
 
     public void deleteAllChatHistory(){
         SQLiteDatabase db = this.getWritableDatabase();
-        //db.delete(TABLE_MESSAGES, null, null);
         db.execSQL("delete from " + TABLE_MESSAGES);
-
+        db.execSQL("delete from " + TABLE_CHATLIST);
     }
 
     public String countChat(){

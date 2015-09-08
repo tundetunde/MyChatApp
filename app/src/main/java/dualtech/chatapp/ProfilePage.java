@@ -1,8 +1,10 @@
 package dualtech.chatapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -13,8 +15,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,6 +38,7 @@ import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -40,15 +47,14 @@ import java.nio.channels.FileChannel;
  * Created by Jesz on 18-Aug-15.
  */
 
-public class ProfilePage extends Activity implements View.OnClickListener{
+public class ProfilePage extends AppCompatActivity implements View.OnClickListener{
     static SharedPreferences prefs;
     static TextView tv_user, tv_mobi, tv_status;
     final String TAG = "PROFILE";
-    File f = new File(Environment.getExternalStorageDirectory() + "/MyChatApp/Profile Photo/");
-    Button et_profile;
     ImageView dp;
     DbSqlite db;
     GoogleCloudMessaging gcm;
+    Toolbar toolbar;
 
     public static void setName(String s){
         ApplicationInit.setUser(s);
@@ -70,18 +76,24 @@ public class ProfilePage extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_profile);
-        prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
 
-        et_profile = (Button) findViewById(R.id.pro_edit);
+        // Creating The Toolbar and setting it as the Toolbar for the activity
+        toolbar = (Toolbar) findViewById(R.id.profile_toolbar);
+        setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("MY PROFILE");
+
+        prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         tv_mobi = (TextView) findViewById(R.id.tvNum);
         tv_user = (TextView) findViewById(R.id.tvName);
         tv_status = (TextView) findViewById(R.id.tvStatus);
         dp = (ImageView) findViewById(R.id.dpView);
-        gcm = GoogleCloudMessaging.getInstance(this);
+        gcm = GoogleCloudMessaging.getInstance(this.getApplicationContext());
         db = new DbSqlite(this);
 
         tv_mobi.setText(ApplicationInit.getMobile_number());
-        et_profile.setOnClickListener(this);
         tv_status.setText(prefs.getString(ApplicationInit.PROPERTY_STATUS, "Hello there!!!"));
         initialize();
     }
@@ -91,25 +103,44 @@ public class ProfilePage extends Activity implements View.OnClickListener{
 
         String path = prefs.getString(ApplicationInit.PROPERTY_PHOTO, null);
         if(path != null){
-            Bitmap bmp = BitmapFactory.decodeFile(path);
+            Bitmap bmp = getOriginalImg(path);
             dp.setImageBitmap(bmp);
         }
     }
 
     @Override
-    public void onClick(View v) {
-        //Creating the instance of PopupMenu
-        PopupMenu popup = new PopupMenu(this, et_profile);
-        //Inflating the Popup using xml file
-        popup.getMenuInflater().inflate(R.menu.edit_profile, popup.getMenu());
-        popup.setOnMenuItemClickListener(new MenuItemListener(this));
-        popup.show();
+    public void onClick(View v) {}
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        return true;
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_pr_edit:
+                //Creating the instance of PopupMenu
+                PopupMenu popup = new PopupMenu(this, findViewById(R.id.action_pr_edit));
+                //Inflating the Popup using xml file
+                popup.getMenuInflater().inflate(R.menu.edit_profile, popup.getMenu());
+                popup.setOnMenuItemClickListener(new MenuItemListener(this));
+                popup.show();
+                return true;
+            default:
+                item.setOnMenuItemClickListener(new MenuItemListener(this));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK /*&& requestCode == SELECT_IMG*/){
+        if(resultCode == RESULT_OK){
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
             Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
@@ -117,7 +148,6 @@ public class ProfilePage extends Activity implements View.OnClickListener{
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
-
 
             ContextWrapper cw = new ContextWrapper(getApplicationContext());
             // path to /data/data/yourapp/app_data/imageDir
@@ -130,21 +160,20 @@ public class ProfilePage extends Activity implements View.OnClickListener{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Bitmap bmp = BitmapFactory.decodeFile(app_path.getAbsolutePath());
+            Bitmap bmp = getThumbnail(app_path.getAbsoluteFile());
             storePhoto(app_path.getAbsolutePath());
-            dp.setImageBitmap(bmp);
             uploadProfile(bmp);
         }
     }
 
     //Upload to server
-    public void uploadProfile(final Bitmap bitmap){
+    public void uploadProfile(final Bitmap selected){
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 String msg;
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+                selected.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                 byte[] bArray = bos.toByteArray();
 
                 try {
@@ -153,10 +182,14 @@ public class ProfilePage extends Activity implements View.OnClickListener{
                     Gson gson = new Gson();
                     String jsonPhoneList = gson.toJson(db.getAllContacts());
                     String byteString = Base64.encodeToString(bArray, Base64.DEFAULT);
-                    data.putString("Type", "ProfilePhoto");
+                    Log.d(TAG, "BYTE ARR: " + bArray.length);
+                    Log.d(TAG, "BYTE STR: " + byteString.length());
+                    Log.d(TAG, "BYTE ARR: " + (double)bArray.length/(1024*1024) + "MB");
+                    Log.d(TAG, "BYTE STR: " + (double)byteString.getBytes().length/ (1024*1024)+ "MB");
+                    data.putString("Type", "Photo");
                     data.putString("ContactList", jsonPhoneList);
                     data.putString("UserOwner", ApplicationInit.getMobile_number());
-                    //data.putString("ProfilePic", byteString);
+                    data.putString("ProfilePic", byteString);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent profile picture";
                 } catch (IOException ex) {
@@ -171,6 +204,37 @@ public class ProfilePage extends Activity implements View.OnClickListener{
                 Log.d(TAG, "PROFILE PICTURE SENT");
             }
         }.execute(null, null, null);
+    }
+
+    public Bitmap getThumbnail(File file){
+        try{
+            Bitmap SelectedImg = BitmapFactory.decodeFile(file.getAbsolutePath());
+            int h = SelectedImg.getHeight()/5;
+            int w = SelectedImg.getWidth()/5;
+            Bitmap thumbnail = Bitmap.createScaledBitmap(SelectedImg, w, h, false);
+
+            //overwrite file
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, out);
+
+            dp.setImageBitmap(SelectedImg);//set the profile image view
+
+            return thumbnail;
+        }catch(Exception e){
+            return null;
+        }
+    }
+
+    public Bitmap getOriginalImg(String path){
+        Bitmap bm;// = BitmapFactory.decodeFile(path);
+        BitmapFactory.Options op = new BitmapFactory.Options();
+        op.inScaled = false;
+        bm = BitmapFactory.decodeFile(path, op);
+        int h = bm.getHeight()*5;
+        int w = bm.getWidth()*5;
+        Bitmap b = Bitmap.createScaledBitmap(bm, w, h, false);
+        return b;
     }
 
     private int msgId() {

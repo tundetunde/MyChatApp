@@ -43,11 +43,11 @@ import java.util.Locale;
 import java.util.Set;
 
 public class FeedView extends ListFragment implements View.OnClickListener {
+    static SharedPreferences prefs;
     DbSqlite db;
     Button btn_share;
     EditText et_feed;
     String update;
-    static SharedPreferences prefs;
     GoogleCloudMessaging gcm;
     ArrayList e;
     ArrayList<Feed> feed_query = new ArrayList<>();
@@ -179,13 +179,11 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         feed_query.clear();
 
         for (List s : query) {
-            Log.d("Feedlist1", s.get(0).toString());
-            Log.d("Feedlist1", s.get(1).toString());
-            Log.d("Feedlist1", s.get(2).toString());
             feed_query.add(new Feed(getContactName(s.get(0).toString()), s.get(1).toString(), s.get(2).toString()));
         }
         adapter = new FeedAdapter(getActivity(), R.layout.feed_box, feed_query);
         setListAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     public String getContactName(String num){
@@ -218,24 +216,14 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     }
 
     private class FeedAdapter extends ArrayAdapter<Feed> {
+        LinearLayout feed_bubble;
         private List<Feed> feed_list = new ArrayList<>();
         private Context context;
-        LinearLayout feed_bubble;
 
         public FeedAdapter(Context context, int resource, ArrayList<Feed> arr) {
             super(context, resource, arr);
             this.context = context;
             feed_list = arr;
-        }
-
-        /**
-         * To cache views of item
-         */
-        private class FHolder {
-            private TextView fh_user, fh_time, fh_msg;
-
-            FHolder() {
-            }
         }
 
         @Override
@@ -272,6 +260,16 @@ public class FeedView extends ListFragment implements View.OnClickListener {
             feed_bubble.setBackgroundResource(R.drawable.box);
 
             return cv;
+        }
+
+        /**
+         * To cache views of item
+         */
+        private class FHolder {
+            private TextView fh_user, fh_time, fh_msg;
+
+            FHolder() {
+            }
         }
     }
 }

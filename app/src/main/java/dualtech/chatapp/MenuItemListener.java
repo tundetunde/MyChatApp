@@ -28,7 +28,8 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
         switch(item.getItemId()){
             case R.id.action_add:
                 ContactView c = new ContactView();
-                i = new Intent().setClass(context, ProfilePage.class);
+                i = new Intent(context, MainActivity.class);
+                i.putExtra("tab_pos",2);
                 context.startActivity(i);
                 return true;
             case R.id.action_refresh:
@@ -72,6 +73,5 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
                 return false;
         }
     }
-
 
 }

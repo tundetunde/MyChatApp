@@ -151,6 +151,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
             @Override
             protected void onPostExecute(String msg) {
                 adapter2.notifyDataSetChanged();
+                setDynamicHeight(lvPhoneContacts);
                 Log.d(TAG, "Done list");
                 loader.setVisibility(View.GONE);
             }

@@ -27,7 +27,6 @@ public class PagerView extends FragmentStatePagerAdapter {
             case 1:
                 return new FeedView();
             case 2:
-                //return new ChatList();
                 return new ContactView();
             default:
                 return null;

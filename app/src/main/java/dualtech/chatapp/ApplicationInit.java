@@ -12,8 +12,10 @@ public class ApplicationInit extends Application {
     public static final String SHARED_PREF = "SharedPref";
     public static final String KEY_MSG_ID = "message_id";
     public static final String PROPERTY_PHOTO = "photo" ;
-    public static final String SERVER_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/GCMServer"; //Tunde
-    //public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer"; //Jesz
+    public static final String PROPERTY_CHAT_BG = "chat_bg" ;
+    public static final String PROPERTY_CHAT_BG_URL = "chat_bg_url" ;
+    //public static final String SERVER_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/GCMServer"; //Tunde
+    public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer"; //Jesz
     private static final String API_KEY = "AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY";
     private static final String PROJECT_ID = "dual-digital-000";
     private static final String PROJECT_NO = "25515784135";
@@ -22,7 +24,7 @@ public class ApplicationInit extends Application {
     private static String REGISTRATION_KEY;
     private static String MOBILE_NUMBER;
     private static String USER;
-     
+
     public static String getProjectNO(){ return PROJECT_NO;}
 
     public static String getMobile_number(){
@@ -32,7 +34,7 @@ public class ApplicationInit extends Application {
 
     public static void setMobile_number(String m){
         MOBILE_NUMBER = m;
-        editor.putString(ApplicationInit.PROPERTY_MOB_ID, m);
+        editor.putString(PROPERTY_MOB_ID, m);
         editor.apply();
     }
 
@@ -43,7 +45,7 @@ public class ApplicationInit extends Application {
 
     public static void setREGISTRATION_KEY(String r){
         REGISTRATION_KEY  = r;
-        editor.putString(ApplicationInit.PROPERTY_REG_ID, r);
+        editor.putString(PROPERTY_REG_ID, r);
         editor.apply();
     }
 
@@ -54,7 +56,25 @@ public class ApplicationInit extends Application {
 
     public static void setUser(String user) {
         USER = user;
-        editor.putString(ApplicationInit.PROPERTY_USER_NAME, user);
+        editor.putString(PROPERTY_USER_NAME, user);
+        editor.apply();
+    }
+
+    public static Boolean getChatBg() {
+        return PREFS.getBoolean(PROPERTY_CHAT_BG, false);
+    }
+
+    public static void setChatBg(Boolean b){
+        editor.putBoolean(PROPERTY_CHAT_BG, b);
+        editor.apply();
+    }
+
+    public static String getChatBgURL() {
+        return PREFS.getString(PROPERTY_CHAT_BG_URL, null);
+    }
+
+    public static void setChatBgURL(String s){
+        editor.putString(PROPERTY_CHAT_BG_URL, s);
         editor.apply();
     }
 

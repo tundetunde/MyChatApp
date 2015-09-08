@@ -1,34 +1,43 @@
 package dualtech.chatapp;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.io.IOException;
-
 /**
  * Created by Jesz on 20-Aug-15.
  */
 
-public class SettingsPage extends Activity {
+public class SettingsPage extends AppCompatActivity {
     ListView menu;
     String[] menuArray;
     Intent i;
     DbSqlite db;
+    Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
+
+        toolbar = (Toolbar) findViewById(R.id.settings_toolbar);
+        setSupportActionBar(toolbar);
+        assert getSupportActionBar() != null;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("SETTINGS");
+
         db = new DbSqlite(this);
         menu = (ListView)findViewById(R.id.lvSettings);
         menuArray = new String[]{"About Us","Chat Background", "Deactivate Account", "Help", "Clear Chats"};
@@ -38,7 +47,7 @@ public class SettingsPage extends Activity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
 
-                switch (position){
+                switch (position) {
                     case 0:
                         i = new Intent("dualtech.chatapp.ABOUTUS");
                         startActivity(i);
@@ -57,25 +66,6 @@ public class SettingsPage extends Activity {
                 }
             }
         });
-    }
-
-    public void displayDialog(){
-        new AlertDialog.Builder(this)
-                .setTitle("Delete entry")
-                .setMessage("Are you sure you want to delete this entry?")
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
-                        deleteChat();
-                    }
-                })
-                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // do nothing
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
     }
 
     private void deleteChat(){
@@ -100,6 +90,39 @@ public class SettingsPage extends Activity {
         }.execute(null, null, null);
     }
 
+    public void displayDialog(){
+        new AlertDialog.Builder(this)
+                .setTitle("Delete entry")
+                .setMessage("Are you sure you want to delete all chat history?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                        deleteChat();
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // do nothing
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                item.setOnMenuItemClickListener(new MenuItemListener(this));
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

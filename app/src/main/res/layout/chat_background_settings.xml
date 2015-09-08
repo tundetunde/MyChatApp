@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Chat Background"
-        android:id="@+id/tvChatSettingBg" />
+    <include
+        android:id="@+id/bg_toolbar"
+        layout="@layout/tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <Switch
+        android:id="@+id/switchChatBackground"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Background Photo"
-        android:id="@+id/switchChatBackground"
-        android:layout_below="@+id/tvChatSettingBg"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
+        android:layout_below="@+id/bg_toolbar"
         android:layout_marginTop="32dp"
-        android:layout_alignRight="@+id/tvChatSettingBg"
-        android:layout_alignEnd="@+id/tvChatSettingBg" />
+        android:text="Background Photo" />
 
     <Button
+        android:id="@+id/btChoosePhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Photo"
-        android:id="@+id/btChoosePhoto"
-        android:layout_marginTop="36dp"
         android:layout_below="@+id/switchChatBackground"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:text="Choose Photo"
+        android:visibility="gone" />
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
         android:id="@+id/ivBackgroundChat"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_below="@+id/btChoosePhoto"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true"
+        android:background="@color/bg_image"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -2,35 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <RelativeLayout
-        android:id="@+id/rLayout"
+    <include
+        android:id="@+id/profile_toolbar"
+        layout="@layout/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/menu_top">
-        <TextView
-            android:id="@+id/tv_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="PROFILE"
-            android:textSize="25sp"/>
-        <Button
-            android:id="@+id/pro_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/edit" />
-    </RelativeLayout>
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rLayout"
+        android:layout_below="@+id/profile_toolbar"
         android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
         android:background="#000000"
         android:gravity="center"
         android:orientation="vertical"
@@ -38,8 +22,8 @@
 
         <ImageView
             android:id="@+id/dpView"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="@dimen/dp_width"
+            android:layout_height="@dimen/dp_height"
             android:scaleType="fitCenter"
             android:src="@drawable/ppg"/>
     </LinearLayout>
