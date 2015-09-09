@@ -28,9 +28,11 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
@@ -42,6 +44,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Jesz on 18-Aug-15.
@@ -172,29 +176,45 @@ public class ProfilePage extends AppCompatActivity implements View.OnClickListen
             @Override
             protected String doInBackground(Void... params) {
                 String msg;
+                String id = String.valueOf(msgId());
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 selected.compress(Bitmap.CompressFormat.JPEG, 100, bos);
                 byte[] bArray = bos.toByteArray();
+                Gson gson = new Gson();
+                final String jsonPhoneList = gson.toJson(db.getAllContacts());
+                final String byteString = Base64.encodeToString(bArray, Base64.DEFAULT);
+                Log.d(TAG, "BYTE ARR: " + bArray.length);
+                Log.d(TAG, "BYTE STR: " + byteString.length());
+                Log.d(TAG, "BYTE ARR: " + (double)bArray.length/(1024*1024) + "MB");
+                Log.d(TAG, "BYTE STR: " + (double) byteString.getBytes().length / (1024 * 1024) + "MB");
 
-                try {
-                    String id = String.valueOf(msgId());
-                    Bundle data = new Bundle();
-                    Gson gson = new Gson();
-                    String jsonPhoneList = gson.toJson(db.getAllContacts());
-                    String byteString = Base64.encodeToString(bArray, Base64.DEFAULT);
-                    Log.d(TAG, "BYTE ARR: " + bArray.length);
-                    Log.d(TAG, "BYTE STR: " + byteString.length());
-                    Log.d(TAG, "BYTE ARR: " + (double)bArray.length/(1024*1024) + "MB");
-                    Log.d(TAG, "BYTE STR: " + (double)byteString.getBytes().length/ (1024*1024)+ "MB");
-                    data.putString("Type", "Photo");
-                    data.putString("ContactList", jsonPhoneList);
-                    data.putString("UserOwner", ApplicationInit.getMobile_number());
-                    data.putString("ProfilePic", byteString);
-                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
-                    msg = "Sent profile picture";
-                } catch (IOException ex) {
-                    msg = "Profile picture could not be sent";
-                }
+                StringRequest postRequest = new StringRequest(Request.Method.POST, ApplicationInit.SERVER_ADDRESS,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                Log.d(TAG, "Response: " + response);
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        Log.d(TAG, error.toString());
+                        Toast.makeText(getApplicationContext(), "Server failed to receive the RegID", Toast.LENGTH_SHORT).show();
+                    }
+                }){
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        // the POST parameters:
+                        params.put("Photo", "y");
+                        params.put("ContactList", jsonPhoneList);
+                        params.put("UserOwner", ApplicationInit.getMobile_number());
+                        params.put("ProfilePic", byteString);
+                        return params;
+                    }
+                };
+                Volley.newRequestQueue(ProfilePage.this).add(postRequest);
+                msg = "Profile picture could not be sent";
                 return msg;
             }
 
@@ -204,6 +224,7 @@ public class ProfilePage extends AppCompatActivity implements View.OnClickListen
                 Log.d(TAG, "PROFILE PICTURE SENT");
             }
         }.execute(null, null, null);
+
     }
 
     public Bitmap getThumbnail(File file){
