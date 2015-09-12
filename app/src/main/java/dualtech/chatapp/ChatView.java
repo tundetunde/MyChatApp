@@ -1,9 +1,11 @@
 package dualtech.chatapp;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,6 +50,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     static ListView lv;
     static LinearLayout BGlv;
     static Bitmap bmp;
+    static public boolean active;
+
     DbSqlite db;
     Toolbar toolbar;
     Button send;
@@ -111,6 +115,12 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         changeBackground();
     }
 
+    public void refreshChat(){
+        chatList.clear();
+        chatList = (ArrayList)db.getChatList();
+        adapter.notifyDataSetChanged();
+    }
+
     public void changeBackground(){
         if (ApplicationInit.getChatBgURL() != null){
             Bitmap bm = BitmapFactory.decodeFile(ApplicationInit.getChatBgURL());
@@ -138,12 +148,26 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.registerReceiver(mMessageReceiver, new IntentFilter("chicken"));
+        active = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.unregisterReceiver(mMessageReceiver);
+        active = false;
+    }
+
     private void sendMsg(final String txt, final String dt) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 String msg;
-                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(ChatView.this);;
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(ChatView.this);
                 try {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
@@ -169,6 +193,18 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             }
         }.execute(null, null, null);
     }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // Extract data included in the Intent
+            String message = intent.getStringExtra("message");
+            loadChat();
+
+            //do other stuff here
+        }
+    };
 
     private int msgId() {
         int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
@@ -233,6 +269,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             chatList.add(new ChatDbProvider(et_msg, 1, d));
             sendMsg(et_msg, d);
+            db = new DbSqlite(this);
             db.insertMessage(et_msg, ch_contact, 1);
             editText.setText("");
             adapter.notifyDataSetChanged();

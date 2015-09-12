@@ -62,7 +62,8 @@ public class MyGcmListenerService extends GcmListenerService {
         Gson gson;
         switch (type){
             case "msg":
-                db.insertMessage(message, sender, 0);
+                DbSqlite dbmsg = new DbSqlite(this);
+                dbmsg.insertMessage(message, sender, 0);
                 break;
             case "Feed":
                 String text = data.getString("msg");
@@ -119,7 +120,11 @@ public class MyGcmListenerService extends GcmListenerService {
          * that a message was received.
          */
         if(type.equals("msg")){
-            sendNotification(message, sender);
+            if(ChatView.active)
+                updateMyActivity(this, message, sender);
+            else
+                sendNotification(message, sender);
+
         }
     }
     // [END receive_message]
@@ -155,6 +160,17 @@ public class MyGcmListenerService extends GcmListenerService {
             cursor.close();
         }
         return name;
+    }
+
+    void updateMyActivity(Context context, String message, String contactID) {
+        Intent intent = new Intent("chicken");
+        //put whatever data you want to send, if any
+        String display = getContactName(contactID);
+        intent.putExtra("message", message);
+        intent.putExtra("display", display);
+        intent.putExtra("contact", contactID);
+        //send broadcast
+        context.sendBroadcast(intent);
     }
 
     /**

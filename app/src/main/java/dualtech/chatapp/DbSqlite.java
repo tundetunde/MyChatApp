@@ -91,12 +91,11 @@ public class DbSqlite extends SQLiteOpenHelper {
     }
 
     public void insertMessage(String s, String c, int sender){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
         if(checkChatList(c)){
             insertChatList(c);
         }
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
 
         values.put("msg", s);
         values.put("contact_id", c);
@@ -178,7 +177,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                List c = new ArrayList<>();
+                List<String> c = new ArrayList<String>();
                 c.add(cursor.getString(1));
                 c.add(cursor.getString(2));
                 c.add(cursor.getString(3));
