@@ -98,6 +98,8 @@ public class SettingsPage extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
                         deleteChat();
+                        i = new Intent("dualtech.chatapp.MAINACTIVITY");
+                        startActivity(i);
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

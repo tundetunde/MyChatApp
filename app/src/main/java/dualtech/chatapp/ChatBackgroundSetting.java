@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -56,7 +58,6 @@ public class ChatBackgroundSetting extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("CHAT BACKGROUND");
-
         initialize();
     }
 
