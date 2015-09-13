@@ -1,7 +1,9 @@
 package dualtech.chatapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -43,17 +45,30 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import static com.google.android.gms.internal.zzhl.runOnUiThread;
+
 public class FeedView extends ListFragment implements View.OnClickListener {
-    static SharedPreferences prefs;
+
+    private static final String TAG = "FEEDVIEW";
+    static ArrayList<Feed> feed_query = new ArrayList<>();
+    static FeedAdapter adapter;
     DbSqlite db;
     Button btn_share;
     EditText et_feed;
     String update;
     GoogleCloudMessaging gcm;
     ArrayList e;
-    ArrayList<Feed> feed_query = new ArrayList<>();
     ArrayList<String> contacts;
-    FeedAdapter adapter;
+    private BroadcastReceiver mFeedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            refreshFeed();
+            Log.d(TAG, "FEED Refreshed");
+
+            //do other stuff here
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,7 +80,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         contacts = new ArrayList<>(s);
         contacts.remove(ApplicationInit.getMobile_number()); //removes device mobile number if exists
         //[End of duplicate removal]
-        prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         btn_share = (Button) v.findViewById(R.id.btnGo);
         btn_share.setOnClickListener(this);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
@@ -89,8 +103,22 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         et_feed.addTextChangedListener(text_watch);
         refreshFeed();
 
+        //getActivity().registerReceiver(feedBroadcastReceiver, new IntentFilter("REFRESH_FEED"));
+
         setHasOptionsMenu(true);
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(mFeedReceiver, new IntentFilter("chicken"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mFeedReceiver);
     }
 
     @Override
@@ -100,8 +128,8 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 update = String.valueOf(et_feed.getText());
                 String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
                 if(update!=null) {
-                    storeUpdate(update);
-                    String name = getContactName(prefs.getString(ApplicationInit.PROPERTY_MOB_ID, null));
+                    ApplicationInit.storeUpdate(update);
+                    String name = getContactName(ApplicationInit.getMobile_number());
                     send(update, time);
                     db.insertFeed(name, update, time);
                     feed_query.add(0, new Feed(name,update, time));
@@ -119,12 +147,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         menu.findItem(R.id.action_refresh).setVisible(false).setEnabled(false);
     }
 
-    public void storeUpdate(String  s){
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(ApplicationInit.PROPERTY_STATUS, s);
-        editor.apply();
-    }
-
     private String listToJSON(ArrayList x){
         Gson gson = new Gson();
         String jsonCartList = gson.toJson(x);
@@ -132,10 +154,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     }
 
     private int msgId() {
-        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
-        editor.apply();
+        int id = ApplicationInit.getMsgId();
         return id;
     }
 
@@ -166,12 +185,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 Log.d("FEED", "MESSAGE SENT");
             }
         }.execute(null, null, null);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        refreshFeed();
     }
 
     public void refreshFeed(){

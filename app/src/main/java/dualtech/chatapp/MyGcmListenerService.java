@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
@@ -45,6 +46,7 @@ public class MyGcmListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
+        //broadcastManager = LocalBroadcastManager.getInstance(this);
         String message = data.getString("GCM_msg");
         String type = data.getString("Type");
         String contact = data.getString("GCM_contactId");
@@ -69,6 +71,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 String text = data.getString("msg");
                 Log.d("CHECK FEED", user);
                 db.insertFeed(user, text, time);
+                Intent fin = new Intent("FEED");
+                this.sendBroadcast(fin);
                 break;
             case "Contact":
                 String listString = data.getString("Contacts");
@@ -78,11 +82,6 @@ public class MyGcmListenerService extends GcmListenerService {
                 list = gson.fromJson(listString, token.getType());
                 System.out.println("Returned List: " + list);
                 db.insertContacts(list);
-                /*ArrayList<Contact> lista = new ArrayList<>();
-                for (Object s : list){lista.add(new Contact(getContactName(s.toString()), s.toString()));}
-                System.out.println("LIST RETURNED");
-                ContactView.updateList(lista);
-                */
                 break;
             case "Photo":
                 String image = data.getString("msg");

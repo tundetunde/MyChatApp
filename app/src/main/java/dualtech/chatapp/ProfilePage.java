@@ -199,7 +199,7 @@ public class ProfilePage extends AppCompatActivity implements View.OnClickListen
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
                         Log.d(TAG, error.toString());
-                        Toast.makeText(getApplicationContext(), "Server failed to receive the RegID", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Server failed to receive the Photo", Toast.LENGTH_SHORT).show();
                     }
                 }){
                     @Override
@@ -248,7 +248,7 @@ public class ProfilePage extends AppCompatActivity implements View.OnClickListen
     }
 
     public Bitmap getOriginalImg(String path){
-        Bitmap bm;// = BitmapFactory.decodeFile(path);
+        Bitmap bm;
         BitmapFactory.Options op = new BitmapFactory.Options();
         op.inScaled = false;
         bm = BitmapFactory.decodeFile(path, op);

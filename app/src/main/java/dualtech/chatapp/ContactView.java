@@ -1,12 +1,10 @@
 package dualtech.chatapp;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
@@ -16,146 +14,93 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.WindowManager;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
+import android.widget.CompoundButton;
+import android.widget.ExpandableListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.gson.Gson;
-
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-
-import static com.google.android.gms.internal.zzhl.runOnUiThread;
+import java.util.Map;
 
 public class ContactView extends Fragment implements View.OnClickListener{
     private static final String TAG = "CONTACTVIEW";
-    static ArrayList<String> appContacts;
-    static ArrayList<Contact> app_contact;
-    static ContactViewAdapter adapter;
+    static ArrayList<Contact> app_friend, app_contact, sent_request, received_request;
+    Map<String,ArrayList<Contact>> exCollection;
+    ExpandableListView exListView;
     ProgressBar loader;
-    List<String> cc, numbers;
-    GoogleCloudMessaging gcm;
     DbSqlite db;
-    ListView lvAppContacts, lvPhoneContacts;
+    Button invite;
     SharedPreferences prefs;
-    ArrayAdapter<String> adapter2;
+    ExContactListAdapter exAdapter;
+    List<String> exGroup = Arrays.asList("Friends", "Contacts On App", "Sent Requests", "Received Requests");
 
-    public static void updateList(final ArrayList<Contact> list){
-        runOnUiThread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        app_contact.clear();
-                        app_contact = list;
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-        );
-    }
-
-   public static void setDynamicHeight(ListView list){
-        ArrayAdapter adapter = (ArrayAdapter) list.getAdapter();
-        if(adapter == null){
-            return;
-        }
-        int height = 0;
-
-        for(int i = 0; i < adapter.getCount(); i++){
-            View listItem = adapter.getView(i,null, list);
-            listItem.measure(0,0);
-            height += listItem.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams param = list.getLayoutParams();
-        param.height = height + (list.getDividerHeight() * (adapter.getCount()-1));
-        list.setLayoutParams(param);
-        list.requestLayout();
-   }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.contact_list, container, false);
-        prefs = v.getContext().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
-        gcm = GoogleCloudMessaging.getInstance(getActivity());
-        cc = new ArrayList<>();
-        numbers = new ArrayList<>();
         db = new DbSqlite(getActivity());
-        read_contact();
+        exCollection = new HashMap<>();
+        app_friend = new ArrayList<>();
+        app_contact = new ArrayList<>();
+        sent_request = new ArrayList<>();
+        received_request = new ArrayList<>();
         initialize(v);
         setHasOptionsMenu(true);
         return v;
     }
 
     private void initialize(final View v){
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        invite = (Button) v.findViewById(R.id.btnInvite);
+        invite.setOnClickListener(this);
         loader = (ProgressBar) v.findViewById(R.id.contact_load);
-        loader.setVisibility(View.VISIBLE);
-        lvAppContacts = (ListView) v.findViewById(R.id.lvAppContacts);
-        appContacts = (ArrayList<String>) db.getAllContacts();
-        app_contact = new ArrayList<>();
-        for(String s: appContacts){app_contact.add(new Contact(getContactName(s), s));}
-        adapter = new ContactViewAdapter(v.getContext(), android.R.layout.simple_list_item_1, app_contact);
-        lvAppContacts.setAdapter(adapter);
+        exListView = (ExpandableListView) v.findViewById(R.id.expandLV);
 
-        lvAppContacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        exListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                Intent newActivity = new Intent(v.getContext(), ChatView.class);
-                String s = arg0.getItemAtPosition(position).toString();
-                Contact c = (Contact) arg0.getItemAtPosition(position);
-                newActivity.putExtra("display", s);
-                newActivity.putExtra("contact", c.number);
-                startActivity(newActivity);
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                exListView.expandGroup(groupPosition);
+                return false;
             }
         });
-        lvPhoneContacts = (ListView)v.findViewById(R.id.lvPhoneContacts);
-        adapter2 = new ArrayAdapter<>(v.getContext(), android.R.layout.simple_list_item_1, cc);
-        lvPhoneContacts.setAdapter(adapter2);
 
+        getChildData();
+        exCollection.put(exGroup.get(0), app_friend);
+        exCollection.put(exGroup.get(1), app_contact);
+        exCollection.put(exGroup.get(2), sent_request);
+        exCollection.put(exGroup.get(3), received_request);
 
-        setDynamicHeight(lvAppContacts);
-        setDynamicHeight(lvPhoneContacts);
+        exAdapter = new ExContactListAdapter(exGroup, exCollection);
+        exAdapter.setInflater((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE), getActivity());
+        exListView.setAdapter(exAdapter);
+
+        loader.setVisibility(View.GONE);
     }
 
-    public void read_contact() {
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                Log.d(TAG, "doInBack");
-                ContentResolver CR = getActivity().getContentResolver();
-                Cursor contact_details = CR.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                        ContactsContract.Contacts.HAS_PHONE_NUMBER + " = 1", null,
-                        "UPPER (" + ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + ") ASC");
+    public void getChildData(){
+        ArrayList<String> appContacts  = (ArrayList<String>) db.getAllContacts();
+        ArrayList<String> fndContact  = (ArrayList<String>) db.getAllFriends();
+        ArrayList<String> sentContacts  = (ArrayList<String>) db.getSentRequest();
+        ArrayList<String> receivedContact  = (ArrayList<String>) db.getRequest();
 
-                if (contact_details.moveToFirst()) {
-                    do {
-                        String contactName = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                        String phoneNumber;
+        for(String s: appContacts){app_contact.add(new Contact(getContactName(s), s));}
+        for(String s: fndContact){app_friend.add(new Contact(getContactName(s), s));}
+        for(String s: sentContacts){sent_request.add(new Contact(getContactName(s), s));}
+        for(String s: receivedContact){received_request.add(new Contact(getContactName(s), s));}
 
-                        if (Integer.parseInt(contact_details.getString(contact_details.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                            //Get all associated numbers
-                            phoneNumber = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-
-                            cc.add(contactName + "   " + phoneNumber);
-                            numbers.add(phoneNumber);
-                        }
-                    } while (contact_details.moveToNext());
-                }
-                contact_details.close();
-                Log.d(TAG, "Done");
-                return "DONE";
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                adapter2.notifyDataSetChanged();
-                setDynamicHeight(lvPhoneContacts);
-                Log.d(TAG, "Done list");
-                loader.setVisibility(View.GONE);
-            }
-        }.execute();
+        System.out.println("APP_CONTACT: " + app_contact);
+        System.out.println("APP_CONTACT: " + app_friend);
+        System.out.println("APP_CONTACT: " + sent_request);
+        System.out.println("APP_CONTACT: " + received_request);
     }
 
     public String getContactName(String num){
@@ -173,33 +118,130 @@ public class ContactView extends Fragment implements View.OnClickListener{
     }
 
     @Override
-    public void onClick(View v) {
-
-    }
-
-    @Override
     public void onPrepareOptionsMenu(Menu menu){
         menu.findItem(R.id.action_add).setVisible(false).setEnabled(false);
     }
 
-    private class ContactViewAdapter extends ArrayAdapter<Contact> {
-        private List<Contact> lt_contact = new ArrayList<>();
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btnInvite:
+                Intent i = new Intent().setClass(getActivity(), InviteContact.class);
+                startActivity(i);
+            default:
+                return;
+        }
+    }
 
-        public ContactViewAdapter(Context context, int resource, ArrayList<Contact> arr) {
-            super(context, resource, arr);
-            lt_contact = arr;
+    public class ExContactListAdapter extends BaseExpandableListAdapter{
+        Context baseContext;
+        LayoutInflater inflater;
+        List<String> parentItem;
+        ArrayList<Contact> rowItem;
+        Map<String, ArrayList<Contact>> childItem;
+
+        public ExContactListAdapter(List<String> l, Map<String, ArrayList<Contact>> col){
+            parentItem = l;
+            childItem = col;
+        }
+
+        public void setInflater(LayoutInflater in, Context c){
+            inflater = in;
+            baseContext = c;
         }
 
         @Override
-        public void add(Contact s){
-            lt_contact.add(s);
-            notifyDataSetChanged();
+        public int getGroupCount() {
+            return parentItem.size();
         }
 
         @Override
-        public Contact getItem(int position) {
-            return lt_contact.get(position);
+        public int getChildrenCount(int groupPosition) {
+            return childItem.get(parentItem.get(groupPosition)).size();
         }
 
+        @Override
+        public Object getGroup(int groupPosition) {
+            return null;
+        }
+
+        @Override
+        public Object getChild(int groupPosition, int childPosition) {
+            return null;
+        }
+
+        @Override
+        public long getGroupId(int groupPosition) {
+            return 0;
+        }
+
+        @Override
+        public long getChildId(int groupPosition, int childPosition) {
+            return 0;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+            if (convertView == null){
+                convertView = inflater.inflate(R.layout.group_row, null);
+                ((CheckedTextView)convertView).setText(parentItem.get(groupPosition));
+                ((CheckedTextView)convertView).setChecked(isExpanded);
+            }
+            ExpandableListView lv = (ExpandableListView) parent;
+            lv.expandGroup(groupPosition);
+
+            return convertView;
+        }
+
+        @Override
+        public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+            rowItem = childItem.get(parentItem.get(groupPosition));
+            if(convertView == null){
+                convertView = inflater.inflate(R.layout.child_row, null);
+            }
+            TextView childText = (TextView) convertView.findViewById(R.id.childTV);
+            CheckBox childChkBox = (CheckBox) convertView.findViewById(R.id.chkRequest);
+            childText.setText(rowItem.get(childPosition).toString());
+
+            if(groupPosition == 0){childChkBox.setVisibility(View.GONE);
+            }else if(groupPosition == 3){childChkBox.setChecked(true);}
+
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (groupPosition == 0) {
+                        Intent newActivity = new Intent(v.getContext(), ChatView.class);
+                        Contact c = rowItem.get(childPosition);
+                        newActivity.putExtra("display", c.name);
+                        newActivity.putExtra("contact", c.number);
+                        startActivity(newActivity);
+                    }
+                }
+            });
+            childChkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (buttonView.isChecked()) {
+                        Log.d(TAG, "Checked!!!");
+                        //Toast.makeText(ContactView.class,"Unchecked!!!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d(TAG, "UnChecked!!!");
+                        //Toast.makeText(ContactView.class, "Checked!!!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            return convertView;
+        }
+
+        @Override
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            return false;
+        }
     }
 }

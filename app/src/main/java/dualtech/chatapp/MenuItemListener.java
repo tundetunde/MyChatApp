@@ -30,6 +30,7 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
                 ContactView c = new ContactView();
                 i = new Intent(context, MainActivity.class);
                 i.putExtra("tab_pos",2);
+                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(i);
                 return true;
             case R.id.action_refresh:

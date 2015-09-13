@@ -14,8 +14,8 @@ public class ApplicationInit extends Application {
     public static final String PROPERTY_PHOTO = "photo" ;
     public static final String PROPERTY_CHAT_BG = "chat_bg" ;
     public static final String PROPERTY_CHAT_BG_URL = "chat_bg_url" ;
-    public static final String SERVER_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/GCMServer"; //Tunde
-    //public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer"; //Jesz
+    //public static final String SERVER_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/GCMServer"; //Tunde
+    public static final String SERVER_ADDRESS = "http://192.168.43.165:8080/ChatServerDual/GCMServer"; //Jesz
     private static final String API_KEY = "AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY";
     private static final String PROJECT_ID = "dual-digital-000";
     private static final String PROJECT_NO = "25515784135";
@@ -24,6 +24,13 @@ public class ApplicationInit extends Application {
     private static String REGISTRATION_KEY;
     private static String MOBILE_NUMBER;
     private static String USER;
+
+    public static int getMsgId() {
+        int id = PREFS.getInt(ApplicationInit.KEY_MSG_ID, 0);
+        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
+        editor.apply();
+        return id;
+    }
 
     public static String getProjectNO(){ return PROJECT_NO;}
 
@@ -75,6 +82,11 @@ public class ApplicationInit extends Application {
 
     public static void setChatBgURL(String s){
         editor.putString(PROPERTY_CHAT_BG_URL, s);
+        editor.apply();
+    }
+
+    public static void storeUpdate(String  s){
+        editor.putString(PROPERTY_STATUS, s);
         editor.apply();
     }
 

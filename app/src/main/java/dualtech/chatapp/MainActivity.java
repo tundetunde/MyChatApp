@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity{
     ViewPager pager;
     PagerView adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Chat","Feed", "Contact"};
+    CharSequence Titles[]={"Chat","Feed", "Friends"};
     int Numboftabs  = Titles.length;
 
     @Override
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity{
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
         pager.setCurrentItem(pos);
+        pager.setOffscreenPageLimit(Titles.length);
 
         // Assiging the Sliding Tab Layout View
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);

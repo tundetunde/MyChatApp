@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/checkTV" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:drawableEnd="@android:drawable/ic_input_add"
+    android:drawableRight="@android:drawable/ic_input_add"
+    android:gravity="center_vertical"
+    android:orientation="vertical" android:paddingBottom="15dp"
+    android:paddingEnd="30dp" android:paddingLeft="35dp"
+    android:paddingRight="30dp"
+    android:paddingTop="15dp"
+    android:text="Hello" android:textSize="20sp"
+    android:textStyle="bold"
+    />
