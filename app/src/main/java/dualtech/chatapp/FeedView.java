@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -216,7 +217,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     }
 
     private class FeedAdapter extends ArrayAdapter<Feed> {
-        LinearLayout feed_bubble;
+        RelativeLayout feed_bubble;
         private List<Feed> feed_list = new ArrayList<>();
         private Context context;
 
@@ -256,7 +257,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
             holder.fh_user.setText(User);
             holder.fh_time.setText(Time);
 
-            feed_bubble = (LinearLayout) cv.findViewById(R.id.fd_bubble);
+            feed_bubble = (RelativeLayout) cv.findViewById(R.id.fd_bubble);
             feed_bubble.setBackgroundResource(R.drawable.box);
 
             return cv;

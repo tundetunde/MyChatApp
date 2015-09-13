@@ -4,8 +4,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_margin="10dp"
         android:padding="5dp"
@@ -17,30 +18,44 @@
             android:layout_height="wrap_content"
             android:textSize="17sp"
             android:textStyle="bold"
-            android:layout_gravity="start"
             android:textColor="@android:color/primary_text_light"
             android:text="Hello World"
-            />
+            android:layout_alignTop="@+id/imageView"
+            android:layout_toRightOf="@+id/imageView"
+            android:layout_toEndOf="@+id/imageView" />
+
         <TextView
             android:id="@+id/fd_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"
-            android:layout_gravity="end"
+            android:layout_gravity="right"
             android:textColor="@android:color/primary_text_light"
             android:text="11/08/2015"
-            />
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
         <TextView
             android:id="@+id/fd_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_gravity="start"
             android:textColor="@android:color/primary_text_light"
             android:text="Hello World MSG"
-            />
-    </LinearLayout>
+            android:layout_below="@+id/fd_user"
+            android:layout_toRightOf="@+id/imageView"
+            android:layout_toEndOf="@+id/imageView" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/imageView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="10dp"
+            android:background="#FFC107"/>
+    </RelativeLayout>
 
 </LinearLayout>
