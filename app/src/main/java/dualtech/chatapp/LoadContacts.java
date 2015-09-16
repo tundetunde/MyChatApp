@@ -17,12 +17,22 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
 /**
  * Created by tunde_000 on 31/08/2015.
@@ -46,21 +56,72 @@ public class LoadContacts extends Activity{
         gcm = GoogleCloudMessaging.getInstance(this);
     }
 
+    private ArrayList<String> generateList(){
+        ArrayList<String> chicken = new ArrayList<String>();
+        for(int i = 0; i < 499; i++)
+            chicken.add(i, "12345678900");
+        chicken.add("00000000000");
+        return chicken;
+    }
+
+    private void getContactsVolley(){
+        StringRequest postRequest = new StringRequest(Request.Method.POST, ApplicationInit.SERVER_ADDRESS,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "Response: " + response);
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                Log.d(TAG, error.toString());
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                // the POST parameters:
+                Gson gson = new Gson();
+                String jsonPhoneList = "";
+                ArrayList<String> hs = new ArrayList<String>();
+                //TestList: ArrayList<String> h1 = generateList();
+                hs.addAll(numbers);
+                numbers.clear();
+                numbers.addAll(hs);
+                jsonPhoneList = gson.toJson(hs);
+                params.put("Contacts", "c");
+                params.put("List", jsonPhoneList);
+                params.put("Phone", ApplicationInit.getMobile_number());
+
+                return params;
+            }
+        };
+        Volley.newRequestQueue(this).add(postRequest);
+    }
+
     private void getContactsFromServer(){
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 String msg;
-                HashSet<String> hs = new HashSet<>();
+                ArrayList<String> hs = new ArrayList<String>();
                 hs.addAll(numbers);
                 numbers.clear();
                 numbers.addAll(hs);
-
                 try {
                     String id = String.valueOf(ApplicationInit.getMsgId());
                     Bundle data = new Bundle();
                     Gson gson = new Gson();
-                    String jsonPhoneList = gson.toJson(numbers);
+                    int num = numbers.size();
+                    int si = hs.size();
+                    String jsonPhoneList = "";
+                    jsonPhoneList = gson.toJson(hs);
+                    byte[] bytes = jsonPhoneList.getBytes();
+                    Log.d("json list", jsonPhoneList);
+                    Log.d("json size", Integer.toString(si));
+                    Log.d("byte size", Integer.toString(bytes.length));
                     data.putString("Type", "Contacts");
                     data.putString("List", jsonPhoneList);
                     data.putString("Phone", prefs.getString(ApplicationInit.PROPERTY_REG_ID,null));
@@ -113,7 +174,11 @@ public class LoadContacts extends Activity{
             @Override
             protected void onPostExecute(String msg) {
                 Log.d(TAG, "Done list");
-                getContactsFromServer();
+                //getContactsFromServer();
+                getContactsVolley();
+                Intent openMain = new Intent("dualtech.chatapp.MAINACTIVITY");
+                openMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(openMain);
             }
         }.execute();
     }

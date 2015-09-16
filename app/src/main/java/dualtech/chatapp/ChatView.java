@@ -47,30 +47,19 @@ import java.util.List;
 import java.util.Locale;
 
 public class ChatView extends AppCompatActivity implements View.OnClickListener {
-    static public boolean active;
     static ListView lv;
     static LinearLayout BGlv;
     static Bitmap bmp;
     DbSqlite db;
     Toolbar toolbar;
     Button send;
+    static boolean active;
     EditText editText;
     TextWatcher text_watch;
     String et_msg, ch_contact, ch_display, ch_sender;
     ArrayList chatList;
     ArrayAdapter<ChatDbProvider> adapter;
     SharedPreferences prefs;
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            // Extract data included in the Intent
-            String message = intent.getStringExtra("message");
-            loadChat();
-
-            //do other stuff here
-        }
-    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,6 +193,18 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         }.execute(null, null, null);
     }
 
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // Extract data included in the Intent
+            String message = intent.getStringExtra("message");
+            loadChat();
+
+            //do other stuff here
+        }
+    };
+
     private int msgId() {
         int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
         SharedPreferences.Editor editor = prefs.edit();
@@ -250,6 +251,14 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 item.setOnMenuItemClickListener(new MenuItemListener(this));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent openMain = new Intent("dualtech.chatapp.MAINACTIVITY");
+        openMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(openMain);
+        finish();
     }
 
     @Override
