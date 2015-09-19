@@ -52,16 +52,30 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         db = new DbSqlite(getActivity());
         chatList = (ArrayList)db.getChatList();
         chatName = new ArrayList<>();
-        for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
+        //for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
         //adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
-        setListAdapter(adapter);
+        //setListAdapter(adapter);
         setHasOptionsMenu(true);
+        refreshChatList();
         return v;
     }
 
     @Override
     public void onClick(View v) {
 
+    }
+
+    public void refreshChatList(){
+        List<String> query = db.getChatList();
+        chatList.clear();
+        chat_query.clear();
+        for (String s : query) {
+            chat_query.add(new ChatItem(getContactName(s), s));
+        }
+        //chatList = (ArrayList)db.getChatList();adapter = new FeedAdapter(getActivity(), R.layout.feed_box, feed_query);
+        adapter = new ChatListAdapter(getActivity(), R.layout.feed_box, chat_query);
+        setListAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -95,9 +109,8 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent = new Intent(getActivity(), ChatView.class);
-        String s = l.getItemAtPosition(position).toString();
-        Contact c = (Contact) l.getItemAtPosition(position);
-        intent.putExtra("display", s);
+        ChatItem c = (ChatItem) l.getItemAtPosition(position);
+        intent.putExtra("display", c.user);
         intent.putExtra("contact", c.number);
         startActivity(intent);
     }
@@ -193,7 +206,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
             if (cv == null) {
                 cv = LayoutInflater.from(context).inflate(R.layout.chat_list_box, parent, false);
                 holder = new FHolder();
-                holder.fh_user = (TextView) cv.findViewById(R.id.fd_user);
+                holder.fh_user = (TextView) cv.findViewById(R.id.chat_user);
                 holder.fh_displayPic = (ImageView) cv.findViewById(R.id.ivProfile1);
                 cv.setTag(holder);
             } else {

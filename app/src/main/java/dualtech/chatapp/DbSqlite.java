@@ -44,6 +44,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
     public DbSqlite(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
+        demoList();
     }
 
     @Override
@@ -307,5 +308,22 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.delete(TABLE_CHATLIST, null, null);
         db.delete(TABLE_CONTACTS, null, null);
         db.delete(TABLE_FEED, null, null);
+    }
+
+    private void demoList(){
+        if(checkChatList("07930332130")){
+            insertChatList("07930332130");
+        }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("msg", "chickeh");
+        values.put("contact_id", "07930332130");
+        values.put("sender", "07944447710");
+
+        db.insert(TABLE_MESSAGES, null, values);
+        Log.d(TAG, "ADDED DEMO : ");
+        db.close();
     }
 }
