@@ -207,6 +207,8 @@ public class ChatList extends ListFragment implements View.OnClickListener{
                 cv = LayoutInflater.from(context).inflate(R.layout.chat_list_box, parent, false);
                 holder = new FHolder();
                 holder.fh_user = (TextView) cv.findViewById(R.id.chat_user);
+                holder.fh_msg = (TextView) cv.findViewById(R.id.tvMsg);
+                holder.fh_time = (TextView) cv.findViewById(R.id.lastMsgTime);
                 holder.fh_displayPic = (ImageView) cv.findViewById(R.id.ivProfile1);
                 cv.setTag(holder);
             } else {
@@ -216,9 +218,12 @@ public class ChatList extends ListFragment implements View.OnClickListener{
             ChatItem p = getItem(position);
             String User = p.user;
             String number = p.number;
-
+            String msg = db.getLastMessage(number);
+            String time = db.getLastMessageTime(number);
             holder.fh_user.setText(User);
-            Drawable profilePic = null;
+            holder.fh_msg.setText(msg);
+            holder.fh_time.setText(time);
+            Drawable profilePic;
             profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
             if(profilePic != null)
                 holder.fh_displayPic.setImageDrawable(profilePic);
@@ -233,7 +238,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
          * To cache views of item
          */
         private class FHolder {
-            private TextView fh_user;
+            private TextView fh_user, fh_msg, fh_time;
             private ImageView fh_displayPic;
 
             FHolder() {

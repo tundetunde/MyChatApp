@@ -318,12 +318,46 @@ public class DbSqlite extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put("msg", "chickeh");
+        values.put("msg", "boo");
         values.put("contact_id", "07930332130");
         values.put("sender", "07944447710");
 
         db.insert(TABLE_MESSAGES, null, values);
         Log.d(TAG, "ADDED DEMO : ");
         db.close();
+    }
+
+    public String getLastMessage(String c){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String msg = "";
+        String selectQuery = "SELECT msg FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "') OR (sender = '" + c + "')"
+                + " ORDER BY id DESC LIMIT 1";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                msg = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d(TAG, "LAST MESSAGE");
+        return msg;
+    }
+
+    public String getLastMessageTime(String c){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String msg = "";
+        String selectQuery = "SELECT datetime FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "') OR (sender = '" + c + "')"
+                + " ORDER BY id DESC LIMIT 1";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                msg = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d(TAG, "LAST MESSAGE");
+        return msg;
     }
 }
