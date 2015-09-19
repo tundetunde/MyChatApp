@@ -2,6 +2,7 @@ package dualtech.chatapp;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.StringRes;
@@ -27,6 +29,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,13 +86,15 @@ public class MyGcmListenerService extends GcmListenerService {
                 gson = new Gson();
                 TypeToken<List<String>> token = new TypeToken<List<String>>() {};
                 list = gson.fromJson(listString, token.getType());
-                System.out.println("Returned List: " + list);
+                Log.d("Returned List: ", list.toString());
                 db.insertContacts(list);
                 break;
             case "Photo":
                 String image = data.getString("msg");
-                byte[] byt = image.getBytes();
-                saveToInternalStorage(user, byt);
+                String number = data.getString("GCM_FROM");
+                /*byte[] byt = image.getBytes();
+                saveToInternalStorage(user, byt);*/
+                downloadImg(image, number);
                 break;
             case "ContactsPhoto":
                 String photolist = data.getString("ListPhoto");
@@ -128,6 +136,44 @@ public class MyGcmListenerService extends GcmListenerService {
     }
     // [END receive_message]
 
+    private void downloadImg(final String user,final String img){
+        final ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                File mypath = null;
+                Bitmap bitmap = null;
+                try {
+                    bitmap = BitmapFactory.decodeStream((InputStream)new URL(img).getContent());
+                    File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+                    // Create imageDir
+                    mypath = new File(directory, "profile_" + user + ".jpg");
+                } catch (MalformedURLException e) {
+                    Log.d("Error", "downloading Image");
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.d("Error", "Saving Image 1");
+                    e.printStackTrace();
+                }
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(mypath);
+                    // Use the compress method on the BitMap object to write image to the OutputStream
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                    fos.close();
+                } catch (Exception e) {
+                    Log.d("Error", "Saving Image");
+                    e.printStackTrace();
+                }
+                return "";
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                Log.d("Stored img", user);
+            }
+        }.execute();
+    }
     private void saveToInternalStorage(String user, byte[] imgByte){
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir

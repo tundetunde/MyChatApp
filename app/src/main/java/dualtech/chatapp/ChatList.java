@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -29,12 +32,14 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ChatList extends ListFragment implements View.OnClickListener{
     DbSqlite db;
     ArrayList<String> chatList;
     ArrayList<Contact> chatName;
-    ArrayAdapter<Contact> adapter;
+    ChatListAdapter adapter;
+    static ArrayList<ChatItem> chat_query = new ArrayList<>();
     GoogleCloudMessaging gcm;
     SharedPreferences prefs;
 
@@ -48,7 +53,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         chatList = (ArrayList)db.getChatList();
         chatName = new ArrayList<>();
         for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
-        adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
+        //adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
         setListAdapter(adapter);
         setHasOptionsMenu(true);
         return v;
@@ -62,8 +67,15 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
+        List<String> query = db.getChatList();
         chatList.clear();
-        chatList = (ArrayList)db.getChatList();
+        chat_query.clear();
+        for (String s : query) {
+            chat_query.add(new ChatItem(getContactName(s), s));
+        }
+        //chatList = (ArrayList)db.getChatList();adapter = new FeedAdapter(getActivity(), R.layout.feed_box, feed_query);
+        adapter = new ChatListAdapter(getActivity(), R.layout.feed_box, chat_query);
+        setListAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
 
@@ -142,5 +154,77 @@ public class ChatList extends ListFragment implements View.OnClickListener{
             }
         }
         return returnedList;
+    }
+
+    public class ChatItem{
+        String user, number;
+
+        ChatItem(String u, String n){
+            user = u;
+            number = n;
+        }
+    }
+
+    private class ChatListAdapter extends ArrayAdapter<ChatItem> {
+        RelativeLayout feed_bubble;
+        private List<ChatItem> feed_list = new ArrayList<>();
+        private Context context;
+        final ContextWrapper cw;
+        File directory;
+
+        public ChatListAdapter(Context context, int resource, ArrayList<ChatItem> arr) {
+            super(context, resource, arr);
+            this.context = context;
+            feed_list = arr;
+            cw = new ContextWrapper(context.getApplicationContext());
+            directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        }
+
+        @Override
+        public ChatItem getItem(int position) {
+            // TODO Auto-generated method stub
+            return feed_list.get(position);
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            FHolder holder;
+            View cv = convertView;
+
+            if (cv == null) {
+                cv = LayoutInflater.from(context).inflate(R.layout.chat_list_box, parent, false);
+                holder = new FHolder();
+                holder.fh_user = (TextView) cv.findViewById(R.id.fd_user);
+                holder.fh_displayPic = (ImageView) cv.findViewById(R.id.ivProfile1);
+                cv.setTag(holder);
+            } else {
+                holder = (FHolder) cv.getTag();
+            }
+
+            ChatItem p = getItem(position);
+            String User = p.user;
+            String number = p.number;
+
+            holder.fh_user.setText(User);
+            Drawable profilePic = null;
+            profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
+            if(profilePic != null)
+                holder.fh_displayPic.setImageDrawable(profilePic);
+
+            feed_bubble = (RelativeLayout) cv.findViewById(R.id.chatList_bubble);
+            feed_bubble.setBackgroundResource(R.drawable.box);
+
+            return cv;
+        }
+
+        /**
+         * To cache views of item
+         */
+        private class FHolder {
+            private TextView fh_user;
+            private ImageView fh_displayPic;
+
+            FHolder() {
+            }
+        }
     }
 }
