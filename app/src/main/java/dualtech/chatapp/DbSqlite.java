@@ -44,7 +44,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
     public DbSqlite(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        demoList();
+        //demoList();
     }
 
     @Override

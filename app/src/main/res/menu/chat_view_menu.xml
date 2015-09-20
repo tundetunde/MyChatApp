@@ -2,6 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
     <item
+        android:id="@+id/action_ch_profilePic"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="View Contact Info"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/action_ch_info"
         android:icon="@android:drawable/ic_menu_info_details"
         android:title="View Contact Info"

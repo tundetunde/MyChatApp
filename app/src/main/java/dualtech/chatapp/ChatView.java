@@ -3,6 +3,7 @@ package dualtech.chatapp;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -11,10 +12,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -38,6 +41,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,6 +64,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     ArrayList chatList;
     ArrayAdapter<ChatDbProvider> adapter;
     SharedPreferences prefs;
+    TextView tvTitle, tvSub;
+    ImageView ivProfile;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,10 +78,15 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.chat_view_actionbar);
+
         Bundle bundle = getIntent().getExtras();
         prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
+
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
+
         ch_sender = ApplicationInit.getMobile_number();
         db = new DbSqlite(this);
         initialize();
@@ -83,9 +94,18 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void initialize() {
-        assert getSupportActionBar() != null;
+        ContextWrapper cw = this;
+        //assert getSupportActionBar() != null;
         getSupportActionBar().setTitle(ch_display);
-        //getSupportActionBar().setIcon(R.drawable.ppg);
+        tvTitle = (TextView) findViewById(R.id.textViewTitle);
+        tvTitle.setText(ch_display);
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        Drawable profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + ch_contact + ".jpg");
+        ivProfile = (ImageView) findViewById(R.id.ivChatProfile);
+        if(profilePic != null)
+            ivProfile.setImageDrawable(profilePic);
+        else
+            ivProfile.setImageResource(R.drawable.ic_launcher);
         lv = (ListView) findViewById(R.id.lvChatHistory);
         lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         send = (Button) findViewById(R.id.send_btn);
