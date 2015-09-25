@@ -311,8 +311,8 @@ public class DbSqlite extends SQLiteOpenHelper {
     }
 
     private void demoList(){
-        if(checkChatList("07930332130")){
-            insertChatList("07930332130");
+        if(checkChatList("07944447710")){
+            insertChatList("07944447710");
         }
 
         SQLiteDatabase db = this.getWritableDatabase();

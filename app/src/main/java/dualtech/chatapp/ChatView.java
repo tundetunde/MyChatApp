@@ -64,8 +64,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     ArrayList chatList;
     ArrayAdapter<ChatDbProvider> adapter;
     SharedPreferences prefs;
-    TextView tvTitle, tvSub;
+    static TextView tvTitle, tvSub;
     ImageView ivProfile;
+    static boolean isTyping = false;
+    static int isTypingCounter = 0;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +97,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
 
     private void initialize() {
         ContextWrapper cw = this;
+        tvSub = (TextView) findViewById(R.id.vActionStatus);
+        //tvSub.setText("chicken");
         //assert getSupportActionBar() != null;
-        getSupportActionBar().setTitle(ch_display);
+        //getSupportActionBar().setTitle(ch_display);
         tvTitle = (TextView) findViewById(R.id.textViewTitle);
         tvTitle.setText(ch_display);
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
@@ -126,6 +130,19 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 } else {
                     send.setVisibility(View.VISIBLE);
                 }
+
+                if(s.length() > 0){
+                    isTypingCounter++;
+                    isTyping = true;
+                    //sendTypingAlert("y");
+                }else{
+                    isTyping = false;
+                    sendTypingAlert("n");
+                    isTypingCounter = 0;
+                }
+                if(isTyping && (isTypingCounter == 1)){
+                    sendTypingAlert("y");
+                }
             }
         };
         editText = (EditText) findViewById(R.id.msg_edit);
@@ -150,6 +167,37 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 BGlv.setBackground(bmDraw);
             }
         }
+    }
+
+    public void sendTypingAlert(final String type){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg;
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(ChatView.this);
+                try {
+                    String id = String.valueOf(msgId());
+                    Bundle data = new Bundle();
+                    data.putString("Type", "Typing");
+                    data.putString("isUserTyping", type);
+                    data.putString("GCM_contactId", ch_contact);
+                    data.putString("GCM_sender", ch_sender);
+                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                    msg = "Sent message";
+                } catch (IOException ex) {
+                    msg = "Message could not be sent";
+                }
+
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                if (!TextUtils.isEmpty(msg)) {
+                    //Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                }
+            }
+        }.execute(null, null, null);
     }
 
     private void loadChat() {
@@ -208,6 +256,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             protected void onPostExecute(String msg) {
                 if (!TextUtils.isEmpty(msg)) {
                     Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                    isTypingCounter = 0;
+                    sendTypingAlert("n");
                 }
             }
         }.execute(null, null, null);
@@ -219,7 +269,24 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
 
             // Extract data included in the Intent
             String message = intent.getStringExtra("message");
+            final String isTyping = intent.getStringExtra("typing");
+            ChatView.this.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // show alert
+                    if(isTyping.equals("y"))
+                        tvSub.setText("... is Typing");
+                    else{
+                        //To be implemented so the person status is there
+                        tvSub.setText("Online");
+                    }
+                }
+            });
+
+
             loadChat();
+
 
             //do other stuff here
         }

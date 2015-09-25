@@ -120,6 +120,12 @@ public class MyGcmListenerService extends GcmListenerService {
                     startActivity(i);
                 }
                 break;
+            case "Typing":
+                String typing = data.getString("isUserTyping");
+                Intent intent = new Intent("chicken");
+                intent.putExtra("typing", typing);
+                this.sendBroadcast(intent);
+                break;
         }
 
         /**
