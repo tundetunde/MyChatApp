@@ -25,6 +25,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,26 +36,25 @@ import java.util.Map;
 
 public class ContactView extends Fragment implements View.OnClickListener{
     private static final String TAG = "CONTACTVIEW";
-    static ArrayList<Contact> app_friend, app_contact, sent_request, received_request;
+    static ArrayList<Contact> app_contact;
     Map<String,ArrayList<Contact>> exCollection;
     ExpandableListView exListView;
     ProgressBar loader;
     DbSqlite db;
     Button invite;
     SharedPreferences prefs;
+    GoogleCloudMessaging gcm;
     ExContactListAdapter exAdapter;
-    List<String> exGroup = Arrays.asList("Friends", "Contacts On App", "Sent Requests", "Received Requests");
+    List<String> exGroup = Arrays.asList("Friends");
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.contact_list, container, false);
+        gcm = GoogleCloudMessaging.getInstance(getActivity());
         db = new DbSqlite(getActivity());
         exCollection = new HashMap<>();
-        app_friend = new ArrayList<>();
         app_contact = new ArrayList<>();
-        sent_request = new ArrayList<>();
-        received_request = new ArrayList<>();
         initialize(v);
         setHasOptionsMenu(true);
         return v;
@@ -74,10 +76,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
         });
 
         getChildData();
-        exCollection.put(exGroup.get(0), app_friend);
-        exCollection.put(exGroup.get(1), app_contact);
-        exCollection.put(exGroup.get(2), sent_request);
-        exCollection.put(exGroup.get(3), received_request);
+        exCollection.put(exGroup.get(0), app_contact);
 
         exAdapter = new ExContactListAdapter(exGroup, exCollection);
         exAdapter.setInflater((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE), getActivity());
@@ -88,19 +87,10 @@ public class ContactView extends Fragment implements View.OnClickListener{
 
     public void getChildData(){
         ArrayList<String> appContacts  = (ArrayList<String>) db.getAllContacts();
-        ArrayList<String> fndContact  = (ArrayList<String>) db.getAllFriends();
-        ArrayList<String> sentContacts  = (ArrayList<String>) db.getSentRequest();
-        ArrayList<String> receivedContact  = (ArrayList<String>) db.getRequest();
 
         for(String s: appContacts){app_contact.add(new Contact(getContactName(s), s));}
-        for(String s: fndContact){app_friend.add(new Contact(getContactName(s), s));}
-        for(String s: sentContacts){sent_request.add(new Contact(getContactName(s), s));}
-        for(String s: receivedContact){received_request.add(new Contact(getContactName(s), s));}
 
         System.out.println("APP_CONTACT: " + app_contact);
-        System.out.println("APP_CONTACT: " + app_friend);
-        System.out.println("APP_CONTACT: " + sent_request);
-        System.out.println("APP_CONTACT: " + received_request);
     }
 
     public String getContactName(String num){
@@ -128,8 +118,6 @@ public class ContactView extends Fragment implements View.OnClickListener{
             case R.id.btnInvite:
                 Intent i = new Intent().setClass(getActivity(), InviteContact.class);
                 startActivity(i);
-            default:
-                return;
         }
     }
 
@@ -193,7 +181,13 @@ public class ContactView extends Fragment implements View.OnClickListener{
                 ((CheckedTextView)convertView).setChecked(isExpanded);
             }
             ExpandableListView lv = (ExpandableListView) parent;
-            lv.expandGroup(groupPosition);
+            if ( getChildrenCount( groupPosition ) == 0 && groupPosition!=0) {
+                CheckedTextView ct = (CheckedTextView) convertView.findViewById(R.id.checkTV);
+                //
+                // ct.setVisibility(View.GONE);
+            }else {
+                lv.expandGroup(groupPosition);
+            }
 
             return convertView;
         }
@@ -208,8 +202,13 @@ public class ContactView extends Fragment implements View.OnClickListener{
             CheckBox childChkBox = (CheckBox) convertView.findViewById(R.id.chkRequest);
             childText.setText(rowItem.get(childPosition).toString());
 
-            if(groupPosition == 0){childChkBox.setVisibility(View.GONE);
-            }else if(groupPosition == 3){childChkBox.setChecked(true);}
+            if(groupPosition == 0){
+                childChkBox.setVisibility(View.GONE);
+            }else if(groupPosition == 2){
+                childChkBox.setVisibility(View.GONE);
+            }else if(groupPosition == 1 && (db.checkRequest(rowItem.get(childPosition).number) || db.checkContList(rowItem.get(childPosition).number))){
+                childChkBox.setVisibility(View.GONE);
+            }
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -226,12 +225,22 @@ public class ContactView extends Fragment implements View.OnClickListener{
             childChkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (buttonView.isChecked()) {
-                        Log.d(TAG, "Checked!!!");
-                        //Toast.makeText(ContactView.class,"Unchecked!!!",Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.d(TAG, "UnChecked!!!");
-                        //Toast.makeText(ContactView.class, "Checked!!!", Toast.LENGTH_SHORT).show();
+                    if (buttonView.isChecked() && groupPosition == 1) {
+                        try {
+                            String num = rowItem.get(childPosition).number;
+                            db.insertRequest(num, 0);
+                            String id = String.valueOf(ApplicationInit.getMsgId());
+                            Bundle data = new Bundle();
+                            data.putString("Type", "Request");
+                            data.putString("Phone", num);
+                            data.putString("AddPhone", ApplicationInit.getMobile_number());
+                            gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                            Toast.makeText(getActivity().getApplicationContext(), "Checked!!!", Toast.LENGTH_SHORT).show();
+                            //childChkBox.setVisibility(View.GONE);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });

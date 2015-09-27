@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,13 +12,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -28,11 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
@@ -41,15 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import static com.google.android.gms.internal.zzhl.runOnUiThread;
 
 public class FeedView extends ListFragment implements View.OnClickListener {
 
@@ -117,7 +108,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(mFeedReceiver, new IntentFilter("chicken"));
+        getActivity().registerReceiver(mFeedReceiver, new IntentFilter("FEED"));
     }
 
     @Override
@@ -155,13 +146,11 @@ public class FeedView extends ListFragment implements View.OnClickListener {
 
     private String listToJSON(ArrayList x){
         Gson gson = new Gson();
-        String jsonCartList = gson.toJson(x);
-        return jsonCartList;
+        return gson.toJson(x);
     }
 
     private int msgId() {
-        int id = ApplicationInit.getMsgId();
-        return id;
+        return ApplicationInit.getMsgId();
     }
 
     private void send(final String text, final String time){
@@ -237,11 +226,11 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     }
 
     private class FeedAdapter extends ArrayAdapter<Feed> {
+        final ContextWrapper cw;
         RelativeLayout feed_bubble;
+        File directory;
         private List<Feed> feed_list = new ArrayList<>();
         private Context context;
-        final ContextWrapper cw;
-        File directory;
 
         public FeedAdapter(Context context, int resource, ArrayList<Feed> arr) {
             super(context, resource, arr);
@@ -253,7 +242,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
 
         @Override
         public Feed getItem(int position) {
-            // TODO Auto-generated method stub
             return feed_list.get(position);
         }
 
@@ -282,7 +270,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
             holder.fh_msg.setText(Message.trim());
             holder.fh_user.setText(User);
             holder.fh_time.setText(Time);
-            Drawable profilePic = null;
+            Drawable profilePic;
             profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
             if(profilePic != null)
                 holder.fh_displayPic.setImageDrawable(profilePic);

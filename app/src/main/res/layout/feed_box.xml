@@ -5,55 +5,56 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/fd_bubble"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_margin="10dp"
-        android:padding="5dp"
-        android:id="@+id/fd_bubble">
+        android:orientation="vertical"
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/fd_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/primary_text_light"
-            android:text="Hello World"
             android:layout_alignTop="@+id/imageView"
+            android:layout_toEndOf="@+id/imageView"
             android:layout_toRightOf="@+id/imageView"
-            android:layout_toEndOf="@+id/imageView" />
+            android:text="Hello World"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="17sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/fd_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:layout_gravity="right"
-            android:textColor="@android:color/primary_text_light"
-            android:text="11/08/2015"
-            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_below="@+id/fd_user"
+            android:layout_centerVertical="true"
+            android:layout_gravity="right"
+            android:text="11/08/2015"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/fd_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@android:color/primary_text_light"
-            android:text="Hello World MSG"
-            android:layout_below="@+id/fd_user"
+            android:layout_below="@+id/fd_time"
+            android:layout_toEndOf="@+id/imageView"
             android:layout_toRightOf="@+id/imageView"
-            android:layout_toEndOf="@+id/imageView" />
+            android:text="Hello World MSG"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="16sp" />
 
         <ImageView
+            android:id="@+id/imageView"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/imageView"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:layout_margin="10dp"
             android:background="#FFC107"/>
     </RelativeLayout>

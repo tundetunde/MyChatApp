@@ -17,15 +17,22 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class BroadcastActivity extends Activity {
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
     private static final String TAG = "BROADCAST";
-    ProgressBar spinner;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     static String regId;
     static String phnNo;
     static SharedPreferences prefs;
+    ProgressBar spinner;
     boolean isRegister;
+    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
+    public static void storePref(){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(ApplicationInit.PROPERTY_REG_ID, regId);
+        editor.putString(ApplicationInit.PROPERTY_MOB_ID, phnNo);
+        editor.apply();
+
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +56,7 @@ public class BroadcastActivity extends Activity {
                     storePref();
                     spinner.setVisibility(View.GONE);
 
-                    Intent i = new Intent("dualtech.chatapp.LOADCONTACT");
+                    Intent i = new Intent().setClass(getApplicationContext(), LoadContacts.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     finish();
@@ -82,14 +89,6 @@ public class BroadcastActivity extends Activity {
             return false;
         }
         return true;
-    }
-
-    public static void storePref(){
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(ApplicationInit.PROPERTY_REG_ID, regId);
-        editor.putString(ApplicationInit.PROPERTY_MOB_ID, phnNo);
-        editor.apply();
-
     }
 
     @Override

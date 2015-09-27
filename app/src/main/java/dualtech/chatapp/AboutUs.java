@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
 
@@ -25,7 +27,6 @@ public class AboutUs extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.about_us);
 
         // Creating The Toolbar and setting it as the Toolbar for the activity
@@ -39,5 +40,22 @@ public class AboutUs extends AppCompatActivity {
         tv = (TextView) findViewById(R.id.textDescription);
         tv.setText(text1);
         tv.append("\n\n" + text2);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                item.setOnMenuItemClickListener(new MenuItemListener(this));
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

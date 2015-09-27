@@ -19,13 +19,13 @@ import java.util.Random;
 
 
 /**
- * Created by Jesz on 19-Jul-15.
- */
+* Created by Jesz on 19-Jul-15.
+*/
 public class VerifyNumber extends Activity implements View.OnClickListener {
 
+    static  String P_NO;
     EditText mobile_Num;
     Button next;
-    static  String P_NO;
     ProgressBar spinner;
     Spinner country_list;
     SharedPreferences prefs;
@@ -59,7 +59,7 @@ public class VerifyNumber extends Activity implements View.OnClickListener {
         if(sent){
             ApplicationInit.setMobile_number(P_NO);
             sent = false;
-            Intent openMain = new Intent("dualtech.chatapp.REG");
+            Intent openMain = new Intent("dualtech.chatapp.REG").setClass(getApplicationContext(),MobileReg.class);
             startActivity(openMain);
         }
 

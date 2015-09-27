@@ -5,15 +5,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
 /**
- * Created by Jesz on 19-Aug-15.
- */
+* Created by Jesz on 19-Aug-15.
+*/
 public class MenuItemListener implements MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
 
     Intent i;
@@ -27,7 +26,6 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
     public boolean onMenuItemClick(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_add:
-                ContactView c = new ContactView();
                 i = new Intent(context, MainActivity.class);
                 i.putExtra("tab_pos",2);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -36,8 +34,8 @@ public class MenuItemListener implements MenuItem.OnMenuItemClickListener, Popup
             case R.id.action_refresh:
                 i = new Intent().setClass(context, LoadContacts.class);
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
-                Toast.makeText(context, "Contact refreshed!!!", Toast.LENGTH_SHORT);
+                context.startService(i);
+                Toast.makeText(context.getApplicationContext(), "Refreshing Contact!!!", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_profile:
                 i = new Intent().setClass(context, ProfilePage.class);

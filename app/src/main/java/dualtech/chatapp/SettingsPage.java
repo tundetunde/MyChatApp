@@ -14,10 +14,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
- * Created by Jesz on 20-Aug-15.
- */
+* Created by Jesz on 20-Aug-15.
+*/
 
 public class SettingsPage extends AppCompatActivity {
     ListView menu;
@@ -49,15 +50,15 @@ public class SettingsPage extends AppCompatActivity {
 
                 switch (position) {
                     case 0:
-                        i = new Intent("dualtech.chatapp.ABOUTUS");
+                        i = new Intent().setClass(getApplicationContext(), AboutUs.class);
                         startActivity(i);
                         break;
                     case 1:
-                        i = new Intent("dualtech.chatapp.CHATBACKGROUND");
+                        i = new Intent().setClass(getApplicationContext(), ChatBackgroundSetting.class);
                         startActivity(i);
                         break;
                     case 2:
-                        i = new Intent("dualtech.chatapp.DEACTIVATE");
+                        i = new Intent().setClass(getApplicationContext(), DeactivateAcct.class);
                         startActivity(i);
                         break;
                     case 4:
@@ -79,13 +80,10 @@ public class SettingsPage extends AppCompatActivity {
                 msg = "Delete Complete";
                 return msg;
             }
-
             @Override
             protected void onPostExecute(String msg) {
                 Log.d("DELETE CHAT", "ALL CHATS DELETED");
                 Log.d("DELETE CHAT", total);
-                Intent i = new Intent(SettingsPage.this, MainActivity.class);
-                startActivity(i);
             }
         }.execute(null, null, null);
     }
@@ -98,8 +96,7 @@ public class SettingsPage extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
                         deleteChat();
-                        i = new Intent("dualtech.chatapp.MAINACTIVITY");
-                        startActivity(i);
+                        Toast.makeText(getBaseContext(), "All chat history deleted", Toast.LENGTH_LONG).show();
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

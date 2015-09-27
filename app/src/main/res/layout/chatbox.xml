@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/chat_toolbar"
-        layout="@layout/tool_bar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        layout="@layout/chat_view_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <LinearLayout
+        android:id="@+id/Lin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
-        android:layout_below="@+id/chat_toolbar"
         android:layout_above="@+id/relativeLayout"
-        android:id="@+id/Lin">
+        android:layout_below="@+id/chat_toolbar"
+        android:background="@android:color/darker_gray">
 
         <ListView
+            android:id="@+id/lvChatHistory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/lvChatHistory"
             android:divider="@null"
             android:dividerHeight="0dp"
-            android:transcriptMode="alwaysScroll"
-            android:stackFromBottom="true"/>
+            android:stackFromBottom="true"
+            android:transcriptMode="alwaysScroll"/>
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/relativeLayout">
+        android:layout_alignParentStart="true">
         <Button
             android:id="@+id/send_btn"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:text="Send" />
+            android:layout_alignParentRight="true"
+            android:text="Send"
+            android:visibility="gone" />
         <EditText
             android:id="@+id/msg_edit"
-            android:hint="Text me"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
             android:layout_toLeftOf="@+id/send_btn"
-            android:layout_toStartOf="@id/send_btn">
+            android:layout_toStartOf="@id/send_btn"
+            android:hint="Text me"
+            android:inputType="textMultiLine">
         </EditText>
     </RelativeLayout>
 

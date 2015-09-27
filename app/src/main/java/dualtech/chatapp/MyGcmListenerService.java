@@ -52,7 +52,6 @@ public class MyGcmListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        //broadcastManager = LocalBroadcastManager.getInstance(this);
         String message = data.getString("GCM_msg");
         String type = data.getString("Type");
         String contact = data.getString("GCM_contactId");
@@ -70,8 +69,7 @@ public class MyGcmListenerService extends GcmListenerService {
         Gson gson;
         switch (type){
             case "msg":
-                DbSqlite dbmsg = new DbSqlite(this);
-                dbmsg.insertMessage(message, sender, 0);
+                db.insertMessage(message, sender, 0);
                 break;
             case "Feed":
                 String text = data.getString("msg");
@@ -112,9 +110,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
             case "Deactivate":
                 String confirm = data.getString("Confirm");
-                DbSqlite db4 = new DbSqlite(this);
                 if(confirm.equals("y")){
-                    db4.deactivateDatabase();
+                    db.deactivateDatabase();
                     Intent i = new Intent("dualtech.chatapp.REG");
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
@@ -161,7 +158,7 @@ public class MyGcmListenerService extends GcmListenerService {
                     Log.d("Error", "Saving Image 1");
                     e.printStackTrace();
                 }
-                FileOutputStream fos = null;
+                FileOutputStream fos;
                 try {
                     fos = new FileOutputStream(mypath);
                     // Use the compress method on the BitMap object to write image to the OutputStream
@@ -187,7 +184,7 @@ public class MyGcmListenerService extends GcmListenerService {
         // Create imageDir
         File mypath = new File(directory, "profile_" + user + ".jpg");
 
-        FileOutputStream fos = null;
+        FileOutputStream fos;
         Bitmap bitmapImage = BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
         try {
             fos = new FileOutputStream(mypath);

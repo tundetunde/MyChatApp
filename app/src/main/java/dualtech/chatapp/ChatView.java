@@ -36,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,21 +54,45 @@ import java.util.Locale;
 public class ChatView extends AppCompatActivity implements View.OnClickListener {
     static ListView lv;
     static LinearLayout BGlv;
-    static Bitmap bmp;
+    static boolean active;
+    static TextView tvTitle, tvSub;
+    static boolean isTyping = false;
+    static int isTypingCounter = 0;
+    RelativeLayout rl;
     DbSqlite db;
     Toolbar toolbar;
     Button send;
-    static boolean active;
     EditText editText;
     TextWatcher text_watch;
     String et_msg, ch_contact, ch_display, ch_sender;
     ArrayList chatList;
     ArrayAdapter<ChatDbProvider> adapter;
     SharedPreferences prefs;
-    static TextView tvTitle, tvSub;
     ImageView ivProfile;
-    static boolean isTyping = false;
-    static int isTypingCounter = 0;
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            // Extract data included in the Intent
+            String message = intent.getStringExtra("message");
+            final String isTyping = intent.getStringExtra("typing");
+            ChatView.this.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // show alert
+                    if(isTyping.equals("y"))
+                        tvSub.setText("... is Typing");
+                    else{
+                        //To be implemented so the person status is there
+                        tvSub.setText("Online");
+                    }
+                }
+            });
+            loadChat();
+            //do other stuff here
+        }
+    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +104,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.chat_view_actionbar);
+        getSupportActionBar().setTitle("");
 
         Bundle bundle = getIntent().getExtras();
         prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
@@ -98,9 +121,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     private void initialize() {
         ContextWrapper cw = this;
         tvSub = (TextView) findViewById(R.id.vActionStatus);
-        //tvSub.setText("chicken");
-        //assert getSupportActionBar() != null;
-        //getSupportActionBar().setTitle(ch_display);
         tvTitle = (TextView) findViewById(R.id.textViewTitle);
         tvTitle.setText(ch_display);
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
@@ -111,6 +131,13 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         else
             ivProfile.setImageResource(R.drawable.ic_launcher);
         lv = (ListView) findViewById(R.id.lvChatHistory);
+        rl = (RelativeLayout) findViewById(R.id.ac_layout);
+        rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openInfo();
+            }
+        });
         lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
         send = (Button) findViewById(R.id.send_btn);
         send.setOnClickListener(this);
@@ -149,12 +176,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         editText.addTextChangedListener(text_watch);
         BGlv = (LinearLayout) findViewById(R.id.Lin);
         changeBackground();
-    }
-
-    public void refreshChat(){
-        chatList.clear();
-        chatList = (ArrayList)db.getChatList();
-        adapter.notifyDataSetChanged();
     }
 
     public void changeBackground(){
@@ -255,7 +276,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             @Override
             protected void onPostExecute(String msg) {
                 if (!TextUtils.isEmpty(msg)) {
-                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                     isTypingCounter = 0;
                     sendTypingAlert("n");
                 }
@@ -263,41 +283,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         }.execute(null, null, null);
     }
 
-    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            // Extract data included in the Intent
-            String message = intent.getStringExtra("message");
-            final String isTyping = intent.getStringExtra("typing");
-            ChatView.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    // show alert
-                    if(isTyping.equals("y"))
-                        tvSub.setText("... is Typing");
-                    else{
-                        //To be implemented so the person status is there
-                        tvSub.setText("Online");
-                    }
-                }
-            });
-
-
-            loadChat();
-
-
-            //do other stuff here
-        }
-    };
-
     private int msgId() {
-        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
-        editor.apply();
-        return id;
+        return  ApplicationInit.getMsgId();
     }
 
     @Override
@@ -340,11 +327,15 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         return super.onOptionsItemSelected(item);
     }
 
+    public void openInfo(){
+        Intent i = new Intent().setClass(this, ContactProfile.class);
+        i.putExtra("number", ch_contact);
+        i.putExtra("name", ch_display);
+        startActivity(i);}
+
     @Override
     public void onBackPressed(){
-        Intent openMain = new Intent("dualtech.chatapp.MAINACTIVITY");
-        openMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(openMain);
+        super.onBackPressed();
         finish();
     }
 

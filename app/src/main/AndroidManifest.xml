@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -32,41 +33,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DeactivateAcct" >
-            <intent-filter>
-                <action android:name="dualtech.chatapp.DEACTIVATE" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".VerifyNumber" >
-            <intent-filter>
-                <action android:name="dualtech.chatapp.VERIFY_NUMBER" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".MobileReg" >
-            <intent-filter>
-                <action android:name="dualtech.chatapp.REG" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".BroadcastActivity" >
-        <intent-filter>
-            <action android:name="dualtech.chatapp.BROADCASTACTIVITY" />
-
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-        </activity>
-        <activity android:name=".AboutUs" >
-            <intent-filter>
-                <action android:name="dualtech.chatapp.ABOUTUS" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".DeactivateAcct" />
+        <activity android:name=".VerifyNumber"/>
+        <activity android:name=".MobileReg" />
+        <activity android:name=".BroadcastActivity" />
+        <activity android:name=".AboutUs"/>
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
@@ -78,22 +49,7 @@
         </activity>
         <activity
             android:name=".ChatBackgroundSetting"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="dualtech.chatapp.CHATBACKGROUND" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".LoadContacts"
-            android:configChanges="orientation|screenSize"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="dualtech.chatapp.LOADCONTACT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".ChatView"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden" />
@@ -101,6 +57,8 @@
         <activity android:name=".ContactProfile" />
         <activity android:name=".InviteContact" />
         <activity android:name=".SettingsPage" />
+
+        <service android:name=".LoadContacts"/>
 
         <!-- [START gcm_receiver] -->
         <receiver
@@ -115,7 +73,6 @@
         </receiver>
         <!-- [END gcm_receiver] -->
 
-
         <!-- [START gcm_listener] -->
         <service
             android:name=".MyGcmListenerService"
@@ -125,6 +82,7 @@
             </intent-filter>
         </service>
         <!-- [END gcm_listener] -->
+
         <!-- [START instanceId_listener] -->
         <service
             android:name=".MyInstanceIDListenerService"
@@ -134,6 +92,7 @@
             </intent-filter>
         </service>
         <!-- [END instanceId_listener] -->
+
         <service
             android:name=".RegistrationIntentService"
             android:exported="false" >

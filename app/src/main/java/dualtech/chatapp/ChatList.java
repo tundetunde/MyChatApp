@@ -5,8 +5,6 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -14,7 +12,6 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -24,22 +21,26 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatList extends ListFragment implements View.OnClickListener{
+    static ArrayList<ChatItem> chat_query = new ArrayList<>();
     DbSqlite db;
-    ArrayList<String> chatList;
     ArrayList<Contact> chatName;
     ChatListAdapter adapter;
-    static ArrayList<ChatItem> chat_query = new ArrayList<>();
     GoogleCloudMessaging gcm;
     SharedPreferences prefs;
 
@@ -50,11 +51,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
         db = new DbSqlite(getActivity());
-        chatList = (ArrayList)db.getChatList();
         chatName = new ArrayList<>();
-        //for (String s : chatList){chatName.add(new Contact(getContactName(s), s));}
-        //adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_1, chatName);
-        //setListAdapter(adapter);
         setHasOptionsMenu(true);
         refreshChatList();
         return v;
@@ -67,13 +64,22 @@ public class ChatList extends ListFragment implements View.OnClickListener{
 
     public void refreshChatList(){
         List<String> query = db.getChatList();
-        chatList.clear();
         chat_query.clear();
         for (String s : query) {
-            chat_query.add(new ChatItem(getContactName(s), s));
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            try {
+                chat_query.add(new ChatItem(getContactName(s), s, dateFormat.parse(db.getLastMessageTime(s))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
-        //chatList = (ArrayList)db.getChatList();adapter = new FeedAdapter(getActivity(), R.layout.feed_box, feed_query);
-        adapter = new ChatListAdapter(getActivity(), R.layout.feed_box, chat_query);
+        Collections.sort(chat_query, Collections.reverseOrder(new Comparator<ChatItem>() {
+            @Override
+            public int compare(ChatItem p1, ChatItem p2) {
+                return p1.date.compareTo(p2.date);
+            }
+        }));
+        adapter = new ChatListAdapter(getActivity(), R.layout.chat_list_box, chat_query);
         setListAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
@@ -81,24 +87,11 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
-        List<String> query = db.getChatList();
-        chatList.clear();
-        chat_query.clear();
-        for (String s : query) {
-            chat_query.add(new ChatItem(getContactName(s), s));
-        }
-        //chatList = (ArrayList)db.getChatList();adapter = new FeedAdapter(getActivity(), R.layout.feed_box, feed_query);
-        adapter = new ChatListAdapter(getActivity(), R.layout.feed_box, chat_query);
-        setListAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        refreshChatList();
     }
 
     private int msgId() {
-        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
-        editor.apply();
-        return id;
+        return ApplicationInit.getMsgId();
     }
 
     @Override
@@ -171,19 +164,21 @@ public class ChatList extends ListFragment implements View.OnClickListener{
 
     public class ChatItem{
         String user, number;
+        Date date;
 
-        ChatItem(String u, String n){
+        ChatItem(String u, String n, Date d){
             user = u;
             number = n;
+            date = d;
         }
     }
 
     private class ChatListAdapter extends ArrayAdapter<ChatItem> {
+        final ContextWrapper cw;
         RelativeLayout feed_bubble;
+        File directory;
         private List<ChatItem> feed_list = new ArrayList<>();
         private Context context;
-        final ContextWrapper cw;
-        File directory;
 
         public ChatListAdapter(Context context, int resource, ArrayList<ChatItem> arr) {
             super(context, resource, arr);

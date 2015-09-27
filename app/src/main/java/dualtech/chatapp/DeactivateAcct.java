@@ -21,10 +21,10 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import java.io.IOException;
 
 /**
- * Created by tunde_000 on 03/09/2015.
- */
+* Created by tunde_000 on 03/09/2015.
+*/
 public class DeactivateAcct extends AppCompatActivity implements View.OnClickListener{
-    static SharedPreferences prefs;
+    private static final String TAG = "DEACTIVATE";
     Toolbar toolbar;
     DbSqlite db;
     EditText editText;
@@ -49,7 +49,6 @@ public class DeactivateAcct extends AppCompatActivity implements View.OnClickLis
 
         db = new DbSqlite(this);
         gcm = GoogleCloudMessaging.getInstance(this);
-        prefs = this.getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         initialize();
     }
 
@@ -81,7 +80,7 @@ public class DeactivateAcct extends AppCompatActivity implements View.OnClickLis
 
             @Override
             protected void onPostExecute(String msg) {
-                Log.d("DEACTIVATE", "NUMBER DEACTIVATED");
+                Log.d(TAG, "NUMBER DEACTIVATED");
             }
         }.execute(null, null, null);
     }
@@ -90,11 +89,11 @@ public class DeactivateAcct extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.btnDeactivate:
-                Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT);
+                Toast.makeText(this, "Please Wait", Toast.LENGTH_SHORT).show();
                 if(ApplicationInit.getMobile_number().equals(editText.getText().toString()))
                     deactivateCompleteDialog();
                 else
-                    Toast.makeText(this, "Mobile number is incorrect", Toast.LENGTH_SHORT);
+                    Toast.makeText(this, "Mobile number is incorrect", Toast.LENGTH_SHORT).show();
                 break;
 
         }
@@ -115,10 +114,6 @@ public class DeactivateAcct extends AppCompatActivity implements View.OnClickLis
     }
 
     private int msgId() {
-        int id = prefs.getInt(ApplicationInit.KEY_MSG_ID, 0);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(ApplicationInit.KEY_MSG_ID, ++id);
-        editor.apply();
-        return id;
+        return ApplicationInit.getMsgId();
     }
 }
