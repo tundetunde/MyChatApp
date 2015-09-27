@@ -120,8 +120,7 @@ public class InviteContact extends AppCompatActivity{
                             String phoneNumber;
 
                             if (Integer.parseInt(contact_details.getString(contact_details.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                                //Get all associated numbers
-                                phoneNumber = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                                phoneNumber = contact_details.getString(contact_details.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("\\s","");
                                 Map<String, String> mapList= new HashMap<>(2);
                                 if(!c.contains(phoneNumber)) {
                                     mapList.put("name", contactName);
