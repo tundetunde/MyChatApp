@@ -21,23 +21,13 @@ public class BroadcastActivity extends Activity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     static String regId;
     static String phnNo;
-    static SharedPreferences prefs;
     ProgressBar spinner;
     boolean isRegister;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
 
-    public static void storePref(){
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(ApplicationInit.PROPERTY_REG_ID, regId);
-        editor.putString(ApplicationInit.PROPERTY_MOB_ID, phnNo);
-        editor.apply();
-
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isRegister = false;
-        prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         setContentView(R.layout.registration2);
         spinner=(ProgressBar)findViewById(R.id.progressBar);
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
@@ -53,12 +43,14 @@ public class BroadcastActivity extends Activity {
                     phnNo = ApplicationInit.getMobile_number();
                     regId = ApplicationInit.getREGISTRATION_KEY();
 
-                    storePref();
                     spinner.setVisibility(View.GONE);
 
                     Intent i = new Intent().setClass(getApplicationContext(), LoadContacts.class);
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startService(i);
+                    Intent openMain = new Intent().setClass(getApplicationContext(), MainActivity.class);
+                    openMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(openMain);
                     finish();
                 } else {
                     Toast.makeText(BroadcastActivity.this,"Cannot activation -- Try again",Toast.LENGTH_LONG).show();
