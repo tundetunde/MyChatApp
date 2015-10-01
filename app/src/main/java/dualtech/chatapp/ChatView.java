@@ -74,7 +74,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         public void onReceive(Context context, Intent intent) {
 
             // Extract data included in the Intent
-            String message = intent.getStringExtra("message");
             final String isTyping = intent.getStringExtra("typing");
             ChatView.this.runOnUiThread(new Runnable() {
 
@@ -213,11 +212,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             }
 
             @Override
-            protected void onPostExecute(String msg) {
-                if (!TextUtils.isEmpty(msg)) {
-                    //Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                }
-            }
+            protected void onPostExecute(String msg) {}
         }.execute(null, null, null);
     }
 

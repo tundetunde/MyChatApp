@@ -1,6 +1,8 @@
 
 package dualtech.chatapp;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -68,6 +70,13 @@ public class MainActivity extends AppCompatActivity{
         item.setOnMenuItemClickListener(new MenuItemListener(this));
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(0);
     }
 
 }

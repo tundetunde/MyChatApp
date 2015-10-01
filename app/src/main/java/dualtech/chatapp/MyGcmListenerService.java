@@ -86,6 +86,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 list = gson.fromJson(listString, token.getType());
                 Log.d("Returned List: ", list.toString());
                 db.insertContacts(list);
+                Intent cn = new Intent("CONTACT");
+                this.sendBroadcast(cn);
                 break;
             case "Photo":
                 String image = data.getString("msg");

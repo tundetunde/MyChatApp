@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:layout_marginBottom="15dp" android:background="#ffffd070"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingEnd="10dp" android:paddingLeft="10dp"
+    android:paddingRight="10dp" android:paddingStart="10dp">
 
 
     <TextView
@@ -17,15 +19,13 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#000" />
 
-    <CheckBox
-        android:id="@+id/chkRequest"
+    <ImageButton
+        android:id="@+id/chdInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:layout_marginEnd="25dp"
-        android:layout_marginRight="25dp" />
+        android:background="@android:drawable/ic_menu_info_details" />
 
 </RelativeLayout>

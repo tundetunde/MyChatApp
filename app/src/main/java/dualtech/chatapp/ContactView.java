@@ -1,7 +1,9 @@
 package dualtech.chatapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,6 +23,7 @@ import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,11 +45,16 @@ public class ContactView extends Fragment implements View.OnClickListener{
     ProgressBar loader;
     DbSqlite db;
     Button invite;
-    SharedPreferences prefs;
     GoogleCloudMessaging gcm;
     ExContactListAdapter exAdapter;
     List<String> exGroup = Arrays.asList("Friends");
-
+    private BroadcastReceiver mContactReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            initialize(getView());
+            Log.d(TAG, "CONTACTS Refreshed");
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,6 +66,18 @@ public class ContactView extends Fragment implements View.OnClickListener{
         initialize(v);
         setHasOptionsMenu(true);
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(mContactReceiver, new IntentFilter("CONTACT"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mContactReceiver);
     }
 
     private void initialize(final View v){
@@ -181,13 +201,8 @@ public class ContactView extends Fragment implements View.OnClickListener{
                 ((CheckedTextView)convertView).setChecked(isExpanded);
             }
             ExpandableListView lv = (ExpandableListView) parent;
-            if ( getChildrenCount( groupPosition ) == 0 && groupPosition!=0) {
-                CheckedTextView ct = (CheckedTextView) convertView.findViewById(R.id.checkTV);
-                //
-                // ct.setVisibility(View.GONE);
-            }else {
-                lv.expandGroup(groupPosition);
-            }
+
+            lv.expandGroup(groupPosition);
 
             return convertView;
         }
@@ -199,16 +214,8 @@ public class ContactView extends Fragment implements View.OnClickListener{
                 convertView = inflater.inflate(R.layout.child_row, null);
             }
             TextView childText = (TextView) convertView.findViewById(R.id.childTV);
-            CheckBox childChkBox = (CheckBox) convertView.findViewById(R.id.chkRequest);
+            ImageButton imgBt = (ImageButton) convertView.findViewById(R.id.chdInfo);
             childText.setText(rowItem.get(childPosition).toString());
-
-            if(groupPosition == 0){
-                childChkBox.setVisibility(View.GONE);
-            }else if(groupPosition == 2){
-                childChkBox.setVisibility(View.GONE);
-            }else if(groupPosition == 1 && (db.checkRequest(rowItem.get(childPosition).number) || db.checkContList(rowItem.get(childPosition).number))){
-                childChkBox.setVisibility(View.GONE);
-            }
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -222,26 +229,14 @@ public class ContactView extends Fragment implements View.OnClickListener{
                     }
                 }
             });
-            childChkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            imgBt.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (buttonView.isChecked() && groupPosition == 1) {
-                        try {
-                            String num = rowItem.get(childPosition).number;
-                            db.insertRequest(num, 0);
-                            String id = String.valueOf(ApplicationInit.getMsgId());
-                            Bundle data = new Bundle();
-                            data.putString("Type", "Request");
-                            data.putString("Phone", num);
-                            data.putString("AddPhone", ApplicationInit.getMobile_number());
-                            gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
-                            Toast.makeText(getActivity().getApplicationContext(), "Checked!!!", Toast.LENGTH_SHORT).show();
-                            //childChkBox.setVisibility(View.GONE);
-
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                public void onClick(View v) {
+                    Contact c = rowItem.get(childPosition);
+                    Intent i = new Intent().setClass(getActivity(), ContactProfile.class);
+                    i.putExtra("number",c.number );
+                    i.putExtra("name", c.name);
+                    startActivity(i);
                 }
             });
 

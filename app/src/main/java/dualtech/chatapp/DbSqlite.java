@@ -92,36 +92,6 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertContacts(String s, int i){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values;
-
-        if(checkContList(s)) {
-            values = new ContentValues();
-            values.put("phoneNumber", s);
-            values.put("accepted", i);
-            db.insert(TABLE_CONTACTS, null, values);
-            Log.d(TAG, "ADDED " + s);
-        }
-        db.close();
-    }
-
-    public void insertRequest(String n, int snd){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values;
-
-        values = new ContentValues();
-        values.put("phoneNumber", n);
-        values.put("requester", snd);
-        if(checkRequest(n)){
-            db.insert(TABLE_REQUEST, null, values);
-        }
-//        db.delete(TABLE_CONTACTS, null, null);
-        Log.d(TAG, "ADDED REQUEST: " + n);
-
-        db.close();
-    }
-
     public void insertMessage(String s, String c, int sender){
         if(checkChatList(c)){
             insertChatList(c);

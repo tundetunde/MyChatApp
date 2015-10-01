@@ -13,8 +13,8 @@ import android.widget.TextView;
 import java.io.File;
 
 /**
- * Created by Jesz on 18-Aug-15.
- */
+* Created by Jesz on 18-Aug-15.
+*/
 public class ContactProfile extends AppCompatActivity {
     private static final String TAG = "ContactProfile";
     SharedPreferences prefs;
