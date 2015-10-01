@@ -34,7 +34,7 @@ public class DbSqlite extends SQLiteOpenHelper {
     String message_table = "CREATE TABLE " + TABLE_MESSAGES + "("
             + "id integer PRIMARY KEY autoincrement," + "msg TEXT,"
             + "contact_id TEXT," + "datetime default current_timestamp,"
-            + "sender INTEGER DEFAULT 0 NOT NULL" + ")";
+            + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL" + ")";
     String chatlist_table = "CREATE TABLE " + TABLE_CHATLIST + "("
             + "contact TEXT PRIMARY KEY," + "regName TEXT" + ")";
 
@@ -92,7 +92,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertMessage(String s, String c, int sender){
+    public void insertMessage(String s, String c, int sender, int status){
         if(checkChatList(c)){
             insertChatList(c);
         }
@@ -103,6 +103,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         values.put("msg", s);
         values.put("contact_id", c);
         values.put("sender", sender);
+        values.put("status", status);
 
         db.insert(TABLE_MESSAGES, null, values);
         Log.d(TAG, "ADDED MSG : " + s);
@@ -301,5 +302,11 @@ public class DbSqlite extends SQLiteOpenHelper {
         cursor.close();
         Log.d(TAG, "LAST MESSAGE");
         return msg;
+    }
+
+    public void updateMsgStatus(int status){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String updateQuery = "UPDATE " + TABLE_MESSAGES + "SET status " + status;
+        db.execSQL(updateQuery);
     }
 }

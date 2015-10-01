@@ -22,6 +22,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -69,7 +70,10 @@ public class MyGcmListenerService extends GcmListenerService {
         Gson gson;
         switch (type){
             case "msg":
-                db.insertMessage(message, sender, 0);
+                String status = data.getString("msg");
+                int statusNum = Integer.getInteger(status);
+                db.insertMessage(message, sender, 0, statusNum);
+                sendDeliveredReceipt(sender);
                 break;
             case "Feed":
                 String text = data.getString("msg");
@@ -125,6 +129,11 @@ public class MyGcmListenerService extends GcmListenerService {
                 intent.putExtra("typing", typing);
                 this.sendBroadcast(intent);
                 break;
+            case "Receipt":
+                String receiptNumber = data.getString("receiptNo");
+                Log.d("RECEIPT SERVER", receiptNumber);
+                break;
+
         }
 
         /**
@@ -210,6 +219,36 @@ public class MyGcmListenerService extends GcmListenerService {
             cursor.close();
         }
         return name;
+    }
+    private int msgId() {
+        return  ApplicationInit.getMsgId();
+    }
+
+    private void sendDeliveredReceipt(final String number){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(MyGcmListenerService.this);
+                String msg = "";
+                try {
+                    String id = String.valueOf(msgId());
+                    Bundle data = new Bundle();
+                    data.putString("Type", "Receipt");
+                    data.putString("receiptNo", "2");
+                    data.putString("GCM_number", number);
+                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                    msg = "Sent message";
+                } catch (IOException ex) {
+                    msg = "Message could not be sent";
+                }
+                return "";
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                Log.d("Sent Delivered Message", "2");
+            }
+        }.execute();
     }
 
     void updateMyActivity(Context context, String message, String contactID) {

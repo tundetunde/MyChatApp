@@ -80,12 +80,15 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 @Override
                 public void run() {
                     // show alert
-                    if(isTyping.equals("y"))
-                        tvSub.setText("... is Typing");
-                    else{
-                        //To be implemented so the person status is there
-                        tvSub.setText("Online");
+                    if(isTyping != null){
+                        if(isTyping.equals("y"))
+                            tvSub.setText("... is Typing");
+                        else{
+                            //To be implemented so the person status is there
+                            tvSub.setText("Online");
+                        }
                     }
+
                 }
             });
             loadChat();
@@ -245,6 +248,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         active = false;
     }
 
+    private void checkMsg(){
+
+    }
+
     private void sendMsg(final String txt, final String dt) {
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -272,7 +279,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             protected void onPostExecute(String msg) {
                 if (!TextUtils.isEmpty(msg)) {
                     isTypingCounter = 0;
-                    sendTypingAlert("n");
+                    //sendTypingAlert("n");
                 }
             }
         }.execute(null, null, null);
