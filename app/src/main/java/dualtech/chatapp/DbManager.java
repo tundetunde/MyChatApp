@@ -92,7 +92,7 @@ public class DbManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertMessage(String s, String c, int sender, int status){
+    public void insertMessage(String s, String c, int sender){
         if(checkChatList(c)){
             insertChatList(c);
         }
@@ -103,7 +103,6 @@ public class DbManager extends SQLiteOpenHelper {
         values.put("msg", s);
         values.put("contact_id", c);
         values.put("sender", sender);
-        values.put("status", status);
 
         db.insert(TABLE_MESSAGES, null, values);
         Log.d(TAG, "ADDED MSG : " + s);
@@ -293,9 +292,18 @@ public class DbManager extends SQLiteOpenHelper {
         return msg;
     }
 
-    public void updateMsgStatus(int status){
+    public int getMsgCount(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String s = "Select * FROM " + TABLE_MESSAGES;
+        Cursor cursor = db.rawQuery(s, null);
+        int n = cursor.getCount();
+        cursor.close();
+        return n+1;
+    }
+
+    public void updateMsgStatus(int status, int id){
         SQLiteDatabase db = this.getWritableDatabase();
-        String updateQuery = "UPDATE " + TABLE_MESSAGES + "SET status " + status;
+        String updateQuery = "UPDATE " + TABLE_MESSAGES + " SET status " + status + " WHERE id = '" + id + "'";
         db.execSQL(updateQuery);
     }
 }

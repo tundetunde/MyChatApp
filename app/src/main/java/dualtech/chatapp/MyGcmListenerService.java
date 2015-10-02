@@ -63,10 +63,8 @@ public class MyGcmListenerService extends GcmListenerService {
         Gson gson;
         switch (type){
             case "msg":
-                String status = data.getString("msg");
-                int statusNum = Integer.getInteger(status);
-                db.insertMessage(message, sender, 0, statusNum);
-                sendDeliveredReceipt(sender);
+                db.insertMessage(message, sender, 0);
+                sendDeliveredReceipt(sender, data.getString("GCM_msgId"));
                 break;
             case "Feed":
                 String text = data.getString("msg");
@@ -124,7 +122,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
             case "Receipt":
                 String receiptNumber = data.getString("receiptNo");
-                db.updateMsgStatus(Integer.valueOf(receiptNumber));
+                String id = data.getString("msgId");
+                db.updateMsgStatus(Integer.valueOf(receiptNumber), Integer.valueOf(id));
                 Log.d("RECEIPT SERVER", receiptNumber);
                 break;
 
@@ -218,24 +217,25 @@ public class MyGcmListenerService extends GcmListenerService {
         return  ApplicationInit.getMsgId();
     }
 
-    private void sendDeliveredReceipt(final String number){
+    private void sendDeliveredReceipt(final String number, final String mid){
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
                 GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(MyGcmListenerService.this);
-                String msg = "";
+                String msg;
                 try {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
                     data.putString("Type", "Receipt");
                     data.putString("receiptNo", "2");
+                    data.putString("msgId", mid);
                     data.putString("GCM_number", number);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent message";
                 } catch (IOException ex) {
                     msg = "Message could not be sent";
                 }
-                return "";
+                return msg;
             }
 
             @Override

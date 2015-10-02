@@ -60,15 +60,13 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     EditText editText;
     TextWatcher text_watch;
     String et_msg, ch_contact, ch_display, ch_sender;
-    ArrayList chatList;
+    ArrayList<ChatDbProvider> chatList;
     ArrayAdapter<ChatDbProvider> adapter;
     SharedPreferences prefs;
     ImageView ivProfile;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            // Extract data included in the Intent
             final String isTyping = intent.getStringExtra("typing");
             ChatView.this.runOnUiThread(new Runnable() {
 
@@ -83,11 +81,9 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                             tvSub.setText("Online");
                         }
                     }
-
                 }
             });
             loadChat();
-            //do other stuff here
         }
     };
 
@@ -243,11 +239,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         active = false;
     }
 
-    private void checkMsg(){
-
-    }
-
-    private void sendMsg(final String txt, final String dt) {
+    private void sendMsg(final String txt, final String dt, final int mid) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -261,6 +253,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                     data.putString("GCM_time", dt);
                     data.putString("GCM_contactId", ch_contact);
                     data.putString("GCM_sender", ch_sender);
+                    data.putString("GCM_msgId", String.valueOf(mid));
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent message";
                 } catch (IOException ex) {
@@ -274,7 +267,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             protected void onPostExecute(String msg) {
                 if (!TextUtils.isEmpty(msg)) {
                     isTypingCounter = 0;
-                    //sendTypingAlert("n");
                 }
             }
         }.execute(null, null, null);
@@ -342,9 +334,9 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         if (et_msg != null) {
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             chatList.add(new ChatDbProvider(et_msg, 1, d));
-            sendMsg(et_msg, d);
             db = new DbManager(this);
             db.insertMessage(et_msg, ch_contact, 1);
+            sendMsg(et_msg, d, db.getMsgCount());
             editText.setText("");
             adapter.notifyDataSetChanged();
         }
