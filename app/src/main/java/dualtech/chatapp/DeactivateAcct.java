@@ -1,9 +1,6 @@
 package dualtech.chatapp;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +23,7 @@ import java.io.IOException;
 public class DeactivateAcct extends AppCompatActivity implements View.OnClickListener{
     private static final String TAG = "DEACTIVATE";
     Toolbar toolbar;
-    DbSqlite db;
+    DbManager db;
     EditText editText;
     TextView tvInfo;
     Button deactivateButton;
@@ -47,7 +44,7 @@ public class DeactivateAcct extends AppCompatActivity implements View.OnClickLis
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("DEACTIVATE ACCOUNT");
 
-        db = new DbSqlite(this);
+        db = new DbManager(this);
         gcm = GoogleCloudMessaging.getInstance(this);
         initialize();
     }

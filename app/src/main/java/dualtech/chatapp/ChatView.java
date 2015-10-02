@@ -10,14 +10,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -38,7 +35,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -46,7 +42,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +54,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     static boolean isTyping = false;
     static int isTypingCounter = 0;
     RelativeLayout rl;
-    DbSqlite db;
+    DbManager db;
     Toolbar toolbar;
     Button send;
     EditText editText;
@@ -115,7 +110,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         ch_display = bundle.getString("display");
 
         ch_sender = ApplicationInit.getMobile_number();
-        db = new DbSqlite(this);
+        db = new DbManager(this);
         initialize();
         loadChat();
     }
@@ -348,7 +343,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             chatList.add(new ChatDbProvider(et_msg, 1, d));
             sendMsg(et_msg, d);
-            db = new DbSqlite(this);
+            db = new DbManager(this);
             db.insertMessage(et_msg, ch_contact, 1);
             editText.setText("");
             adapter.notifyDataSetChanged();

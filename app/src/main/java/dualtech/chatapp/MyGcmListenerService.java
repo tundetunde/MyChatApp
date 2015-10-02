@@ -2,10 +2,8 @@ package dualtech.chatapp;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,10 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.annotation.StringRes;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -27,8 +22,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +59,7 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "Contact: " + contact);
         Log.d(TAG, "Time: " + time);
 
-        DbSqlite db = new DbSqlite(this);
+        DbManager db = new DbManager(this);
         Gson gson;
         switch (type){
             case "msg":
@@ -118,7 +111,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 String confirm = data.getString("Confirm");
                 if(confirm.equals("y")){
                     db.deactivateDatabase();
-                    Intent i = new Intent("dualtech.chatapp.REG");
+                    Intent i = new Intent().setClass(getApplicationContext(), MobileReg.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                 }
@@ -131,6 +124,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
             case "Receipt":
                 String receiptNumber = data.getString("receiptNo");
+                db.updateMsgStatus(Integer.valueOf(receiptNumber));
                 Log.d("RECEIPT SERVER", receiptNumber);
                 break;
 

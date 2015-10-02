@@ -24,7 +24,7 @@ public class SettingsPage extends AppCompatActivity {
     ListView menu;
     String[] menuArray;
     Intent i;
-    DbSqlite db;
+    DbManager db;
     Toolbar toolbar;
 
     @Override
@@ -39,7 +39,7 @@ public class SettingsPage extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("SETTINGS");
 
-        db = new DbSqlite(this);
+        db = new DbManager(this);
         menu = (ListView)findViewById(R.id.lvSettings);
         menuArray = new String[]{"About Us","Chat Background", "Deactivate Account", "Help", "Clear Chats"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1, menuArray);

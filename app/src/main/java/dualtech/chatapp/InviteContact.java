@@ -1,11 +1,9 @@
 package dualtech.chatapp;
 
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -20,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -39,7 +36,7 @@ public class InviteContact extends AppCompatActivity{
         private static final String TAG = "INVITE_CONTACT";
         ProgressBar loader;
         List<Map<String, String>> cc;
-        DbSqlite db;
+        DbManager db;
         ListView lvPhoneContacts;
         SharedPreferences prefs;
         SimpleAdapter adapter;
@@ -78,7 +75,7 @@ public class InviteContact extends AppCompatActivity{
 
         prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         cc = new ArrayList<>();
-        db = new DbSqlite(this);
+        db = new DbManager(this);
         read_contact();
         initialize();
     }

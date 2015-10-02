@@ -49,7 +49,7 @@ public class ProfilePage extends AppCompatActivity implements View.OnClickListen
     static TextView tv_user, tv_mobi, tv_status;
     final String TAG = "PROFILE";
     ImageView dp;
-    DbSqlite db;
+    DbManager db;
     GoogleCloudMessaging gcm;
     Toolbar toolbar;
 
@@ -82,7 +82,7 @@ public class ProfilePage extends AppCompatActivity implements View.OnClickListen
         tv_user = (TextView) findViewById(R.id.tvName);
         tv_status = (TextView) findViewById(R.id.tvStatus);
         dp = (ImageView) findViewById(R.id.dpView);
-        db = new DbSqlite(this);
+        db = new DbManager(this);
 
         tv_mobi.setText(ApplicationInit.getMobile_number());
         tv_status.setText(prefs.getString(ApplicationInit.PROPERTY_STATUS, "Hello there!!!"));

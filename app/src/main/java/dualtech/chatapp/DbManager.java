@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //SQL CLASS HELPER
-public class DbSqlite extends SQLiteOpenHelper {
+public class DbManager extends SQLiteOpenHelper {
 
     final static String TAG = "DB";
     final static String DB_NAME = "chat_db";
@@ -20,7 +20,7 @@ public class DbSqlite extends SQLiteOpenHelper {
     final static String TABLE_MESSAGES = "messages";
     final static String TABLE_CONTACTS = "contacts";
     final static String TABLE_REQUEST = "requests";
-    final static String TABLE_CHATLIST = "chat_list";
+    final static String TABLE_CHAT_LIST = "chat_list";
 
     String contact_table = "CREATE TABLE " + TABLE_CONTACTS + "("
             + "phoneNumber TEXT," + "accepted INTEGER DEFAULT 0 NOT NULL"
@@ -35,10 +35,10 @@ public class DbSqlite extends SQLiteOpenHelper {
             + "id integer PRIMARY KEY autoincrement," + "msg TEXT,"
             + "contact_id TEXT," + "datetime default current_timestamp,"
             + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL" + ")";
-    String chatlist_table = "CREATE TABLE " + TABLE_CHATLIST + "("
+    String chatList_table = "CREATE TABLE " + TABLE_CHAT_LIST + "("
             + "contact TEXT PRIMARY KEY," + "regName TEXT" + ")";
 
-    public DbSqlite(Context context) {
+    public DbManager(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
@@ -46,14 +46,14 @@ public class DbSqlite extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(feed_table);
         db.execSQL(contact_table);
-        db.execSQL(chatlist_table);
+        db.execSQL(chatList_table);
         db.execSQL(message_table);
         db.execSQL(request_table);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(DbSqlite.class.getName(),
+        Log.w(DbManager.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
         // Drop older table if existed
@@ -115,7 +115,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put("contact", c);
-        db.insert(TABLE_CHATLIST, null, values);
+        db.insert(TABLE_CHAT_LIST, null, values);
 
         Log.d(TAG, "UPDATED CHATLIST");
         db.close();
@@ -125,7 +125,7 @@ public class DbSqlite extends SQLiteOpenHelper {
 
         Boolean check = false;
         // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_CHATLIST + " WHERE (contact = '" + s + "')";
+        String selectQuery = "SELECT * FROM " + TABLE_CHAT_LIST + " WHERE (contact = '" + s + "')";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.getCount() < 1){check = true;}
@@ -144,22 +144,11 @@ public class DbSqlite extends SQLiteOpenHelper {
         return check;
     }
 
-    public boolean checkRequest(String s){
-        Boolean check = false;
-        // Select All Query
-        String selectQuery = "SELECT * FROM " + TABLE_REQUEST + " WHERE (phoneNumber = '" + s + "')";
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        if (cursor.getCount() < 1){check = true;}
-        cursor.close();
-        return check;
-    }
-
     public List<String> getChatList(){
 
         List<String> update = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT contact FROM " + TABLE_CHATLIST;
+        String selectQuery = "SELECT contact FROM " + TABLE_CHAT_LIST;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
@@ -201,7 +190,7 @@ public class DbSqlite extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                List c = new ArrayList<>();
+                List<String> c = new ArrayList<>();
                 c.add(cursor.getString(1));
                 c.add(cursor.getString(2));
                 c.add(cursor.getString(3));
@@ -237,13 +226,13 @@ public class DbSqlite extends SQLiteOpenHelper {
     public void deleteChatHistory(String c){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MESSAGES, "contact_id = '" + c + "'", null);
-        db.delete(TABLE_CHATLIST, "contact = '" + c + "'", null);
+        db.delete(TABLE_CHAT_LIST, "contact = '" + c + "'", null);
     }
 
     public void deleteAllChatHistory(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_MESSAGES);
-        db.execSQL("delete from " + TABLE_CHATLIST);
+        db.execSQL("delete from " + TABLE_CHAT_LIST);
     }
 
     public String countChat(){
@@ -265,7 +254,7 @@ public class DbSqlite extends SQLiteOpenHelper {
     public void deactivateDatabase(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MESSAGES, null, null);
-        db.delete(TABLE_CHATLIST, null, null);
+        db.delete(TABLE_CHAT_LIST, null, null);
         db.delete(TABLE_CONTACTS, null, null);
         db.delete(TABLE_FEED, null, null);
     }

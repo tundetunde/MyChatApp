@@ -48,7 +48,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     static ArrayList<Feed> feed_query = new ArrayList<>();
 
     static FeedAdapter adapter;
-    DbSqlite db;
+    DbManager db;
     Button btn_share;
     EditText et_feed;
     String update;
@@ -69,7 +69,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.feed_list, container, false);
-        db = new DbSqlite(getActivity());
+        db = new DbManager(getActivity());
         e = (ArrayList)db.getAllContacts();
         //[removes duplicate numbers]
         Set<String> s = new HashSet<>(db.getAllContacts());

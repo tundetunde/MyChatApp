@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,18 +18,14 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CheckedTextView;
-import android.widget.CompoundButton;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,7 +38,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
     Map<String,ArrayList<Contact>> exCollection;
     ExpandableListView exListView;
     ProgressBar loader;
-    DbSqlite db;
+    DbManager db;
     Button invite;
     GoogleCloudMessaging gcm;
     ExContactListAdapter exAdapter;
@@ -60,7 +55,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.contact_list, container, false);
         gcm = GoogleCloudMessaging.getInstance(getActivity());
-        db = new DbSqlite(getActivity());
+        db = new DbManager(getActivity());
         exCollection = new HashMap<>();
         app_contact = new ArrayList<>();
         initialize(v);

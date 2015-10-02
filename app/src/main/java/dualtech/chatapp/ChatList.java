@@ -38,7 +38,7 @@ import java.util.Locale;
 
 public class ChatList extends ListFragment implements View.OnClickListener{
     static ArrayList<ChatItem> chat_query = new ArrayList<>();
-    DbSqlite db;
+    DbManager db;
     ArrayList<Contact> chatName;
     ChatListAdapter adapter;
     GoogleCloudMessaging gcm;
@@ -50,7 +50,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
 
         prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
-        db = new DbSqlite(getActivity());
+        db = new DbManager(getActivity());
         chatName = new ArrayList<>();
         setHasOptionsMenu(true);
         refreshChatList();
