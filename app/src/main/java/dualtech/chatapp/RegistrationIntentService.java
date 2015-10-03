@@ -25,8 +25,6 @@ public class RegistrationIntentService extends IntentService {
     private static final String TAG = "RegIntentService";
     private static final String[] TOPICS = {"global"};
     private static final String PROJECT_NO = "25515784135";
-    private static final String REG_RESPONSE = "REGISTERED";
-    private static final String ERROR_RESPONSE = "ERROR";
     Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
     LocalBroadcastManager broadcastManager;
     SharedPreferences sharedPreferences;
@@ -53,7 +51,7 @@ public class RegistrationIntentService extends IntentService {
                 // [END get_token]
                 Log.i(TAG, "GCM Registration Token: " + token);
 
-                ApplicationInit.setREGISTRATION_KEY(token);// Save the regid for global use - no need to register again.
+//                ApplicationInit.setREGISTRATION_KEY(token);// Save the regid for global use - no need to register again.
 
                 // Subscribe to topic channels
                 subscribeTopics(token);
@@ -91,6 +89,7 @@ public class RegistrationIntentService extends IntentService {
                         sharedPreferences.edit().putBoolean(QuickstartPreferences.SENT_TOKEN_TO_SERVER, true).apply();
                         broadcastManager.sendBroadcast(registrationComplete);
                         Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
+                        ApplicationInit.setREGISTRATION_KEY(token);// Save the regid for global use - no need to register again.
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -105,7 +104,7 @@ public class RegistrationIntentService extends IntentService {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 // the POST parameters:
-                params.put("RegNo", ApplicationInit.getREGISTRATION_KEY());
+                params.put("RegNo", token);
                 params.put("MobileNo", ApplicationInit.getMobile_number());
                 params.put("Register", "yes");
                 return params;
