@@ -220,7 +220,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             editText.setFocusable(false);
             String msg = "You cannot send messages to your self";
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            chatList.add(new ChatDbProvider(msg, 2, d));
+            chatList.add(new ChatDbProvider(msg, 2, d, 0));
             adapter.notifyDataSetChanged();
         }
     }
@@ -333,9 +333,9 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         et_msg = String.valueOf(editText.getText());
         if (et_msg != null) {
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            chatList.add(new ChatDbProvider(et_msg, 1, d));
             db = new DbManager(this);
             db.insertMessage(et_msg, ch_contact, 1);
+            chatList.add(new ChatDbProvider(et_msg, 1, d, db.getMsgCount()));
             sendMsg(et_msg, d, db.getMsgCount());
             editText.setText("");
             adapter.notifyDataSetChanged();
@@ -380,6 +380,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             String Message = p.msg;
             int sender = p.s_id;
             String Date = p.date;
+            int stat = p.status;
 
             holder.vh_msg.setText(Message.trim());
             holder.vh_time.setText(Date);
@@ -387,10 +388,16 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             msg_bubble = (LinearLayout) cv.findViewById(R.id.ct_bubble);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) msg_bubble.getLayoutParams();
 
-            if (sender == 1) {
+            if (sender == 1 && stat == 0) {
+                msg_bubble.setBackgroundResource(R.drawable.pending);
+                params.gravity = Gravity.END;
+            }else if (sender == 1 && stat == 1) {
                 msg_bubble.setBackgroundResource(R.drawable.outgoing);
                 params.gravity = Gravity.END;
-            } else {
+            }else if (sender == 1 && stat == 2) {
+                msg_bubble.setBackgroundResource(R.drawable.sent);
+                params.gravity = Gravity.END;
+            }else {
                 msg_bubble.setBackgroundResource(R.drawable.incoming);
                 params.gravity = Gravity.START;
             }

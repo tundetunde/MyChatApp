@@ -207,14 +207,14 @@ public class DbManager extends SQLiteOpenHelper {
 
         List<ChatDbProvider> update = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT msg,sender, datetime FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
+        String selectQuery = "SELECT msg,sender, datetime, status FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 // Adding contact to list
-                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2)));
+                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2), cursor.getInt(3)));
             } while (cursor.moveToNext());
         }
         cursor.close();
