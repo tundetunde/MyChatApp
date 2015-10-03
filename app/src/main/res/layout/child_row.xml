@@ -6,14 +6,21 @@
     android:paddingEnd="10dp" android:paddingLeft="10dp"
     android:paddingRight="10dp" android:paddingStart="10dp">
 
+    <ImageView
+        android:id="@+id/childIMG"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="#000"/>
 
     <TextView
         android:id="@+id/childTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/childIMG"
+        android:layout_toRightOf="@id/childIMG"
         android:padding="15dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium"
