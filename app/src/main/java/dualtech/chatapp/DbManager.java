@@ -303,7 +303,7 @@ public class DbManager extends SQLiteOpenHelper {
 
     public void updateMsgStatus(int status, int id){
         SQLiteDatabase db = this.getWritableDatabase();
-        String updateQuery = "UPDATE " + TABLE_MESSAGES + " SET status " + status + " WHERE id = '" + id + "'";
+        String updateQuery = "UPDATE " + TABLE_MESSAGES + " SET status = " + status + " WHERE id = '" + id + "'";
         db.execSQL(updateQuery);
     }
 }
