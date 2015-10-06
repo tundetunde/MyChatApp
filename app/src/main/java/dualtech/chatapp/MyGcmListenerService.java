@@ -125,6 +125,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 String id = data.getString("msgId");
                 db.updateMsgStatus(Integer.valueOf(receiptNumber), Integer.valueOf(id));
                 Log.d("RECEIPT SERVER", receiptNumber);
+                Log.d("RECEIPT msgID", id);
                 break;
 
         }

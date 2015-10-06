@@ -168,6 +168,7 @@ public class ProfilePage extends AppCompatActivity implements View.OnClickListen
                 byte[] bArray = bos.toByteArray();
                 Gson gson = new Gson();
                 final String jsonPhoneList = gson.toJson(db.getAllContacts());
+                Log.d(TAG, "Contact List: " + jsonPhoneList);
                 final String byteString = Base64.encodeToString(bArray, Base64.DEFAULT);
                 Log.d(TAG, "BYTE ARR: " + bArray.length);
                 Log.d(TAG, "BYTE STR: " + byteString.length());
