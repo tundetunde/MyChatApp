@@ -388,7 +388,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             msg_bubble = (LinearLayout) cv.findViewById(R.id.ct_bubble);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) msg_bubble.getLayoutParams();
 
-            if (sender == 1 && stat == 0) {
+            System.out.println("STATUS: " + stat);
+            if (sender == 1 && stat != 1 && stat != 2) {
                 msg_bubble.setBackgroundResource(R.drawable.pending);
                 params.gravity = Gravity.END;
             }else if (sender == 1 && stat == 1) {
