@@ -62,7 +62,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     String et_msg, ch_contact, ch_display, ch_sender;
     ArrayList<ChatDbProvider> chatList;
     ArrayAdapter<ChatDbProvider> adapter;
-    SharedPreferences prefs;
     ImageView ivProfile;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -100,8 +99,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         getSupportActionBar().setTitle("");
 
         Bundle bundle = getIntent().getExtras();
-        prefs = getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
-
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
 
@@ -154,7 +151,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 if(s.length() > 0){
                     isTypingCounter++;
                     isTyping = true;
-                    //sendTypingAlert("y");
                 }else{
                     isTyping = false;
                     sendTypingAlert("n");
@@ -335,7 +331,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             db = new DbManager(this);
             db.insertMessage(et_msg, ch_contact, 1);
-            chatList.add(new ChatDbProvider(et_msg, 1, d, db.getMsgCount()));
+            chatList.add(new ChatDbProvider(et_msg, 1, d, 0));
             sendMsg(et_msg, d, db.getMsgCount());
             editText.setText("");
             adapter.notifyDataSetChanged();
@@ -388,8 +384,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             msg_bubble = (LinearLayout) cv.findViewById(R.id.ct_bubble);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) msg_bubble.getLayoutParams();
 
-            System.out.println("STATUS: " + stat);
-            if (sender == 1 && stat != 1 && stat != 2) {
+            if (sender == 1 && stat == 0) {
                 msg_bubble.setBackgroundResource(R.drawable.pending);
                 params.gravity = Gravity.END;
             }else if (sender == 1 && stat == 1) {
@@ -417,4 +412,5 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             }
         }
     }
+
 }

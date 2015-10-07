@@ -36,6 +36,13 @@ public class MyGcmListenerService extends GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
 
+    public static void cancelNotification(Context ctx, int notifyId) {
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager nMgr = (NotificationManager) ctx.getSystemService(ns);
+        nMgr.cancel(notifyId);
+    }
+    // [END receive_message]
+
     /**
      * Called when message is received.
      *
@@ -124,8 +131,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 String receiptNumber = data.getString("receiptNo");
                 String id = data.getString("msgId");
                 db.updateMsgStatus(Integer.valueOf(receiptNumber), Integer.valueOf(id));
-                Log.d("RECEIPT SERVER", receiptNumber);
-                Log.d("RECEIPT msgID", id);
+                updateMyActivity(this, message, sender);
                 break;
 
         }
@@ -139,10 +145,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 updateMyActivity(this, message, sender);
             else
                 sendNotification(message, sender);
-
         }
     }
-    // [END receive_message]
 
     private void downloadImg(final String user,final String img){
         final ContextWrapper cw = new ContextWrapper(getApplicationContext());
@@ -182,6 +186,7 @@ public class MyGcmListenerService extends GcmListenerService {
             }
         }.execute();
     }
+
     private void saveToInternalStorage(String user, byte[] imgByte){
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         // path to /data/data/yourapp/app_data/imageDir
@@ -214,6 +219,7 @@ public class MyGcmListenerService extends GcmListenerService {
         }
         return name;
     }
+
     private int msgId() {
         return  ApplicationInit.getMsgId();
     }
@@ -228,21 +234,18 @@ public class MyGcmListenerService extends GcmListenerService {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
                     data.putString("Type", "Receipt");
-                    data.putString("receiptNo", "2");
                     data.putString("msgId", mid);
                     data.putString("GCM_number", number);
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
-                    msg = "Sent message";
+                    msg = "Sent delivery message";
                 } catch (IOException ex) {
-                    msg = "Message could not be sent";
+                    msg = "Delivery Message could not be sent";
                 }
                 return msg;
             }
 
             @Override
-            protected void onPostExecute(String msg) {
-                Log.d("Sent Delivered Message", "2");
-            }
+            protected void onPostExecute(String msg) {}
         }.execute();
     }
 
@@ -255,6 +258,7 @@ public class MyGcmListenerService extends GcmListenerService {
         intent.putExtra("contact", contactID);
         //send broadcast
         context.sendBroadcast(intent);
+        cancelNotification(getBaseContext(), 0);
     }
 
     /**
@@ -283,6 +287,6 @@ public class MyGcmListenerService extends GcmListenerService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(ApplicationInit.NOTIFICATION_ID /* ID of notification */, notificationBuilder.build());
     }
 }

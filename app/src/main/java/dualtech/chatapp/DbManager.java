@@ -298,7 +298,7 @@ public class DbManager extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(s, null);
         int n = cursor.getCount();
         cursor.close();
-        return n-1;
+        return n;
     }
 
     public void updateMsgStatus(int status, int id){

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class ApplicationInit extends Application {
+    public static final int NOTIFICATION_ID = 0;
     public static final String PROPERTY_REG_ID = "registration_id";
     public static final String PROPERTY_MOB_ID = "mobile_number";
     public static final String PROPERTY_USER_NAME = "user_name";
