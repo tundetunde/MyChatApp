@@ -148,15 +148,18 @@ public class MyGcmListenerService extends GcmListenerService {
         }
     }
 
+
+
     private void downloadImg(final String user,final String img){
         final ContextWrapper cw = new ContextWrapper(getApplicationContext());
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
+                String myImagePath = "http://192.168.1.9:8080/ProfilePics/" + img + ".jpg";
                 File mypath = null;
                 Bitmap bitmap = null;
                 try {
-                    bitmap = BitmapFactory.decodeStream((InputStream)new URL(img).getContent());
+                    bitmap = BitmapFactory.decodeStream((InputStream)new URL(myImagePath).getContent());
                     File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
                     // Create imageDir
                     mypath = new File(directory, "profile_" + user + ".jpg");
