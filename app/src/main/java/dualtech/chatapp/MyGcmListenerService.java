@@ -15,11 +15,21 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.ImageView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +45,7 @@ import java.util.Map;
 public class MyGcmListenerService extends GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
+    Bitmap bitmap;
 
     public static void cancelNotification(Context ctx, int notifyId) {
         String ns = Context.NOTIFICATION_SERVICE;
@@ -96,7 +107,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 String number = data.getString("GCM_FROM");
                 /*byte[] byt = image.getBytes();
                 saveToInternalStorage(user, byt);*/
-                downloadImg(image, number);
+                downloadImg(number);
                 break;
             case "ContactsPhoto":
                 String photolist = data.getString("ListPhoto");
@@ -150,12 +161,12 @@ public class MyGcmListenerService extends GcmListenerService {
 
 
 
-    private void downloadImg(final String user,final String img){
+    private void downloadImg(final String user){
         final ContextWrapper cw = new ContextWrapper(getApplicationContext());
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
-                String myImagePath = "http://192.168.1.9:8080/ProfilePics/" + img + ".jpg";
+                String myImagePath = ApplicationInit.PROFILE_PIC_ADDRESS + user + ".jpg";
                 File mypath = null;
                 Bitmap bitmap = null;
                 try {
