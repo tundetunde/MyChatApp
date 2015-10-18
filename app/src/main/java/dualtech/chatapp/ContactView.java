@@ -2,9 +2,11 @@ package dualtech.chatapp;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -21,11 +23,14 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -137,18 +142,23 @@ public class ContactView extends Fragment implements View.OnClickListener{
     }
 
     public class ExContactListAdapter extends BaseExpandableListAdapter{
+        ContextWrapper cw;
         Context baseContext;
         LayoutInflater inflater;
         List<String> parentItem;
         ArrayList<Contact> rowItem;
         Map<String, ArrayList<Contact>> childItem;
+        File directory;
 
         public ExContactListAdapter(List<String> l, Map<String, ArrayList<Contact>> col){
             parentItem = l;
             childItem = col;
+            cw = null;
         }
 
         public void setInflater(LayoutInflater in, Context c){
+            cw = new ContextWrapper(c.getApplicationContext());
+            directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
             inflater = in;
             baseContext = c;
         }
@@ -210,7 +220,13 @@ public class ContactView extends Fragment implements View.OnClickListener{
             }
             TextView childText = (TextView) convertView.findViewById(R.id.childTV);
             ImageButton imgBt = (ImageButton) convertView.findViewById(R.id.chdInfo);
+            ImageView imgView = (ImageView) convertView.findViewById(R.id.childIMG);
             childText.setText(rowItem.get(childPosition).toString());
+
+            Contact c1 = rowItem.get(childPosition);
+            Drawable profilePic;
+            profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + c1.number + ".jpg");
+            imgView.setImageDrawable(profilePic);
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -229,7 +245,7 @@ public class ContactView extends Fragment implements View.OnClickListener{
                 public void onClick(View v) {
                     Contact c = rowItem.get(childPosition);
                     Intent i = new Intent().setClass(getActivity(), ContactProfile.class);
-                    i.putExtra("number",c.number );
+                    i.putExtra("number", c.number);
                     i.putExtra("name", c.name);
                     startActivity(i);
                 }
