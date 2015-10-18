@@ -6,4 +6,5 @@
     <color name="tab_text">#000000</color>
     <color name="bg_image">#000000</color>
     <color name="menu_top">@android:color/darker_gray</color>
+    <color name="bg_colour">#d5ffb380</color>
 </resources>

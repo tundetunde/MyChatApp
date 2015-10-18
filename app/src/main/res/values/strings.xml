@@ -12,7 +12,6 @@
         running the sample again.</string>
     <string name="api_name">AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY</string>
     <string name="project_id">dual-digital-000</string>
-    <color name="bg_colour">#ffb380d5</color>
     <string name="prompt">Choose Country code</string>
     <string name="feed_hint">Share your thoughts</string>
     <string-array name="CountryCodes" >

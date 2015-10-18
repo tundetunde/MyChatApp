@@ -135,7 +135,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 adapter.notifyDataSetChanged();
                 break;
         }
-
     }
 
     @Override
@@ -267,7 +266,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
             String Time = p.time;
             String number = p.number;
 
-            holder.fh_msg.setText(Message.trim());
+            holder.fh_msg.setText("... has changed their status to: '" + Message.trim() + "'");
             holder.fh_user.setText(User);
             holder.fh_time.setText(Time);
             Drawable profilePic;
@@ -277,7 +276,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
 
             feed_bubble = (RelativeLayout) cv.findViewById(R.id.fd_bubble);
             feed_bubble.setBackgroundResource(R.drawable.box);
-
             return cv;
         }
 
