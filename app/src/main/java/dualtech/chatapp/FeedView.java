@@ -58,7 +58,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
     private BroadcastReceiver mFeedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             refreshFeed();
             Log.d(TAG, "FEED Refreshed");
 
@@ -129,7 +128,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                     String number = ApplicationInit.getMobile_number();
                     send(update, time);
                     db.insertFeed(name, update, time);
-                    feed_query.add(0, new Feed(name,update, time, number));
+                    feed_query.add(0, new Feed(name,update, time, number, 0));
                 }
                 et_feed.setText("");
                 adapter.notifyDataSetChanged();
@@ -187,7 +186,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         feed_query.clear();
 
         for (List s : query) {
-            feed_query.add(new Feed(getContactName(s.get(0).toString()), s.get(1).toString(), s.get(2).toString(), s.get(0).toString()));
+            feed_query.add(new Feed(getContactName(s.get(0).toString()), s.get(1).toString(), s.get(2).toString(), s.get(0).toString(), Integer.parseInt(s.get(3).toString())));
         }
         adapter = new FeedAdapter(getActivity(), R.layout.feed_box, feed_query);
         setListAdapter(adapter);
@@ -215,12 +214,14 @@ public class FeedView extends ListFragment implements View.OnClickListener {
 
     public class Feed{
         String status, user, time, number;
+        int picture;
 
-        Feed(String u, String s, String t, String n){
+        Feed(String u, String s, String t, String n, int p){
             user = u;
             status = s;
             time = t;
             number = n;
+            picture = p;
         }
     }
 
@@ -247,35 +248,65 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         public View getView(int position, View convertView, ViewGroup parent) {
             FHolder holder;
             View cv = convertView;
-
-            if (cv == null) {
-                cv = LayoutInflater.from(context).inflate(R.layout.feed_box, parent, false);
-                holder = new FHolder();
-                holder.fh_msg = (TextView) cv.findViewById(R.id.fd_msg);
-                holder.fh_time = (TextView) cv.findViewById(R.id.fd_time);
-                holder.fh_user = (TextView) cv.findViewById(R.id.fd_user);
-                holder.fh_displayPic = (ImageView) cv.findViewById(R.id.imageView);
-                cv.setTag(holder);
-            } else {
-                holder = (FHolder) cv.getTag();
-            }
-
             Feed p = getItem(position);
             String Message = p.status;
             String User = p.user;
             String Time = p.time;
             String number = p.number;
+            int picture = p.picture;
 
-            holder.fh_msg.setText("... has changed their status to: '" + Message.trim() + "'");
-            holder.fh_user.setText(User);
-            holder.fh_time.setText(Time);
-            Drawable profilePic;
-            profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
-            if(profilePic != null)
-                holder.fh_displayPic.setImageDrawable(profilePic);
+            if(picture == 0){
 
-            feed_bubble = (RelativeLayout) cv.findViewById(R.id.fd_bubble);
-            feed_bubble.setBackgroundResource(R.drawable.box);
+                //if (cv == null) {
+                    cv = LayoutInflater.from(context).inflate(R.layout.feed_box, parent, false);
+                    holder = new FHolder();
+                    holder.fh_msg = (TextView) cv.findViewById(R.id.fd_msg);
+                    holder.fh_time = (TextView) cv.findViewById(R.id.fd_time);
+                    holder.fh_user = (TextView) cv.findViewById(R.id.fd_user);
+                    holder.fh_smallDisplayPic = (ImageView) cv.findViewById(R.id.imageView);
+                    cv.setTag(holder);
+                /*} else {
+                    holder = (FHolder) cv.getTag();
+                }*/
+
+                holder.fh_msg.setText("... has changed their status to: '" + Message.trim() + "'");
+                holder.fh_user.setText(User);
+                holder.fh_time.setText(Time);
+                Drawable profilePic;
+                profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
+                if(profilePic != null)
+                    holder.fh_smallDisplayPic.setImageDrawable(profilePic);
+                feed_bubble = (RelativeLayout) cv.findViewById(R.id.fd_bubble);
+                feed_bubble.setBackgroundResource(R.drawable.box);
+            }else{
+                //if (cv == null) {
+                    cv = LayoutInflater.from(context).inflate(R.layout.feed_box_display_pic, parent, false);
+                    holder = new FHolder();
+                    holder.fh_msg = (TextView) cv.findViewById(R.id.tvMessageStatus);
+                    holder.fh_time = (TextView) cv.findViewById(R.id.tvTime);
+                    holder.fh_user = (TextView) cv.findViewById(R.id.tvContactName);
+                    holder.fh_smallDisplayPic = (ImageView) cv.findViewById(R.id.ivSmallDisplayPic);
+                    holder.fh_LargeDisplayPic = (ImageView) cv.findViewById(R.id.ivBigImage);
+                    cv.setTag(holder);
+                /*} else {
+                    holder = (FHolder) cv.getTag();
+                }*/
+
+                holder.fh_msg.setText("Display Picture Changed");
+                holder.fh_user.setText(User);
+                holder.fh_time.setText(Time);
+                Drawable profilePic;
+                profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
+                if(profilePic != null){
+                    holder.fh_smallDisplayPic.setImageDrawable(profilePic);
+                    holder.fh_LargeDisplayPic.setImageDrawable(profilePic);
+                }
+
+                feed_bubble = (RelativeLayout) cv.findViewById(R.id.rlBubbble);
+                feed_bubble.setBackgroundResource(R.drawable.box);
+            }
+
+
             return cv;
         }
 
@@ -284,7 +315,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
          */
         private class FHolder {
             private TextView fh_user, fh_time, fh_msg;
-            private ImageView fh_displayPic;
+            private ImageView fh_smallDisplayPic, fh_LargeDisplayPic;
 
             FHolder() {
             }
