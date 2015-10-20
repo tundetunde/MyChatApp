@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/rlBubbble"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="277dp"
         android:layout_margin="10dp"
         android:orientation="vertical"
         android:padding="5dp">
@@ -29,14 +29,13 @@
             android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/tvContactName"
-            android:layout_centerVertical="true"
             android:layout_gravity="right"
             android:text="11/08/2015"
             android:textColor="@android:color/primary_text_light"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            android:layout_below="@+id/tvContactName"
+            android:layout_toRightOf="@+id/ivBigImage"
+            android:layout_toEndOf="@+id/ivBigImage" />
 
         <TextView
             android:id="@+id/tvMessageStatus"
@@ -65,9 +64,8 @@
             android:id="@+id/ivBigImage"
             android:background="#000000"
             android:layout_weight="5.65"
-            android:layout_below="@+id/ivSmallDisplayPic"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 

@@ -394,7 +394,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 msg_bubble.setBackgroundResource(R.drawable.sent);
                 params.gravity = Gravity.END;
             }else {
-                msg_bubble.setBackgroundResource(R.drawable.incoming);
+                msg_bubble.setBackgroundResource(R.drawable.chat_incoming);
                 params.gravity = Gravity.START;
             }
 
