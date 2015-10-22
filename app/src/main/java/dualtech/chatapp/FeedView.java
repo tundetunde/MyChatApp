@@ -300,6 +300,9 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 if(profilePic != null){
                     holder.fh_smallDisplayPic.setImageDrawable(profilePic);
                     holder.fh_LargeDisplayPic.setImageDrawable(profilePic);
+                }else {
+                    holder.fh_smallDisplayPic.setImageResource(R.drawable.default_pic);
+                    holder.fh_LargeDisplayPic.setImageResource(R.drawable.default_pic);
                 }
 
                 feed_bubble = (RelativeLayout) cv.findViewById(R.id.rlBubbble);

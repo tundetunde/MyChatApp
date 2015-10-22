@@ -119,7 +119,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         if(profilePic != null)
             ivProfile.setImageDrawable(profilePic);
         else
-            ivProfile.setImageResource(R.drawable.ic_launcher);
+            ivProfile.setImageResource(R.drawable.default_pic);
         lv = (ListView) findViewById(R.id.lvChatHistory);
         rl = (RelativeLayout) findViewById(R.id.ac_layout);
         rl.setOnClickListener(new View.OnClickListener() {

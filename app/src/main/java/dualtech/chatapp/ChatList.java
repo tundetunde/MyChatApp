@@ -220,10 +220,11 @@ public class ChatList extends ListFragment implements View.OnClickListener{
             holder.fh_time.setText(time);
             Drawable profilePic;
             profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
-            if(profilePic != null){
+            if(profilePic != null)
+                holder.fh_displayPic.setImageDrawable(profilePic);
+            else
+                holder.fh_displayPic.setImageResource(R.drawable.default_pic);
 
-            }
-            holder.fh_displayPic.setImageDrawable(profilePic);
 
             feed_bubble = (RelativeLayout) cv.findViewById(R.id.chatList_bubble);
             feed_bubble.setBackgroundResource(R.drawable.box);
