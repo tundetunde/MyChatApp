@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:id="@+id/rlBubbble"
+        android:layout_width="match_parent"
+        android:layout_height="277dp"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:id="@+id/tvContactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/ivSmallDisplayPic"
+            android:layout_toEndOf="@+id/ivSmallDisplayPic"
+            android:layout_toRightOf="@+id/ivSmallDisplayPic"
+            android:text="Hello World"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="11/08/2015"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="12sp"
+            android:layout_below="@+id/tvContactName"
+            android:layout_toRightOf="@+id/ivBigImage"
+            android:layout_toEndOf="@+id/ivBigImage" />
+
+        <TextView
+            android:id="@+id/tvMessageStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTime"
+            android:layout_toEndOf="@+id/ivSmallDisplayPic"
+            android:layout_toRightOf="@+id/ivSmallDisplayPic"
+            android:text="Hello World MSG"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/ivSmallDisplayPic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="10dp"
+            android:background="#FFC107"/>
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:id="@+id/ivBigImage"
+            android:background="#000000"
+            android:layout_weight="5.65"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>

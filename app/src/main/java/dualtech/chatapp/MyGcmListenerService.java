@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MyGcmListenerService extends GcmListenerService {
@@ -93,11 +96,15 @@ public class MyGcmListenerService extends GcmListenerService {
                 this.sendBroadcast(cn);
                 break;
             case "Photo":
-                String image = data.getString("msg");
+                //String image = data.getString("msg");
                 String number = data.getString("GCM_FROM");
                 /*byte[] byt = image.getBytes();
                 saveToInternalStorage(user, byt);*/
                 downloadImg(number);
+                String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                db.insertFeed(number, "display image", d, 1);
+                Intent fini = new Intent("FEED");
+                this.sendBroadcast(fini);
                 break;
             case "ContactsPhoto":
                 String photolist = data.getString("ListPhoto");

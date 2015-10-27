@@ -30,7 +30,7 @@ public class DbManager extends SQLiteOpenHelper {
             + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
             + "id INTEGER PRIMARY KEY autoincrement, " + "user TEXT,"
-            + "status TEXT," + "date_time default current_timestamp" + ")";
+            + "status TEXT," + "date_time default current_timestamp," + "picture INTEGER DEFAULT 0 NOT NULL" +")";
     String message_table = "CREATE TABLE " + TABLE_MESSAGES + "("
             + "id integer PRIMARY KEY autoincrement," + "msg TEXT,"
             + "contact_id TEXT," + "datetime default current_timestamp,"
@@ -71,6 +71,21 @@ public class DbManager extends SQLiteOpenHelper {
         values.put("user", u);
         values.put("status", s);
         values.put("date_time", t);
+
+        db.insert(TABLE_FEED, null, values);
+        Log.d(TAG, "ADDED " + s);
+        db.close();
+    }
+
+    //Overload function for Display Picture
+    public void insertFeed(String u, String s, String t, int pic){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("user", u);
+        values.put("status", s);
+        values.put("date_time", t);
+        values.put("picture", pic);
 
         db.insert(TABLE_FEED, null, values);
         Log.d(TAG, "ADDED " + s);
@@ -193,6 +208,7 @@ public class DbManager extends SQLiteOpenHelper {
                 c.add(cursor.getString(1));
                 c.add(cursor.getString(2));
                 c.add(cursor.getString(3));
+                c.add(cursor.getString(4));
                 // Adding contact to list
                 update.add(c);
             } while (cursor.moveToNext());

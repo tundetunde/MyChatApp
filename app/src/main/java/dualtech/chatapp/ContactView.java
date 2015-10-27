@@ -226,7 +226,10 @@ public class ContactView extends Fragment implements View.OnClickListener{
             Contact c1 = rowItem.get(childPosition);
             Drawable profilePic;
             profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + c1.number + ".jpg");
-            imgView.setImageDrawable(profilePic);
+            if(profilePic != null)
+                imgView.setImageDrawable(profilePic);
+            else
+                imgView.setImageResource(R.drawable.default_pic);
 
             convertView.setOnClickListener(new View.OnClickListener() {
                 @Override
