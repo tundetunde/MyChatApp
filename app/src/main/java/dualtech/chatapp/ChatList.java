@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -43,6 +44,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     ChatListAdapter adapter;
     GoogleCloudMessaging gcm;
     SharedPreferences prefs;
+    Button btnCreateGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,6 +56,16 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         chatName = new ArrayList<>();
         setHasOptionsMenu(true);
         refreshChatList();
+        btnCreateGroup = (Button) v.findViewById(R.id.btnCreateGroup);
+        btnCreateGroup.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                Intent i = new Intent("dualtech.chatapp.CREATEGROUP");
+                startActivity(i);
+            }
+
+        });
         return v;
     }
 

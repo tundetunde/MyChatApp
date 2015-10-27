@@ -34,7 +34,7 @@ public class DbManager extends SQLiteOpenHelper {
     String message_table = "CREATE TABLE " + TABLE_MESSAGES + "("
             + "id integer PRIMARY KEY autoincrement," + "msg TEXT,"
             + "contact_id TEXT," + "datetime default current_timestamp,"
-            + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL" + ")";
+            + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL, " + "groupname TEXT" + ")";
     String chatList_table = "CREATE TABLE " + TABLE_CHAT_LIST + "("
             + "contact TEXT PRIMARY KEY," + "regName TEXT" + ")";
 
@@ -118,6 +118,25 @@ public class DbManager extends SQLiteOpenHelper {
         values.put("msg", s);
         values.put("contact_id", c);
         values.put("sender", sender);
+
+        db.insert(TABLE_MESSAGES, null, values);
+        Log.d(TAG, "ADDED MSG : " + s);
+        db.close();
+    }
+
+    //Group Message
+    public void insertMessage(String s, String c, int sender, String groupName){
+        if(checkChatList(c)){
+            insertChatList(c);
+        }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("msg", s);
+        values.put("contact_id", c);
+        values.put("sender", sender);
+        values.put("groupname", groupName);
 
         db.insert(TABLE_MESSAGES, null, values);
         Log.d(TAG, "ADDED MSG : " + s);
@@ -223,7 +242,27 @@ public class DbManager extends SQLiteOpenHelper {
 
         List<ChatDbProvider> update = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT msg,sender, datetime, status FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
+        String selectQuery = "SELECT msg,sender, datetime, status FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "') AND groupname = 'NULL'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding contact to list
+                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2), cursor.getInt(3)));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d(TAG, "CHAT HISTORY");
+        return update;
+    }
+
+    //Chat History for group chat
+    public List<ChatDbProvider> getChatHistory(String c, String groupName) {
+
+        List<ChatDbProvider> update = new ArrayList<>();
+        // Select All Query
+        String selectQuery = "SELECT msg,sender, datetime, status FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "') AND groupname = '" + groupName + "'";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list

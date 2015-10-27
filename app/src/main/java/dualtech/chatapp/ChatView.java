@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,6 +38,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +64,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     TextWatcher text_watch;
     String et_msg, ch_contact, ch_display, ch_sender;
     ArrayList<ChatDbProvider> chatList;
+    ArrayList<String> group, numbers;
     ArrayAdapter<ChatDbProvider> adapter;
     ImageView ivProfile;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
@@ -72,12 +76,14 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 @Override
                 public void run() {
                     // show alert
-                    if(isTyping != null){
-                        if(isTyping.equals("y"))
-                            tvSub.setText("... is Typing");
-                        else{
-                            //To be implemented so the person status is there
-                            tvSub.setText("Online");
+                    if(isGroup() == false) {
+                        if (isTyping != null) {
+                            if (isTyping.equals("y"))
+                                tvSub.setText("... is Typing");
+                            else {
+                                //To be implemented so the person status is there
+                                tvSub.setText("Online");
+                            }
                         }
                     }
                 }
@@ -101,6 +107,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         Bundle bundle = getIntent().getExtras();
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
+        group = bundle.getStringArrayList("group");
+        numbers = bundle.getStringArrayList("number");
+        //Log.d("contact", ch_contact);
+        Log.d("display", ch_display);
 
         ch_sender = ApplicationInit.getMobile_number();
         db = new DbManager(this);
@@ -113,6 +123,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         tvSub = (TextView) findViewById(R.id.vActionStatus);
         tvTitle = (TextView) findViewById(R.id.textViewTitle);
         tvTitle.setText(ch_display);
+        /*if(group != "" || group != null)
+            tvTitle.setText(group);*/
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         Drawable profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + ch_contact + ".jpg");
         ivProfile = (ImageView) findViewById(R.id.ivChatProfile);
@@ -147,17 +159,18 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 } else {
                     send.setVisibility(View.VISIBLE);
                 }
-
-                if(s.length() > 0){
-                    isTypingCounter++;
-                    isTyping = true;
-                }else{
-                    isTyping = false;
-                    sendTypingAlert("n");
-                    isTypingCounter = 0;
-                }
-                if(isTyping && (isTypingCounter == 1)){
-                    sendTypingAlert("y");
+                if(isGroup() == false) {
+                    if (s.length() > 0) {
+                        isTypingCounter++;
+                        isTyping = true;
+                    } else {
+                        isTyping = false;
+                        sendTypingAlert("n");
+                        isTypingCounter = 0;
+                    }
+                    if (isTyping && (isTypingCounter == 1)) {
+                        sendTypingAlert("y");
+                    }
                 }
             }
         };
@@ -207,18 +220,20 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void loadChat() {
-        chatList = (ArrayList) db.getChatHistory(ch_contact);
+        chatList = (ArrayList) db.getChatHistory(ch_contact, ch_display);
         adapter = new ChatViewAdapter(this, R.layout.message, chatList);
         lv.setAdapter(adapter);
-
-        if(ch_contact.equals(ApplicationInit.getMobile_number())){
-            editText.setClickable(false);
-            editText.setFocusable(false);
-            String msg = "You cannot send messages to your self";
-            String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-            chatList.add(new ChatDbProvider(msg, 2, d, 0));
-            adapter.notifyDataSetChanged();
+        if(group == null){
+            if(ch_contact.equals(ApplicationInit.getMobile_number())){
+                editText.setClickable(false);
+                editText.setFocusable(false);
+                String msg = "You cannot send messages to your self";
+                String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+                chatList.add(new ChatDbProvider(msg, 2, d, 0));
+                adapter.notifyDataSetChanged();
+            }
         }
+
     }
 
     @Override
@@ -244,12 +259,24 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 try {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
-                    data.putString("Type", "msg");
-                    data.putString("GCM_msg", txt);
-                    data.putString("GCM_time", dt);
-                    data.putString("GCM_contactId", ch_contact);
-                    data.putString("GCM_sender", ch_sender);
-                    data.putString("GCM_msgId", String.valueOf(mid));
+                    if(isGroup() == false){
+                        data.putString("Type", "msg");
+                        data.putString("GCM_msg", txt);
+                        data.putString("GCM_time", dt);
+                        data.putString("GCM_contactId", ch_contact);
+                        data.putString("GCM_sender", ch_sender);
+                        data.putString("GCM_msgId", String.valueOf(mid));
+                    }else {
+                        data.putString("Type", "GroupMessage");
+                        data.putString("GCM_msg", txt);
+                        data.putString("GCM_time", dt);
+                        data.putString("GroupName", ch_display);
+                        data.putString("GCM_FROM", ch_sender);
+                        data.putString("GCM_msgId", String.valueOf(mid));
+                        Gson gson = new Gson();
+                        data.putString("contacts", gson.toJson(numbers));
+                    }
+
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent message";
                 } catch (IOException ex) {
@@ -324,6 +351,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         finish();
     }
 
+    public boolean isGroup(){
+        return group != null;
+    }
+
     @Override
     public void onClick(View v) {
         et_msg = String.valueOf(editText.getText());
@@ -384,19 +415,30 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             msg_bubble = (LinearLayout) cv.findViewById(R.id.ct_bubble);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) msg_bubble.getLayoutParams();
 
-            if (sender == 1 && stat == 0) {
-                msg_bubble.setBackgroundResource(R.drawable.pending);
-                params.gravity = Gravity.END;
-            }else if (sender == 1 && stat == 1) {
-                msg_bubble.setBackgroundResource(R.drawable.outgoing);
-                params.gravity = Gravity.END;
-            }else if (sender == 1 && stat == 2) {
-                msg_bubble.setBackgroundResource(R.drawable.sent);
-                params.gravity = Gravity.END;
-            }else {
-                msg_bubble.setBackgroundResource(R.drawable.chat_incoming);
-                params.gravity = Gravity.START;
+            if(isGroup()){
+                if (sender == 1 && stat == 0) {
+                    msg_bubble.setBackgroundResource(R.drawable.chat_delivered);
+                    params.gravity = Gravity.END;
+                }else {
+                    msg_bubble.setBackgroundResource(R.drawable.chat_incoming);
+                    params.gravity = Gravity.START;
+                }
+            }else{
+                if (sender == 1 && stat == 0) {
+                    msg_bubble.setBackgroundResource(R.drawable.chat_outcoming);
+                    params.gravity = Gravity.END;
+                }else if (sender == 1 && stat == 1) {
+                    msg_bubble.setBackgroundResource(R.drawable.chat_sending);
+                    params.gravity = Gravity.END;
+                }else if (sender == 1 && stat == 2) {
+                    msg_bubble.setBackgroundResource(R.drawable.chat_delivered);
+                    params.gravity = Gravity.END;
+                }else {
+                    msg_bubble.setBackgroundResource(R.drawable.chat_incoming);
+                    params.gravity = Gravity.START;
+                }
             }
+
 
             return cv;
         }

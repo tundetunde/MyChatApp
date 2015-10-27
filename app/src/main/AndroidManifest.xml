@@ -48,6 +48,24 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".CreateGroup"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="dualtech.chatapp.CREATEGROUP" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".GroupAddContacts"
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="dualtech.chatapp.GROUPADDCONTACTS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".ChatBackgroundSetting"
             android:configChanges="orientation|screenSize"/>
         <activity android:name=".ChatView"

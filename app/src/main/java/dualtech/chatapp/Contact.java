@@ -12,6 +12,7 @@ import android.provider.ContactsContract;
 public class Contact{
     String number , name;
     Context context;
+    private boolean checked = false ;
 
     Contact(String n, String num){
         number = num;
@@ -42,5 +43,17 @@ public class Contact{
             cursor.close();
         }
         return name;
+    }
+
+    public boolean isChecked(){
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
+
+    public void toggleChecked() {
+        checked = !checked ;
     }
 }

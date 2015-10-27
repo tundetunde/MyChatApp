@@ -139,7 +139,12 @@ public class MyGcmListenerService extends GcmListenerService {
                 String receiptNumber = data.getString("receiptNo");
                 String id = data.getString("msgId");
                 db.updateMsgStatus(Integer.valueOf(receiptNumber), Integer.valueOf(id));
-                updateMyActivity(this, message, sender);
+                updateMyActivity(this, message, sender, "");
+                break;
+            case "GroupMessage":
+                String group = data.getString("GroupName");
+                db.insertMessage(message, sender, 0, group);
+                //sendDeliveredReceipt(sender, data.getString("GCM_msgId"));
                 break;
 
         }
@@ -150,9 +155,15 @@ public class MyGcmListenerService extends GcmListenerService {
          */
         if(type.equals("msg")){
             if(ChatView.active)
-                updateMyActivity(this, message, sender);
+                updateMyActivity(this, message, sender, "");
             else
-                sendNotification(message, sender);
+                sendNotification(message, sender, "");
+        }else if(type.equals("GroupMessage")){
+            String group = data.getString("GroupName");
+            if(ChatView.active)
+                updateMyActivity(this, message, sender, group);
+            else
+                sendNotification(message, sender, group);
         }
     }
 
@@ -260,13 +271,14 @@ public class MyGcmListenerService extends GcmListenerService {
         }.execute();
     }
 
-    void updateMyActivity(Context context, String message, String contactID) {
+    void updateMyActivity(Context context, String message, String contactID, String group) {
         Intent intent = new Intent("chicken");
         //put whatever data you want to send, if any
         String display = getContactName(contactID);
         intent.putExtra("message", message);
         intent.putExtra("display", display);
         intent.putExtra("contact", contactID);
+        intent.putExtra("group", group);
         //send broadcast
         context.sendBroadcast(intent);
         cancelNotification(getBaseContext(), 0);
@@ -277,24 +289,41 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message, String contactID) {
+    private void sendNotification(String message, String contactID, String groupName) {
         Intent intent = new Intent(this, ChatView.class);
         String display = getContactName(contactID);
         intent.putExtra("display", display);
         intent.putExtra("contact", contactID);
+
+        if(groupName != ""){
+            intent.putExtra("display", groupName);
+            intent.putExtra("display", groupName);
+        }
+
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(display)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
+        NotificationCompat.Builder notificationBuilder;
+        if(groupName != ""){
+            Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            notificationBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(display)
+                    .setContentText(message + " - " + groupName)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
+        }else{
+            Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            notificationBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(display)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent);
+        }
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
