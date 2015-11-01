@@ -89,7 +89,7 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btnCreateGroup:{
+            case R.id.btnCreateTheGroup:
                 String group = String.valueOf(groupName.getText());
                 if(!group.equals("")){
                     db.insertChatList(group);
@@ -101,11 +101,13 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
                     startActivity(i);
                 }else {
                     Toast.makeText(getApplicationContext(), "Please enter a Group Name", Toast.LENGTH_SHORT).show();
-                }}
-            case R.id.btnAddContacts:{
+                }
+            break;
+            case R.id.btnAddContacts:
                 Intent i = new Intent("dualtech.chatapp.GROUPADDCONTACTS");
                 i.putExtra("name", String.valueOf(groupName.getText()));
-                startActivity(i);}
+                startActivity(i);
+            break;
         }
     }
 }

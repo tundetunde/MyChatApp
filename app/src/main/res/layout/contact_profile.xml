@@ -30,7 +30,7 @@
             android:id="@+id/ch_dpView"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:src="@drawable/ppg"/>
+            android:src="@drawable/default_pic"/>
 
     </LinearLayout>
 

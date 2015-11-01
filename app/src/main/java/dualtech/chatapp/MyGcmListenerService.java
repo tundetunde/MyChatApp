@@ -143,7 +143,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
             case "GroupMessage":
                 String group = data.getString("GroupName");
-                db.insertMessage(message, sender, 0, group);
+                db.insertGroupMessage(message, sender, 0, group);
                 //sendDeliveredReceipt(sender, data.getString("GCM_msgId"));
                 break;
 
@@ -315,7 +315,7 @@ public class MyGcmListenerService extends GcmListenerService {
             Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentTitle(display)
+                    .setContentTitle(groupName)
                     .setContentText(message + " - " + groupName)
                     .setAutoCancel(true)
                     .setSound(defaultSoundUri)

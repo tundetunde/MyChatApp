@@ -95,7 +95,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chatbox);
-
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.chat_toolbar);
         setSupportActionBar(toolbar);
@@ -108,6 +107,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
         group = bundle.getStringArrayList("group");
+        if(group == null)
+            group = new ArrayList<>();
         numbers = bundle.getStringArrayList("number");
         //Log.d("contact", ch_contact);
         Log.d("display", ch_display);
@@ -116,6 +117,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         db = new DbManager(this);
         initialize();
         loadChat();
+    }
+
+    private boolean isGroup(){
+        return !(group.isEmpty());
     }
 
     private void initialize() {
@@ -223,7 +228,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         /*chatList = (ArrayList) db.getChatHistory(ch_contact, ch_display);
         adapter = new ChatViewAdapter(this, R.layout.message, chatList);
         lv.setAdapter(adapter);*/
-        if(group == null){
+        if(isGroup() == false){
             chatList = (ArrayList) db.getChatHistory(ch_contact);
             adapter = new ChatViewAdapter(this, R.layout.message, chatList);
             lv.setAdapter(adapter);
@@ -236,7 +241,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 adapter.notifyDataSetChanged();
             }
         }else{
-            chatList = (ArrayList) db.getChatHistory(ch_contact, ch_display);
+            chatList = (ArrayList) db.getGroupChatHistory(ch_contact, ch_display);
             adapter = new ChatViewAdapter(this, R.layout.message, chatList);
             lv.setAdapter(adapter);
         }
@@ -266,7 +271,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 try {
                     String id = String.valueOf(msgId());
                     Bundle data = new Bundle();
-                    if(isGroup() == false){
+                    if(!isGroup()){
                         data.putString("Type", "msg");
                         data.putString("GCM_msg", txt);
                         data.putString("GCM_time", dt);
@@ -280,6 +285,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                         data.putString("GroupName", ch_display);
                         data.putString("GCM_FROM", ch_sender);
                         data.putString("GCM_msgId", String.valueOf(mid));
+                        //data.putString("GCM_groupId", String.valueOf(mid));
                         Gson gson = new Gson();
                         data.putString("contacts", gson.toJson(numbers));
                     }
@@ -356,10 +362,6 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     public void onBackPressed(){
         super.onBackPressed();
         finish();
-    }
-
-    public boolean isGroup(){
-        return group != null;
     }
 
     @Override
