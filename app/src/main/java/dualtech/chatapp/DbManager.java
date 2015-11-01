@@ -19,14 +19,11 @@ public class DbManager extends SQLiteOpenHelper {
     final static String TABLE_FEED = "feed";
     final static String TABLE_MESSAGES = "messages";
     final static String TABLE_CONTACTS = "contacts";
-    final static String TABLE_REQUEST = "requests";
     final static String TABLE_CHAT_LIST = "chat_list";
+    final static String TABLE_GROUP_MSG = "group_msg";
 
     String contact_table = "CREATE TABLE " + TABLE_CONTACTS + "("
             + "phoneNumber TEXT," + "accepted INTEGER DEFAULT 0 NOT NULL"
-            + ")";
-    String request_table = "CREATE TABLE " + TABLE_REQUEST + "("
-            + "phoneNumber TEXT," + "requester INTEGER DEFAULT 0 NOT NULL"
             + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
             + "id INTEGER PRIMARY KEY autoincrement, " + "user TEXT,"
@@ -34,9 +31,13 @@ public class DbManager extends SQLiteOpenHelper {
     String message_table = "CREATE TABLE " + TABLE_MESSAGES + "("
             + "id integer PRIMARY KEY autoincrement," + "msg TEXT,"
             + "contact_id TEXT," + "datetime default current_timestamp,"
-            + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL, " + "groupname TEXT" + ")";
+            + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL" + ")";
+    String group_msg_table = "CREATE TABLE " + TABLE_GROUP_MSG + "("
+            + "id integer PRIMARY KEY autoincrement," + "groupId INTEGER NOT NULL," + "msg TEXT,"
+            + "contact_id TEXT," + "datetime default current_timestamp,"
+            + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL" + ")";
     String chatList_table = "CREATE TABLE " + TABLE_CHAT_LIST + "("
-            + "contact TEXT PRIMARY KEY," + "regName TEXT" + ")";
+            + "contact TEXT PRIMARY KEY," + "regName TEXT," + "type INTEGER DEFAULT 0 NOT NULL" + ")";
 
     public DbManager(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -48,7 +49,7 @@ public class DbManager extends SQLiteOpenHelper {
         db.execSQL(contact_table);
         db.execSQL(chatList_table);
         db.execSQL(message_table);
-        db.execSQL(request_table);
+        db.execSQL(group_msg_table);
     }
 
     @Override
@@ -123,6 +124,8 @@ public class DbManager extends SQLiteOpenHelper {
         Log.d(TAG, "ADDED MSG : " + s);
         db.close();
     }
+
+    public void insertGroupMsg(){}
 
     //Group Message
     public void insertMessage(String s, String c, int sender, String groupName){

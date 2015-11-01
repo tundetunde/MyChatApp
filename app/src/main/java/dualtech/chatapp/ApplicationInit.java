@@ -15,12 +15,8 @@ public class ApplicationInit extends Application {
     public static final String PROPERTY_PHOTO = "photo" ;
     public static final String PROPERTY_CHAT_BG = "chat_bg";
     public static final String PROPERTY_CHAT_BG_URL = "chat_bg_url" ;
-
-    //public static final String PROFILE_PIC_ADDRESS = "http://88.105.100.200:8080/ChatServerDual/ImgFolderClass/";
-    public static final String PROFILE_PIC_ADDRESS = "http://192.168.1.9:8080/ChatServerDual/ImgFolderClass/";
-
-    //public static final String SERVER_ADDRESS = "http://88.105.100.200:8080/ChatServerDual/GCMServer";
-    public static final String SERVER_ADDRESS = "http://192.168.1.9:8080/ChatServerDual/GCMServer";
+    public static final String PROFILE_PIC_ADDRESS = "http://100.71.193.225:8080/ChatServerDual/ImgFolderClass/";
+    public static final String SERVER_ADDRESS = "http://100.71.193.225:8080/ChatServerDual/GCMServer";
     private static final String API_KEY = "AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY";
     private static final String PROJECT_ID = "dual-digital-000";
     private static final String PROJECT_NO = "25515784135";

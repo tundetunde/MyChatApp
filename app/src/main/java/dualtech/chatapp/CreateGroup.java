@@ -49,7 +49,6 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
             contactNumbers = bundle.getStringArrayList("contactNumbers");
             groupNameString = bundle.getString("name");
         }
-
         db = new DbManager(this);
         initialize();
     }
@@ -59,44 +58,15 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
         groupName.setText(groupNameString);
         ivProfilePic = (ImageView) findViewById(R.id.ivGroupProfilePic);
         btnContact = (Button) findViewById(R.id.btnAddContacts);
-        btnContact.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                Intent i = new Intent("dualtech.chatapp.GROUPADDCONTACTS");
-                i.putExtra("name", String.valueOf(groupName.getText()));
-                startActivity(i);
-            }
-
-        });
+        btnContact.setOnClickListener(this);
+        btnCreateGroup = (Button)findViewById(R.id.btnCreateTheGroup);
+        btnCreateGroup.setOnClickListener(this);
         lvGroupContacts = (ListView) findViewById(R.id.lvContactGroupPpl);
         if(groupContacts != null){
             final ArrayAdapter adapter = new ArrayAdapter(this,
                     android.R.layout.simple_list_item_1, groupContacts);
             lvGroupContacts.setAdapter(adapter);
         }
-        btnCreateGroup = (Button)findViewById(R.id.btnCreateTheGroup);
-        btnCreateGroup.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                String group = String.valueOf(groupName.getText());
-                if(group != ""){
-                    db.insertChatList(group);
-                    Intent i = new Intent(CreateGroup.this, ChatView.class);
-                    i.putStringArrayListExtra("group", groupContacts);
-                    i.putStringArrayListExtra("number", contactNumbers);
-                    i.putExtra("display", group);
-                    i.putExtra("name", groupNameString);
-                    startActivity(i);
-                }else {
-                    Toast.makeText(getApplicationContext(), "Please enter a Group Name", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-
-        });
-
     }
 
     @Override
@@ -119,10 +89,23 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.btnCreateGroup:
+            case R.id.btnCreateGroup:{
+                String group = String.valueOf(groupName.getText());
+                if(!group.equals("")){
+                    db.insertChatList(group);
+                    Intent i = new Intent(CreateGroup.this, ChatView.class);
+                    i.putStringArrayListExtra("group", groupContacts);
+                    i.putStringArrayListExtra("number", contactNumbers);
+                    i.putExtra("display", group);
+                    i.putExtra("name", groupNameString);
+                    startActivity(i);
+                }else {
+                    Toast.makeText(getApplicationContext(), "Please enter a Group Name", Toast.LENGTH_SHORT).show();
+                }}
+            case R.id.btnAddContacts:{
                 Intent i = new Intent("dualtech.chatapp.GROUPADDCONTACTS");
-                startActivity(i);
-                break;
+                i.putExtra("name", String.valueOf(groupName.getText()));
+                startActivity(i);}
         }
     }
 }

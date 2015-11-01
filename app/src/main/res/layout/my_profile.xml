@@ -25,7 +25,7 @@
             android:layout_width="@dimen/dp_width"
             android:layout_height="@dimen/dp_height"
             android:scaleType="fitCenter"
-            android:src="@drawable/ppg"/>
+            android:src="@drawable/default_pic"/>
     </LinearLayout>
 
     <ScrollView
