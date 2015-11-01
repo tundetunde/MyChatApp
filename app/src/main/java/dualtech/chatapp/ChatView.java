@@ -220,10 +220,13 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void loadChat() {
-        chatList = (ArrayList) db.getChatHistory(ch_contact, ch_display);
+        /*chatList = (ArrayList) db.getChatHistory(ch_contact, ch_display);
         adapter = new ChatViewAdapter(this, R.layout.message, chatList);
-        lv.setAdapter(adapter);
+        lv.setAdapter(adapter);*/
         if(group == null){
+            chatList = (ArrayList) db.getChatHistory(ch_contact);
+            adapter = new ChatViewAdapter(this, R.layout.message, chatList);
+            lv.setAdapter(adapter);
             if(ch_contact.equals(ApplicationInit.getMobile_number())){
                 editText.setClickable(false);
                 editText.setFocusable(false);
@@ -232,6 +235,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 chatList.add(new ChatDbProvider(msg, 2, d, 0));
                 adapter.notifyDataSetChanged();
             }
+        }else{
+            chatList = (ArrayList) db.getChatHistory(ch_contact, ch_display);
+            adapter = new ChatViewAdapter(this, R.layout.message, chatList);
+            lv.setAdapter(adapter);
         }
 
     }

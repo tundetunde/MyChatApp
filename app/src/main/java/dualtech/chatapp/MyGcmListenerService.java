@@ -139,7 +139,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 String receiptNumber = data.getString("receiptNo");
                 String id = data.getString("msgId");
                 db.updateMsgStatus(Integer.valueOf(receiptNumber), Integer.valueOf(id));
-                updateMyActivity(this, message, sender, "");
+                updateMyActivity(this, message, sender, "", null);
                 break;
             case "GroupMessage":
                 String group = data.getString("GroupName");
@@ -155,15 +155,19 @@ public class MyGcmListenerService extends GcmListenerService {
          */
         if(type.equals("msg")){
             if(ChatView.active)
-                updateMyActivity(this, message, sender, "");
+                updateMyActivity(this, message, sender, "", null);
             else
-                sendNotification(message, sender, "");
+                sendNotification(message, sender, "", null);
         }else if(type.equals("GroupMessage")){
+            Gson gson1 = new Gson();
+            String contacts = data.getString("contacts");
             String group = data.getString("GroupName");
+            TypeToken<List<String>> token = new TypeToken<List<String>>() {};
+            ArrayList<String> list = gson1.fromJson(contacts, token.getType());
             if(ChatView.active)
-                updateMyActivity(this, message, sender, group);
+                updateMyActivity(this, message, sender, group, list);
             else
-                sendNotification(message, sender, group);
+                sendNotification(message, sender, group, list);
         }
     }
 
@@ -271,14 +275,16 @@ public class MyGcmListenerService extends GcmListenerService {
         }.execute();
     }
 
-    void updateMyActivity(Context context, String message, String contactID, String group) {
+    void updateMyActivity(Context context, String message, String contactID, String groupName, ArrayList<String> list) {
         Intent intent = new Intent("chicken");
         //put whatever data you want to send, if any
         String display = getContactName(contactID);
+        if(groupName != null)
+            display = groupName;
         intent.putExtra("message", message);
         intent.putExtra("display", display);
         intent.putExtra("contact", contactID);
-        intent.putExtra("group", group);
+        intent.putStringArrayListExtra("group", list);
         //send broadcast
         context.sendBroadcast(intent);
         cancelNotification(getBaseContext(), 0);
@@ -289,7 +295,7 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message, String contactID, String groupName) {
+    private void sendNotification(String message, String contactID, String groupName, ArrayList<String> contactList) {
         Intent intent = new Intent(this, ChatView.class);
         String display = getContactName(contactID);
         intent.putExtra("display", display);
@@ -297,7 +303,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
         if(groupName != ""){
             intent.putExtra("display", groupName);
-            intent.putExtra("display", groupName);
+            intent.putStringArrayListExtra("group", contactList);
         }
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
