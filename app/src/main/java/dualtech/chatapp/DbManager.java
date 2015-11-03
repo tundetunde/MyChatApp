@@ -85,14 +85,14 @@ public class DbManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertGroupContacts(String name, ArrayList<String> listContacts){
+    public void insertGroupContacts(String name, ArrayList<String> listContacts, int groupID){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         String json = new Gson().toJson(listContacts);
         values.put("name", name);
         values.put("contacts", json);
-        values.put("groupId", 0);
+        values.put("groupId", groupID);
 
         db.insert(TABLE_FEED, null, values);
         Log.d(TAG, "ADDED GROUP " + name);
