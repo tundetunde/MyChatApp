@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +23,14 @@ public class DbManager extends SQLiteOpenHelper {
     final static String TABLE_CONTACTS = "contacts";
     final static String TABLE_CHAT_LIST = "chat_list";
     final static String TABLE_GROUP_MSG = "group_msg";
+    final static String TABLE_GROUP_CONTACTS = "group_contacts";
 
     String contact_table = "CREATE TABLE " + TABLE_CONTACTS + "("
             + "phoneNumber TEXT," + "accepted INTEGER DEFAULT 0 NOT NULL"
             + ")";
+    String group_contacts = "CREATE TABLE " + TABLE_GROUP_CONTACTS + "("
+            + "id INTEGER PRIMARY KEY autoincrement," + "groupId INTEGER DEFAULT 0 NOT NULL," + "name TEXT,"
+            + "contacts TEXT" + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
             + "id INTEGER PRIMARY KEY autoincrement, " + "user TEXT,"
             + "status TEXT," + "date_time default current_timestamp," + "picture INTEGER DEFAULT 0 NOT NULL" +")";
@@ -50,6 +56,7 @@ public class DbManager extends SQLiteOpenHelper {
         db.execSQL(chatList_table);
         db.execSQL(message_table);
         db.execSQL(group_msg_table);
+        db.execSQL(group_contacts);
     }
 
     @Override
@@ -75,6 +82,20 @@ public class DbManager extends SQLiteOpenHelper {
 
         db.insert(TABLE_FEED, null, values);
         Log.d(TAG, "ADDED " + s);
+        db.close();
+    }
+
+    public void insertGroupContacts(String name, ArrayList<String> listContacts){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        String json = new Gson().toJson(listContacts);
+        values.put("name", name);
+        values.put("contacts", json);
+        values.put("groupId", 0);
+
+        db.insert(TABLE_FEED, null, values);
+        Log.d(TAG, "ADDED GROUP " + name);
         db.close();
     }
 
@@ -149,6 +170,18 @@ public class DbManager extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put("contact", c);
+        db.insert(TABLE_CHAT_LIST, null, values);
+
+        Log.d(TAG, "UPDATED CHATLIST");
+        db.close();
+    }
+
+    public void insertChatList(String c, int type) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put("contact", c);
+        values.put("type", type);
         db.insert(TABLE_CHAT_LIST, null, values);
 
         Log.d(TAG, "UPDATED CHATLIST");
@@ -239,6 +272,25 @@ public class DbManager extends SQLiteOpenHelper {
         return update;
     }
 
+    public String getGroupContacts(String c) {
+
+        String update = "";
+        // Select All Query
+        String selectQuery = "SELECT contacts FROM " + TABLE_GROUP_CONTACTS + " WHERE (name = '" + c + "')";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                // Adding contact to list
+                update = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        Log.d(TAG, "CHAT HISTORY");
+        return update;
+    }
+
     public List<ChatDbProvider> getChatHistory(String c) {
 
         List<ChatDbProvider> update = new ArrayList<>();
@@ -282,6 +334,11 @@ public class DbManager extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MESSAGES, "contact_id = '" + c + "'", null);
         db.delete(TABLE_CHAT_LIST, "contact = '" + c + "'", null);
+    }
+
+    public void deleteGroup(String c){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_GROUP_CONTACTS, "name = '" + c + "'", null);
     }
 
     public void deleteAllChatHistory(){

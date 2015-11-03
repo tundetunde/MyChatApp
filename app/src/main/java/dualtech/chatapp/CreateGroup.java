@@ -92,8 +92,10 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
             case R.id.btnCreateTheGroup:
                 String group = String.valueOf(groupName.getText());
                 if(!group.equals("")){
-                    db.insertChatList(group);
-                    Intent i = new Intent(CreateGroup.this, ChatView.class);
+                    db.insertGroupContacts(group, contactNumbers);
+                    db.insertChatList(group, 1);
+
+                    Intent i = new Intent(CreateGroup.this, MainActivity.class);
                     i.putStringArrayListExtra("group", groupContacts);
                     i.putStringArrayListExtra("number", contactNumbers);
                     i.putExtra("display", group);
