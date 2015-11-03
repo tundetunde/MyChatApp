@@ -33,9 +33,9 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Group Profile Picture"
         android:id="@+id/tvGroupProfilePic"
-        android:layout_below="@+id/btnAddContacts"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etGroupName" />
 
     <Button
         android:layout_width="wrap_content"
@@ -43,44 +43,17 @@
         android:text="Create Group"
         android:id="@+id/btnCreateTheGroup"
         android:layout_gravity="center_horizontal"
-        android:layout_below="@+id/etGroupName"
-        android:layout_toRightOf="@+id/ivGroupProfilePic"
-        android:layout_toEndOf="@+id/ivGroupProfilePic" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Contacts"
-        android:id="@+id/btnAddContacts"
-        android:layout_below="@+id/etGroupName"
-        android:layout_toLeftOf="@+id/btnCreateTheGroup"
-        android:layout_toStartOf="@+id/btnCreateTheGroup" />
+        android:layout_below="@+id/tvGroupProfilePic"
+        android:layout_alignLeft="@+id/ivGroupProfilePic"
+        android:layout_alignStart="@+id/ivGroupProfilePic" />
 
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:src="@drawable/default_pic"
         android:id="@+id/ivGroupProfilePic"
-        android:layout_below="@+id/tvGroupProfilePic"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Contacts"
-        android:id="@+id/textViewGroutContacts"
-        android:layout_below="@+id/ivGroupProfilePic"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lvContactGroupPpl"
-        android:layout_below="@+id/textViewGroutContacts"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/btnCreateTheGroup"
+        android:layout_alignRight="@+id/tvGroupProfilePic"
+        android:layout_alignEnd="@+id/tvGroupProfilePic" />
 
 </RelativeLayout>

@@ -33,10 +33,9 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
     Toolbar toolbar;
     EditText groupName;
     ImageView ivProfilePic;
-    Button btnContact, btnCreateGroup;
-    ArrayList<String> groupContacts, contactNumbers;
+    Button btnCreateGroup;
+    ArrayList<String> contactNumbers;
     String groupNameString;
-    ListView lvGroupContacts;
     DbManager db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,13 +47,7 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Create Group");
-        Bundle bundle = getIntent().getExtras();
         groupNameString = "";
-        if(bundle != null){
-            groupContacts = bundle.getStringArrayList("contactList");
-            contactNumbers = bundle.getStringArrayList("contactNumbers");
-            groupNameString = bundle.getString("name");
-        }
         db = new DbManager(this);
         initialize();
     }
@@ -63,16 +56,8 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
         groupName = (EditText) findViewById(R.id.etGroupName);
         groupName.setText(groupNameString);
         ivProfilePic = (ImageView) findViewById(R.id.ivGroupProfilePic);
-        btnContact = (Button) findViewById(R.id.btnAddContacts);
-        btnContact.setOnClickListener(this);
         btnCreateGroup = (Button)findViewById(R.id.btnCreateTheGroup);
         btnCreateGroup.setOnClickListener(this);
-        lvGroupContacts = (ListView) findViewById(R.id.lvContactGroupPpl);
-        if(groupContacts != null){
-            final ArrayAdapter adapter = new ArrayAdapter(this,
-                    android.R.layout.simple_list_item_1, groupContacts);
-            lvGroupContacts.setAdapter(adapter);
-        }
     }
 
     @Override
@@ -103,19 +88,10 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
                     db.insertChatList(group, 1);
                     //sendGroupContacts(group, contactNumbers, rand);
                     Intent i = new Intent(CreateGroup.this, MainActivity.class);
-                    i.putStringArrayListExtra("group", groupContacts);
-                    i.putStringArrayListExtra("number", contactNumbers);
-                    i.putExtra("display", group);
-                    i.putExtra("name", groupNameString);
                     startActivity(i);
                 }else {
                     Toast.makeText(getApplicationContext(), "Please enter a Group Name", Toast.LENGTH_SHORT).show();
                 }
-            break;
-            case R.id.btnAddContacts:
-                Intent i = new Intent("dualtech.chatapp.GROUPADDCONTACTS");
-                i.putExtra("name", String.valueOf(groupName.getText()));
-                startActivity(i);
             break;
         }
     }
