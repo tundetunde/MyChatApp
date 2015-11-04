@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -46,10 +47,9 @@ public class FeedView extends ListFragment implements View.OnClickListener {
 
     private static final String TAG = "FEEDVIEW";
     static ArrayList<Feed> feed_query = new ArrayList<>();
-
     static FeedAdapter adapter;
     DbManager db;
-    Button btn_share;
+    ImageButton btn_share;
     EditText et_feed;
     String update;
     GoogleCloudMessaging gcm;
@@ -60,7 +60,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         public void onReceive(Context context, Intent intent) {
             refreshFeed();
             Log.d(TAG, "FEED Refreshed");
-
             //do other stuff here
         }
     };
@@ -75,7 +74,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         contacts = new ArrayList<>(s);
         contacts.remove(ApplicationInit.getMobile_number()); //removes device mobile number if exists
         //[End of duplicate removal]
-        btn_share = (Button) v.findViewById(R.id.btnGo);
+        btn_share = (ImageButton) v.findViewById(R.id.btnGo);
         btn_share.setOnClickListener(this);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
         TextWatcher text_watch = new TextWatcher() {
@@ -97,8 +96,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         et_feed = (EditText) v.findViewById(R.id.etUpdate);
         et_feed.addTextChangedListener(text_watch);
         refreshFeed();
-
-        //getActivity().registerReceiver(feedBroadcastReceiver, new IntentFilter("REFRESH_FEED"));
 
         setHasOptionsMenu(true);
         return v;
@@ -247,17 +244,17 @@ public class FeedView extends ListFragment implements View.OnClickListener {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             FHolder holder;
-            View cv = convertView;
+            View cv;
             Feed p = getItem(position);
             String Message = p.status;
             String User = p.user;
             String Time = p.time;
             String number = p.number;
             int picture = p.picture;
+            String t = "... has changed their status to: '" + Message.trim() + "'";
+            String d = "Display Picture Changed";
 
             if(picture == 0){
-
-                //if (cv == null) {
                     cv = LayoutInflater.from(context).inflate(R.layout.feed_box, parent, false);
                     holder = new FHolder();
                     holder.fh_msg = (TextView) cv.findViewById(R.id.fd_msg);
@@ -265,11 +262,8 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                     holder.fh_user = (TextView) cv.findViewById(R.id.fd_user);
                     holder.fh_smallDisplayPic = (ImageView) cv.findViewById(R.id.imageView);
                     cv.setTag(holder);
-                /*} else {
-                    holder = (FHolder) cv.getTag();
-                }*/
 
-                holder.fh_msg.setText("... has changed their status to: '" + Message.trim() + "'");
+                holder.fh_msg.setText(t);
                 holder.fh_user.setText(User);
                 holder.fh_time.setText(Time);
                 Drawable profilePic;
@@ -279,7 +273,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 feed_bubble = (RelativeLayout) cv.findViewById(R.id.fd_bubble);
                 feed_bubble.setBackgroundResource(R.drawable.box);
             }else{
-                //if (cv == null) {
                     cv = LayoutInflater.from(context).inflate(R.layout.feed_box_display_pic, parent, false);
                     holder = new FHolder();
                     holder.fh_msg = (TextView) cv.findViewById(R.id.tvMessageStatus);
@@ -288,11 +281,8 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                     holder.fh_smallDisplayPic = (ImageView) cv.findViewById(R.id.ivSmallDisplayPic);
                     holder.fh_LargeDisplayPic = (ImageView) cv.findViewById(R.id.ivBigImage);
                     cv.setTag(holder);
-                /*} else {
-                    holder = (FHolder) cv.getTag();
-                }*/
 
-                holder.fh_msg.setText("Display Picture Changed");
+                holder.fh_msg.setText(d);
                 holder.fh_user.setText(User);
                 holder.fh_time.setText(Time);
                 Drawable profilePic;
@@ -308,8 +298,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 feed_bubble = (RelativeLayout) cv.findViewById(R.id.rlBubbble);
                 feed_bubble.setBackgroundResource(R.drawable.box);
             }
-
-
             return cv;
         }
 
@@ -319,9 +307,6 @@ public class FeedView extends ListFragment implements View.OnClickListener {
         private class FHolder {
             private TextView fh_user, fh_time, fh_msg;
             private ImageView fh_smallDisplayPic, fh_LargeDisplayPic;
-
-            FHolder() {
-            }
         }
     }
 }

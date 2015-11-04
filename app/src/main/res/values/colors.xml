@@ -2,9 +2,11 @@
 <resources>
     <color name="toolbar_color">#ffff5202</color>
     <color name="tab_color">#ffff7241</color>
-    <color name="tab_indicator">#0000ff</color>
+    <color name="tab_indicator">#ffff5202</color>
     <color name="tab_text">#000000</color>
     <color name="bg_image">#000000</color>
-    <color name="menu_top">@android:color/darker_gray</color>
+    <color name="menu_top">#ffff5202</color>
     <color name="bg_colour">#d5ffb380</color>
+    <color name="contact_row">#ffffd070</color>
+    <color name="text_col">#000000</color>
 </resources>

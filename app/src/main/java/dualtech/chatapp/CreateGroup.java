@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -33,7 +34,7 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
     Toolbar toolbar;
     EditText groupName;
     ImageView ivProfilePic;
-    Button btnCreateGroup;
+    ImageButton btnCreateGroup;
     ArrayList<String> contactNumbers;
     String groupNameString;
     DbManager db;
@@ -56,7 +57,7 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
         groupName = (EditText) findViewById(R.id.etGroupName);
         groupName.setText(groupNameString);
         ivProfilePic = (ImageView) findViewById(R.id.ivGroupProfilePic);
-        btnCreateGroup = (Button)findViewById(R.id.btnCreateTheGroup);
+        btnCreateGroup = (ImageButton) findViewById(R.id.btnCreateTheGroup);
         btnCreateGroup.setOnClickListener(this);
     }
 

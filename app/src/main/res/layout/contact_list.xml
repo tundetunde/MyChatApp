@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@color/bg_colour">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ProgressBar
         android:id="@+id/contact_load"
@@ -13,23 +12,21 @@
         android:layout_alignParentTop="true"
         android:visibility="visible" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btnInvite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="Invite Friend" />
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/invite_frnd"/>
 
-    <ExpandableListView
-        android:id="@+id/expandLV"
-        android:layout_width="wrap_content"
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnInvite"
-        android:layout_centerHorizontal="true"
-        android:childDivider="#00000000"
-        android:groupIndicator="@null" />
-
+        android:layout_weight="1" />
 
 </RelativeLayout>

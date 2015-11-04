@@ -17,8 +17,8 @@ public class ApplicationInit extends Application {
     public static final String PROPERTY_PHOTO = "photo" ;
     public static final String PROPERTY_CHAT_BG = "chat_bg";
     public static final String PROPERTY_CHAT_BG_URL = "chat_bg_url" ;
-    public static final String PROFILE_PIC_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/ImgFolderClass/";
-    public static final String SERVER_ADDRESS = "http://192.168.1.5:8080/ChatServerDual/GCMServer";
+    public static final String PROFILE_PIC_ADDRESS = "http://100.71.199.58:8080/ChatServerDual/ImgFolderClass/";
+    public static final String SERVER_ADDRESS = "http://100.71.199.58:8080/ChatServerDual/GCMServer";
     private static final String API_KEY = "AIzaSyDZ60w-JN-RzBHk1litPqzKtzqThmZnpaY";
     private static final String PROJECT_ID = "dual-digital-000";
     private static final String PROJECT_NO = "25515784135";
@@ -93,12 +93,6 @@ public class ApplicationInit extends Application {
         editor.apply();
     }
 
-    public void onCreate(){
-        super.onCreate();
-        PREFS = getApplicationContext().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        editor = PREFS.edit();
-    }
-
     public static String generateGroupId(){
         String groupId = "";
         for(int i = 0; i < 10; i++){
@@ -123,5 +117,11 @@ public class ApplicationInit extends Application {
             default:
                 return '0';
         }
+    }
+
+    public void onCreate(){
+        super.onCreate();
+        PREFS = getApplicationContext().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        editor = PREFS.edit();
     }
 }

@@ -1,32 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bg_colour"
-    >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/etUpdate"
-        android:layout_marginTop="10dp"
-        android:hint="@string/feed_hint"
-        android:imeOptions="actionDone"
-        android:layout_gravity="center_horizontal" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
+    <RelativeLayout
+        android:id="@+id/rlEdit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:text="Share"
-        android:id="@+id/btnGo"/>
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+        <EditText
+            android:id="@+id/etUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_toLeftOf="@+id/btnGo"
+            android:layout_toStartOf="@id/btnGo"
+            android:hint="@string/feed_hint"
+            android:imeOptions="actionDone"
+            android:inputType="textMultiLine"/>
+
+        <ImageButton
+            android:id="@+id/btnGo"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/send"
+            android:padding="1dp"
+            android:scaleType="center"
+            android:visibility="gone"/>
+        </RelativeLayout>
 
     <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@android:id/list"
-        android:divider="@null"
-        android:layout_weight="1" />
+        android:layout_below="@+id/rlEdit"
+        android:layout_weight="1"
+        android:divider="@null"/>
 
-</LinearLayout>
+</RelativeLayout>

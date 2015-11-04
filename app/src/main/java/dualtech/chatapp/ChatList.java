@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -44,7 +45,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     ChatListAdapter adapter;
     GoogleCloudMessaging gcm;
     SharedPreferences prefs;
-    Button btnCreateGroup;
+    ImageButton btnCreateGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -56,22 +57,18 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         chatName = new ArrayList<>();
         setHasOptionsMenu(true);
         refreshChatList();
-        btnCreateGroup = (Button) v.findViewById(R.id.btnCreateGroup);
-        btnCreateGroup.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View arg0) {
-                Intent i = new Intent("dualtech.chatapp.CREATEGROUP");
-                startActivity(i);
-            }
-
-        });
+        btnCreateGroup = (ImageButton) v.findViewById(R.id.btnCreateGroup);
+        btnCreateGroup.setOnClickListener(this);
         return v;
     }
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.btnCreateGroup:
+                Intent i = new Intent().setClass(getActivity(), CreateGroup.class);
+                startActivity(i);
+        }
     }
 
     public void refreshChatList(){
@@ -187,7 +184,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
 
     private class ChatListAdapter extends ArrayAdapter<ChatItem> {
         final ContextWrapper cw;
-        RelativeLayout feed_bubble;
+        RelativeLayout chat_list_bubble;
         File directory;
         private List<ChatItem> feed_list = new ArrayList<>();
         private Context context;
@@ -202,7 +199,6 @@ public class ChatList extends ListFragment implements View.OnClickListener{
 
         @Override
         public ChatItem getItem(int position) {
-            // TODO Auto-generated method stub
             return feed_list.get(position);
         }
 
@@ -237,9 +233,8 @@ public class ChatList extends ListFragment implements View.OnClickListener{
             else
                 holder.fh_displayPic.setImageResource(R.drawable.default_pic);
 
-
-            feed_bubble = (RelativeLayout) cv.findViewById(R.id.chatList_bubble);
-            feed_bubble.setBackgroundResource(R.drawable.box);
+            chat_list_bubble = (RelativeLayout) cv.findViewById(R.id.chatList_bubble);
+            chat_list_bubble.setBackgroundResource(R.drawable.box);
 
             return cv;
         }

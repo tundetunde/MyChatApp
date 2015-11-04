@@ -33,15 +33,18 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
-        <Button
+        <ImageButton
             android:id="@+id/send_btn"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="Send"
-            android:visibility="gone" />
+            android:background="@drawable/send"
+            android:padding="1dp"
+            android:scaleType="center"
+            android:visibility="gone"/>
         <EditText
             android:id="@+id/msg_edit"
             android:layout_width="match_parent"

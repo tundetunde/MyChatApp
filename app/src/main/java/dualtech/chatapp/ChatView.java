@@ -31,6 +31,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -59,7 +60,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     RelativeLayout rl;
     DbManager db;
     Toolbar toolbar;
-    Button send;
+    ImageButton send;
     EditText editText;
     TextWatcher text_watch;
     String et_msg, ch_contact, ch_display, ch_sender;
@@ -146,7 +147,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             }
         });
         lv.setTranscriptMode(AbsListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
-        send = (Button) findViewById(R.id.send_btn);
+        send = (ImageButton) findViewById(R.id.send_btn);
         send.setOnClickListener(this);
         text_watch = new TextWatcher() {
             @Override
