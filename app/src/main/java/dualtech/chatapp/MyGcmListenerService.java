@@ -146,6 +146,16 @@ public class MyGcmListenerService extends GcmListenerService {
                 db.insertGroupMessage(message, sender, 0, group);
                 //sendDeliveredReceipt(sender, data.getString("GCM_msgId"));
                 break;
+            case "NewGroup":
+                String groupName = data.getString("groupName");
+                String groupList = data.getString("groupList");
+                String groupId = data.getString("groupId");
+                String creator = data.getString("creator");
+                gson = new Gson();
+                db.insertChatList(groupName, 1);
+                TypeToken<List<String>> token1 = new TypeToken<List<String>>() {};
+                ArrayList<String> list1 = gson.fromJson(groupList, token1.getType());
+                db.insertGroupContacts(groupName, list1, Integer.valueOf(groupId));
 
         }
 

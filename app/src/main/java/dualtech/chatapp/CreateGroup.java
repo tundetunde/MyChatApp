@@ -84,6 +84,7 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
                 String group = String.valueOf(groupName.getText());
                 if(!group.equals("")){
                     int rand = new Random(100000).nextInt();
+                    String groupId = ApplicationInit.generateGroupId();
                     db.insertGroupContacts(group, contactNumbers, rand);
                     db.insertChatList(group, 1);
                     //sendGroupContacts(group, contactNumbers, rand);

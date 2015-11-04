@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Random;
+
 public class ApplicationInit extends Application {
     public static final int NOTIFICATION_ID = 0;
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -95,5 +97,31 @@ public class ApplicationInit extends Application {
         super.onCreate();
         PREFS = getApplicationContext().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         editor = PREFS.edit();
+    }
+
+    public static String generateGroupId(){
+        String groupId = "";
+        for(int i = 0; i < 10; i++){
+            groupId += generateCharacter();
+        }
+        return groupId;
+    }
+
+    private static char generateCharacter(){
+        Random rand = new Random();
+        int number = rand.nextInt(10) + 48;
+        int smallC = rand.nextInt(26) + 65;
+        int CapitalC = rand.nextInt(26) + 97;
+        int x = rand.nextInt(3) + 1;
+        switch (x){
+            case 1:
+                return (char)number;
+            case 2:
+                return (char) smallC;
+            case 3:
+                return (char) CapitalC;
+            default:
+                return '0';
+        }
     }
 }
