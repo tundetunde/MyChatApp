@@ -155,7 +155,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 db.insertChatList(groupName, 1);
                 TypeToken<List<String>> token1 = new TypeToken<List<String>>() {};
                 ArrayList<String> list1 = gson.fromJson(groupList, token1.getType());
-                db.insertGroupContacts(groupName, list1, Integer.valueOf(groupId));
+                db.insertGroupContacts(groupName, list1, groupId);
 
         }
 

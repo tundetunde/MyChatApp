@@ -39,7 +39,7 @@ public class DbManager extends SQLiteOpenHelper {
             + "contact_id TEXT," + "datetime default current_timestamp,"
             + "sender INTEGER DEFAULT 0 NOT NULL," + "status INTEGER DEFAULT 0 NOT NULL" + ")";
     String group_msg_table = "CREATE TABLE " + TABLE_GROUP_MSG + "("
-            + "id integer PRIMARY KEY autoincrement," + "groupId INTEGER DEFAULT 0 NOT NULL," + "msg TEXT,"
+            + "id integer PRIMARY KEY autoincrement," + "groupId TEXT," + "msg TEXT,"
             + "contact_id TEXT," + "datetime default current_timestamp,"
             + "sender INTEGER DEFAULT 0 NOT NULL," + "name string" + ")";
     String chatList_table = "CREATE TABLE " + TABLE_CHAT_LIST + "("
@@ -85,7 +85,7 @@ public class DbManager extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void insertGroupContacts(String name, ArrayList<String> listContacts, int groupID){
+    public void insertGroupContacts(String name, ArrayList<String> listContacts, String groupID){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 

@@ -57,6 +57,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     static TextView tvTitle, tvSub;
     static boolean isTyping = false;
     static int isTypingCounter = 0;
+    int type;
     RelativeLayout rl;
     DbManager db;
     Toolbar toolbar;
@@ -107,21 +108,25 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         Bundle bundle = getIntent().getExtras();
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
-        group = bundle.getStringArrayList("group");
-        if(group == null)
-            group = new ArrayList<>();
-        numbers = bundle.getStringArrayList("number");
         //Log.d("contact", ch_contact);
         Log.d("display", ch_display);
+        int type = 0;
+        type = Integer.valueOf(bundle.getString("type"));
 
         ch_sender = ApplicationInit.getMobile_number();
         db = new DbManager(this);
+        if(isGroup()){
+            String j = db.getGroupContacts(ch_display);
+            TypeToken<List<String>> token = new TypeToken<List<String>>() {};
+            numbers = new Gson().fromJson(j, token.getType());
+        }
+
         initialize();
         loadChat();
     }
 
     private boolean isGroup(){
-        return !(group.isEmpty());
+        return (type == 1);
     }
 
     private void initialize() {
