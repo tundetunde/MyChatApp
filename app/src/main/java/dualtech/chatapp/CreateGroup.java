@@ -86,7 +86,8 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
                 if(!group.equals("")){
                     String groupId = ApplicationInit.generateGroupId();
                     db.insertGroupContacts(group, contactNumbers, groupId);
-                    db.insertChatList(group, 1);
+                    //db.insertChatList(group, 1);
+                    db.insertGroupMessage("You have created this group", "", 0, group);
                     //sendGroupContacts(group, contactNumbers, rand);
                     Intent i = new Intent(CreateGroup.this, MainActivity.class);
                     startActivity(i);
