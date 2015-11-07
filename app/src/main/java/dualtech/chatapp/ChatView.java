@@ -108,10 +108,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         Bundle bundle = getIntent().getExtras();
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
-        //Log.d("contact", ch_contact);
         Log.d("display", ch_display);
-        int type = 0;
-        type = Integer.valueOf(bundle.getString("type"));
+        int type = Integer.valueOf(bundle.getString("type"));
 
         ch_sender = ApplicationInit.getMobile_number();
         db = new DbManager(this);

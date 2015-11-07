@@ -29,7 +29,7 @@ public class DbManager extends SQLiteOpenHelper {
             + "phoneNumber TEXT," + "accepted INTEGER DEFAULT 0 NOT NULL"
             + ")";
     String group_contacts = "CREATE TABLE " + TABLE_GROUP_CONTACTS + "("
-            + "id INTEGER PRIMARY KEY autoincrement," + "groupId INTEGER DEFAULT 0 NOT NULL," + "name TEXT,"
+            + "id INTEGER PRIMARY KEY autoincrement," + "groupId TEXT NOT NULL," + "name TEXT,"
             + "contacts TEXT" + ")";
     String feed_table = "CREATE TABLE " + TABLE_FEED + "("
             + "id INTEGER PRIMARY KEY autoincrement, " + "user TEXT,"
@@ -99,6 +99,16 @@ public class DbManager extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void createGroup(String g, String n, String c){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("groupId", g);
+        values.put("name", n);
+        values.put("contacts", c);
+        db.insert(TABLE_GROUP_CONTACTS, null, values);
+        db.close();
+    }
+
     //Overload function for Display Picture
     public void insertFeed(String u, String s, String t, int pic){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -147,19 +157,15 @@ public class DbManager extends SQLiteOpenHelper {
     }
 
     //Group Message
-    public void insertGroupMessage(String s, String c, int sender, String groupName){
-        if(checkChatList(c)){
-            insertChatList(c);
-        }
-
+    public void insertGroupMessage(String s, String c, int sender, String groupid){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put("msg", s);
         values.put("contact_id", c);
         values.put("sender", sender);
-        values.put("name", groupName);
-        values.put("groupId", 0);
+        values.put("name", getGroupName(groupid));
+        values.put("groupId", groupid);
         db.insert(TABLE_GROUP_MSG, null, values);
         Log.d(TAG, "ADDED GROUP MSG : " + s);
         db.close();
@@ -189,9 +195,7 @@ public class DbManager extends SQLiteOpenHelper {
     }
 
     public boolean checkChatList(String s){
-
         Boolean check = false;
-        // Select All Query
         String selectQuery = "SELECT * FROM " + TABLE_CHAT_LIST + " WHERE (contact = '" + s + "')";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -211,23 +215,34 @@ public class DbManager extends SQLiteOpenHelper {
         return check;
     }
 
-    public List<String> getChatList(){
-
-        List<String> update = new ArrayList<>();
-        // Select All Query
-        String selectQuery = "SELECT contact FROM " + TABLE_CHAT_LIST;
+    public List<List<String>> getChatList(){
+        List<List<String>> update = new ArrayList<>();
+        String selectQuery = "SELECT contact, type FROM " + TABLE_CHAT_LIST;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                // Adding contact to list
-                update.add(cursor.getString(0));
+                List<String> c = new ArrayList<>(2);
+                c.add(cursor.getString(0));
+                c.add(String.valueOf(cursor.getInt(1)));
+                update.add(c);
             } while (cursor.moveToNext());
         }
         cursor.close();
         Log.d(TAG, "CHAT LIST");
         return update;
+    }
+
+    public String getGroupName(String s){
+        String name = "";
+        String selectQuery = "SELECT name FROM " + TABLE_GROUP_CONTACTS + " WHERE (groupId = '" + s + "')";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+           name = cursor.getString(0);
+        }
+        cursor.close();
+        return name;
     }
 
     public List<String> getAllContacts(){
@@ -312,16 +327,12 @@ public class DbManager extends SQLiteOpenHelper {
 
     //Chat History for group chat
     public List<ChatDbProvider> getGroupChatHistory(String c, String groupName) {
-
         List<ChatDbProvider> update = new ArrayList<>();
-        // Select All Query
         String selectQuery = "SELECT msg,sender, datetime FROM " + TABLE_GROUP_MSG + " WHERE  (name = '" + groupName + "')";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
-                // Adding contact to list
                 update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2), 0));
             } while (cursor.moveToNext());
         }
@@ -403,7 +414,22 @@ public class DbManager extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        Log.d(TAG, "LAST MESSAGE");
+        System.out.println("CHAT_LISTI: " + msg);
+        return msg;
+    }
+    public String getGrpMessageTime(String c){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String msg = "";
+        String selectQuery = "SELECT datetime FROM " + TABLE_GROUP_MSG + " WHERE (groupId = '" + c + "')"
+                + " ORDER BY id DESC LIMIT 1";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                msg = cursor.getString(0);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        System.out.println("CHAT_LIST: "+msg);
         return msg;
     }
 

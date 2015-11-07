@@ -166,6 +166,7 @@ public class ContactView extends ListFragment implements View.OnClickListener{
                     Contact c = getItem(position);
                     newActivity.putExtra("display", c.name);
                     newActivity.putExtra("contact", c.number);
+                    newActivity.putExtra("type", "0");
                     startActivity(newActivity);
                 }
             });

@@ -85,11 +85,11 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
                 String group = String.valueOf(groupName.getText());
                 if(!group.equals("")){
                     String groupId = ApplicationInit.generateGroupId();
-                    db.insertGroupContacts(group, contactNumbers, groupId);
-                    //db.insertChatList(group, 1);
-                    db.insertGroupMessage("You have created this group", "", 0, group);
-                    //sendGroupContacts(group, contactNumbers, rand);
+                    db.createGroup(groupId, group, "");
+                    db.insertChatList(groupId, 1);
+                    db.insertGroupMessage("You have created this group", "", 0, groupId);
                     Intent i = new Intent(CreateGroup.this, MainActivity.class);
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                 }else {
                     Toast.makeText(getApplicationContext(), "Please enter a Group Name", Toast.LENGTH_SHORT).show();

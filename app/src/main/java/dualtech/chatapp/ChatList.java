@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -44,14 +45,12 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     ArrayList<Contact> chatName;
     ChatListAdapter adapter;
     GoogleCloudMessaging gcm;
-    SharedPreferences prefs;
     ImageButton btnCreateGroup;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.chat_list, container, false);
 
-        prefs = getActivity().getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE);
         gcm = GoogleCloudMessaging.getInstance(getActivity().getApplicationContext());
         db = new DbManager(getActivity());
         chatName = new ArrayList<>();
@@ -72,12 +71,17 @@ public class ChatList extends ListFragment implements View.OnClickListener{
     }
 
     public void refreshChatList(){
-        List<String> query = db.getChatList();
+        List<List<String>> query = db.getChatList();
         chat_query.clear();
-        for (String s : query) {
+        for (List<String> s : query) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             try {
-                chat_query.add(new ChatItem(getContactName(s), s, dateFormat.parse(db.getLastMessageTime(s))));
+                String c = s.get(0);
+                if (s.get(1).equals("0")) {
+                    chat_query.add(new ChatItem(getContactName(c), c, dateFormat.parse(db.getLastMessageTime(c)), "0"));
+                }else{
+                    chat_query.add(new ChatItem(db.getGroupName(c), c, dateFormat.parse(db.getGrpMessageTime(c)), "1"));
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -114,6 +118,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         ChatItem c = (ChatItem) l.getItemAtPosition(position);
         intent.putExtra("display", c.user);
         intent.putExtra("contact", c.number);
+        intent.putExtra("type", c.type);
         startActivity(intent);
     }
 
@@ -142,7 +147,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
                 String jsonPhoneList = gson.toJson(PhotoRequestList());
                 data.putString("Type", "GetPhoto");
                 data.putString("List", jsonPhoneList);
-                data.putString("Phone", prefs.getString(ApplicationInit.PROPERTY_REG_ID,null));
+                data.putString("Phone", ApplicationInit.getREGISTRATION_KEY());
                 gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                 msg = "Photo requested";
             } catch (IOException ex) {
@@ -158,27 +163,28 @@ public class ChatList extends ListFragment implements View.OnClickListener{
 
     public ArrayList<String> PhotoRequestList(){
         ArrayList<String> returnedList = new ArrayList<>();
-        ArrayList<String> chatlist = (ArrayList<String>) db.getChatList();
+        List<List<String>> chatlist = db.getChatList();
 
-        for(String contact : chatlist){
+        for(List<String> contact : chatlist){
             ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
             File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
             File mypath = new File(directory, "profile_" + contact + ".jpg");
             if(!mypath.exists()){
-                returnedList.add(contact);
+                returnedList.add(contact.get(0));
             }
         }
         return returnedList;
     }
 
     public class ChatItem{
-        String user, number;
+        String user, number, type;
         Date date;
 
-        ChatItem(String u, String n, Date d){
+        ChatItem(String u, String n, Date d, String t){
             user = u;
             number = n;
             date = d;
+            type = t;
         }
     }
 
@@ -186,20 +192,20 @@ public class ChatList extends ListFragment implements View.OnClickListener{
         final ContextWrapper cw;
         RelativeLayout chat_list_bubble;
         File directory;
-        private List<ChatItem> feed_list = new ArrayList<>();
+        private List<ChatItem> chat_list = new ArrayList<>();
         private Context context;
 
         public ChatListAdapter(Context context, int resource, ArrayList<ChatItem> arr) {
             super(context, resource, arr);
             this.context = context;
-            feed_list = arr;
+            chat_list = arr;
             cw = new ContextWrapper(context.getApplicationContext());
             directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
         }
 
         @Override
         public ChatItem getItem(int position) {
-            return feed_list.get(position);
+            return chat_list.get(position);
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
@@ -223,6 +229,9 @@ public class ChatList extends ListFragment implements View.OnClickListener{
             String number = p.number;
             String msg = db.getLastMessage(number);
             String time = db.getLastMessageTime(number);
+            if(p.type.equals("1")){
+                time = db.getGrpMessageTime(number);
+            }
             holder.fh_user.setText(User);
             holder.fh_msg.setText(msg);
             holder.fh_time.setText(time);

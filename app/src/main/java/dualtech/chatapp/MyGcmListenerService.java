@@ -310,9 +310,11 @@ public class MyGcmListenerService extends GcmListenerService {
         String display = getContactName(contactID);
         intent.putExtra("display", display);
         intent.putExtra("contact", contactID);
+        intent.putExtra("type", "0");
 
-        if(groupName != ""){
+        if(groupName.equals("")){
             intent.putExtra("display", groupName);
+            intent.putExtra("type", "1");
             intent.putStringArrayListExtra("group", contactList);
         }
 
@@ -321,7 +323,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder notificationBuilder;
-        if(groupName != ""){
+        if(groupName.equals("")){
             Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)

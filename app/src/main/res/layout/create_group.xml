@@ -4,7 +4,7 @@
     android:orientation="vertical">
     <include
         android:id="@+id/create_group_toolbar"
-        layout="@layout/creategroup_actionbar"
+        layout="@layout/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
