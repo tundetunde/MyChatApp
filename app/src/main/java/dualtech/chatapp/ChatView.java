@@ -383,7 +383,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         if (et_msg != null) {
             String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
             db = new DbManager(this);
-            db.insertMessage(et_msg, ch_contact, 1);
+            if(isGroup())
+                db.insertGroupMessage(et_msg, ApplicationInit.getMobile_number(), 1, ch_contact);
+            else
+                db.insertMessage(et_msg, ch_contact, 1);
             chatList.add(new ChatDbProvider(et_msg, 1, d, 0));
             sendMsg(et_msg, d, db.getMsgCount());
             editText.setText("");

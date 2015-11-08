@@ -139,11 +139,12 @@ public class MyGcmListenerService extends GcmListenerService {
                 String receiptNumber = data.getString("receiptNo");
                 String id = data.getString("msgId");
                 db.updateMsgStatus(Integer.valueOf(receiptNumber), Integer.valueOf(id));
-                updateMyActivity(this, message, sender, "", null);
+                updateMyActivity(this, message, sender, "");
                 break;
             case "GroupMessage":
                 String group = data.getString("GroupName");
-                db.insertGroupMessage(message, sender, 0, group);
+                String groupId1 = data.getString("groupId");
+                db.insertGroupMessage(message, sender, 0, groupId1);
                 //sendDeliveredReceipt(sender, data.getString("GCM_msgId"));
                 break;
             case "NewGroup":
@@ -167,19 +168,16 @@ public class MyGcmListenerService extends GcmListenerService {
          */
         if(type.equals("msg")){
             if(ChatView.active)
-                updateMyActivity(this, message, sender, "", null);
+                updateMyActivity(this, message, sender, "");
             else
-                sendNotification(message, sender, "", null);
+                sendNotification(message, sender, "");
         }else if(type.equals("GroupMessage")){
             Gson gson1 = new Gson();
-            String contacts = data.getString("contacts");
             String group = data.getString("GroupName");
-            TypeToken<List<String>> token = new TypeToken<List<String>>() {};
-            ArrayList<String> list = gson1.fromJson(contacts, token.getType());
             if(ChatView.active)
-                updateMyActivity(this, message, sender, group, list);
+                updateMyActivity(this, message, sender, group);
             else
-                sendNotification(message, sender, group, list);
+                sendNotification(message, sender, group);
         }
     }
 
@@ -287,16 +285,15 @@ public class MyGcmListenerService extends GcmListenerService {
         }.execute();
     }
 
-    void updateMyActivity(Context context, String message, String contactID, String groupName, ArrayList<String> list) {
+    void updateMyActivity(Context context, String message, String contactID, String groupName) {
         Intent intent = new Intent("chicken");
         //put whatever data you want to send, if any
         String display = getContactName(contactID);
-        if(groupName != null)
+        if(groupName.isEmpty())
             display = groupName;
         intent.putExtra("message", message);
         intent.putExtra("display", display);
         intent.putExtra("contact", contactID);
-        intent.putStringArrayListExtra("group", list);
         //send broadcast
         context.sendBroadcast(intent);
         cancelNotification(getBaseContext(), 0);
@@ -307,17 +304,16 @@ public class MyGcmListenerService extends GcmListenerService {
      *
      * @param message GCM message received.
      */
-    private void sendNotification(String message, String contactID, String groupName, ArrayList<String> contactList) {
+    private void sendNotification(String message, String contactID, String groupName) {
         Intent intent = new Intent(this, ChatView.class);
         String display = getContactName(contactID);
         intent.putExtra("display", display);
         intent.putExtra("contact", contactID);
         intent.putExtra("type", "0");
 
-        if(groupName.equals("")){
+        if(!groupName.isEmpty()){
             intent.putExtra("display", groupName);
             intent.putExtra("type", "1");
-            intent.putStringArrayListExtra("group", contactList);
         }
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -325,7 +321,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 PendingIntent.FLAG_ONE_SHOT);
 
         NotificationCompat.Builder notificationBuilder;
-        if(groupName.equals("")){
+        if(!groupName.equals("")){
             Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.mipmap.ic_launcher)
