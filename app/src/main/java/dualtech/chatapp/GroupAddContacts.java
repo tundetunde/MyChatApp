@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +24,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.gson.Gson;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,7 +48,7 @@ public class GroupAddContacts extends AppCompatActivity {
     GroupAddContacts.ExContactListAdapter exAdapter;
     DbManager db;
     Button button;
-    String name;
+    String name, groupName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,7 @@ public class GroupAddContacts extends AppCompatActivity {
         db = new DbManager(this);
         Bundle bundle = getIntent().getExtras();
         name = bundle.getString("name");
+        groupName = bundle.getString("groupName");
         initialize();
     }
 
@@ -96,19 +102,22 @@ public class GroupAddContacts extends AppCompatActivity {
 
             @Override
             public void onClick(View arg0) {
-                Intent i = new Intent("dualtech.chatapp.CREATEGROUP");
-                for(Contact x : app_contact){
-                    if(x.isChecked()){
+                Intent i = new Intent(GroupAddContacts.this, MainActivity.class);
+                for (Contact x : app_contact) {
+                    if (x.isChecked()) {
                         Log.d("groupContact", x.name);
                         groupContacts.add(x.name);
                         contactNumbers.add(x.number);
                     }
                     //groupContacts.add(x.name);
                 }
-                    //Log.d("groupContact", x);
-                i.putStringArrayListExtra("contactList", groupContacts);
-                i.putStringArrayListExtra("contactNumbers", contactNumbers);
-                i.putExtra("name", name);
+                //Log.d("groupContact", x);
+                //db.insertGroupContacts();
+                db.UpdateGroupContacts(name, contactNumbers);
+                for (String x : contactNumbers) {
+                    db.insertGroupMessage("You have added this contact to the group" + x, "", 0, name);
+                }
+                sendGroupContacts(groupName, contactNumbers, name);
                 startActivity(i);
             }
 
@@ -127,6 +136,39 @@ public class GroupAddContacts extends AppCompatActivity {
             cursor.close();
         }
         return name;
+    }
+
+    private int msgId() {
+        return  ApplicationInit.getMsgId();
+    }
+
+    public void sendGroupContacts(final String groupName,final ArrayList<String> groupContacts, final String groupId){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg;
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(GroupAddContacts.this);
+                try {
+                    String json = new Gson().toJson(groupContacts);
+                    String id = String.valueOf(msgId());
+                    Bundle data = new Bundle();
+                    data.putString("Type", "NewGroup");
+                    data.putString("groupName", groupName);
+                    data.putString("groupList", json);
+                    data.putString("groupId", String.valueOf(groupId));
+                    data.putString("creator", String.valueOf(ApplicationInit.getMobile_number()));
+                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                    msg = "Sent message";
+                } catch (IOException ex) {
+                    msg = "Message could not be sent";
+                }
+
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {}
+        }.execute(null, null, null);
     }
 
     public class ExContactListAdapter extends BaseExpandableListAdapter {

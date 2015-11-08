@@ -97,6 +97,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chatbox);
+        Bundle bundle = getIntent().getExtras();
+        type = Integer.valueOf(bundle.getString("type"));
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.chat_toolbar);
         setSupportActionBar(toolbar);
@@ -105,11 +107,10 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("");
 
-        Bundle bundle = getIntent().getExtras();
         ch_contact = bundle.getString("contact");
         ch_display = bundle.getString("display");
         Log.d("display", ch_display);
-        int type = Integer.valueOf(bundle.getString("type"));
+
 
         ch_sender = ApplicationInit.getMobile_number();
         db = new DbManager(this);
@@ -318,12 +319,20 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.chat_view_menu, menu);
+        if(isGroup())
+            getMenuInflater().inflate(R.menu.chat_view_menu_group, menu);
+        else
+            getMenuInflater().inflate(R.menu.chat_view_menu, menu);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
+            case R.id.action_add_user:
+                Intent I = new Intent(this, GroupAddContacts.class);
+                I.putExtra("name", ch_contact);
+                I.putExtra("groupName", ch_display);
+                startActivity(I);
             case android.R.id.home:
                 onBackPressed();
                 return true;

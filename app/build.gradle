@@ -23,6 +23,9 @@ repositories {
     maven {
         url 'https://github.com/Goddchen/mvn-repo/raw/master/'
     }
+    maven {
+        url 'http://repository.adbuddiz.com/maven'
+    }
     mavenCentral()
 }
 
@@ -33,4 +36,5 @@ dependencies {
     compile 'com.android:volley:1.+'
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.purplebrain.adbuddiz.sdk:AdBuddiz-Java:3.+'
 }

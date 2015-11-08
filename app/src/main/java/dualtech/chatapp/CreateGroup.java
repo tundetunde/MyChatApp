@@ -85,9 +85,9 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
                 String group = String.valueOf(groupName.getText());
                 if(!group.equals("")){
                     String groupId = ApplicationInit.generateGroupId();
-                    db.createGroup(groupId, group, "");
+                    db.createGroup(groupId, group, ApplicationInit.getMobile_number());
                     db.insertChatList(groupId, 1);
-                    db.insertGroupMessage("You have created this group", "", 0, groupId);
+                    db.insertGroupMessage("You have created this group", ApplicationInit.getMobile_number(), 0, groupId);
                     Intent i = new Intent(CreateGroup.this, MainActivity.class);
                     i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
@@ -98,36 +98,4 @@ public class CreateGroup extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private int msgId() {
-        return  ApplicationInit.getMsgId();
-    }
-
-    public void sendGroupContacts(final String groupName,final ArrayList<String> groupContacts, final int groupId){
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg;
-                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(CreateGroup.this);
-                try {
-                    String json = new Gson().toJson(groupContacts);
-                    String id = String.valueOf(msgId());
-                    Bundle data = new Bundle();
-                    data.putString("Type", "NewGroup");
-                    data.putString("groupName", groupName);
-                    data.putString("groupList", json);
-                    data.putString("groupId", String.valueOf(groupId));
-                    data.putString("creator", String.valueOf(ApplicationInit.getMobile_number()));
-                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
-                    msg = "Sent message";
-                } catch (IOException ex) {
-                    msg = "Message could not be sent";
-                }
-
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {}
-        }.execute(null, null, null);
-    }
 }

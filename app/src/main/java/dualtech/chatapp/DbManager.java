@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,23 +89,52 @@ public class DbManager extends SQLiteOpenHelper {
     public void insertGroupContacts(String name, ArrayList<String> listContacts, String groupID){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-
         String json = new Gson().toJson(listContacts);
         values.put("name", name);
         values.put("contacts", json);
         values.put("groupId", groupID);
 
-        db.insert(TABLE_FEED, null, values);
+        db.insert(TABLE_GROUP_CONTACTS, null, values);
         Log.d(TAG, "ADDED GROUP " + name);
+        db.close();
+    }
+
+    public void UpdateGroupContacts(String groupID, ArrayList<String> contacts){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Gson gson = new Gson();
+        List<String> ListContacts = new ArrayList<>();
+        String selectQuery = "SELECT contacts FROM " + TABLE_GROUP_CONTACTS + " WHERE (groupID = '" + groupID + "')";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        TypeToken<List<String>> token1 = new TypeToken<List<String>>() {};
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String x = cursor.getString(0);
+                if(x != "")
+                    ListContacts = gson.fromJson(x, token1.getType());
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        for(String x: contacts){
+            ListContacts.add(x);
+        }
+        String json = gson.toJson(ListContacts);
+        ContentValues newValues = new ContentValues();
+        newValues.put("contacts", json);
+
+        db.update(TABLE_GROUP_CONTACTS, newValues, "groupID='" + groupID + "'", null);
         db.close();
     }
 
     public void createGroup(String g, String n, String c){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        ArrayList<String> x = new ArrayList<>();
+        x.add(c);
+        String json = new Gson().toJson(x);
         values.put("groupId", g);
         values.put("name", n);
-        values.put("contacts", c);
+        values.put("contacts", json);
         db.insert(TABLE_GROUP_CONTACTS, null, values);
         db.close();
     }
