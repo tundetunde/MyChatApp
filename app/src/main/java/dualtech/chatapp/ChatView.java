@@ -289,7 +289,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                         data.putString("GCM_time", dt);
                         data.putString("GroupName", ch_display);
                         data.putString("GCM_FROM", ch_sender);
-                        data.putString("GCM_msgId", String.valueOf(mid));
+                        data.putString("GCM_msgId", ch_contact);
                         //data.putString("GCM_groupId", String.valueOf(mid));
                         Gson gson = new Gson();
                         data.putString("contacts", gson.toJson(numbers));

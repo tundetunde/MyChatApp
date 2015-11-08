@@ -143,7 +143,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
             case "GroupMessage":
                 String group = data.getString("GroupName");
-                String groupId1 = data.getString("groupId");
+                String groupId1 = data.getString("GCM_msgId");
                 db.insertGroupMessage(message, sender, 0, groupId1);
                 //sendDeliveredReceipt(sender, data.getString("GCM_msgId"));
                 break;
@@ -172,7 +172,6 @@ public class MyGcmListenerService extends GcmListenerService {
             else
                 sendNotification(message, sender, "");
         }else if(type.equals("GroupMessage")){
-            Gson gson1 = new Gson();
             String group = data.getString("GroupName");
             if(ChatView.active)
                 updateMyActivity(this, message, sender, group);

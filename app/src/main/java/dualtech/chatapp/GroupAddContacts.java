@@ -115,7 +115,7 @@ public class GroupAddContacts extends AppCompatActivity {
                 //db.insertGroupContacts();
                 db.UpdateGroupContacts(name, contactNumbers);
                 for (String x : contactNumbers) {
-                    db.insertGroupMessage("You have added this contact to the group" + x, "", 0, name);
+                    db.insertGroupMessage("You have added this contact to the group " + x, "", 0, name);
                 }
                 sendGroupContacts(groupName, contactNumbers, name);
                 startActivity(i);
