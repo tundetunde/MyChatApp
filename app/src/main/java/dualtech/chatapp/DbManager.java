@@ -377,15 +377,46 @@ public class DbManager extends SQLiteOpenHelper {
         db.delete(TABLE_CHAT_LIST, "contact = '" + c + "'", null);
     }
 
-    public void deleteGroup(String c){
+    public void deleteGroup(String id){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_GROUP_CONTACTS, "name = '" + c + "'", null);
+        db.delete(TABLE_GROUP_CONTACTS, "groupId = '" + id + "'", null);
+        db.delete(TABLE_GROUP_MSG, "groupId = '" + id + "'", null);
+        db.delete(TABLE_CHAT_LIST, "contact = '" + id + "'", null);
+    }
+
+    public void deleteUserFromGroup(String contact, String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Gson gson = new Gson();
+        List<String> ListContacts = new ArrayList<>();
+        String selectQuery = "SELECT contacts FROM " + TABLE_GROUP_CONTACTS + " WHERE (groupID = '" + id + "')";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        TypeToken<List<String>> token1 = new TypeToken<List<String>>() {};
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String x = cursor.getString(0);
+                if(x != "")
+                    ListContacts = gson.fromJson(x, token1.getType());
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        for(String x: ListContacts){
+            if(x.equals(contact))
+                ListContacts.remove(x);
+        }
+        String json = gson.toJson(ListContacts);
+        ContentValues newValues = new ContentValues();
+        newValues.put("contacts", json);
+
+        db.update(TABLE_GROUP_CONTACTS, newValues, "groupID='" + id + "'", null);
+        db.close();
     }
 
     public void deleteAllChatHistory(){
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_MESSAGES);
         db.execSQL("delete from " + TABLE_GROUP_MSG);
+        db.execSQL("delete from " + TABLE_GROUP_CONTACTS);
         db.execSQL("delete from " + TABLE_CHAT_LIST);
 
     }

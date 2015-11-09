@@ -159,6 +159,13 @@ public class MyGcmListenerService extends GcmListenerService {
                 db.insertGroupContacts(groupName, list1, groupId);
                 db.insertChatList(groupId, 1);
                 db.insertGroupMessage("You have added to this group by " + creator, "", 0, groupId);
+                break;
+            case "DeleteContactFromGroup":
+                String theContact = data.getString("GCM_contactId");
+                String groupID = data.getString("GCM_groupId");
+                db.deleteUserFromGroup(theContact, groupID);
+                db.insertGroupMessage("This contact has left the group: " + theContact, "", 0, groupID);
+                break;
 
         }
 

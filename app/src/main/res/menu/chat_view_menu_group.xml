@@ -10,6 +10,11 @@
         android:title="View Contact Info"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/action_leave_group"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:title="Leave Group"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/action_ch_delete"
         android:icon="@android:drawable/ic_menu_delete"
         android:title="Delete chat"

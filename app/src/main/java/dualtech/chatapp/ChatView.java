@@ -37,6 +37,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.gson.Gson;
@@ -333,9 +334,17 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 I.putExtra("name", ch_contact);
                 I.putExtra("groupName", ch_display);
                 startActivity(I);
+                break;
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.action_leave_group:
+                sendDeleteFromUser(ch_sender);
+                db.deleteGroup(ch_contact);
+                Toast.makeText(this, "You Have Left This Group", Toast.LENGTH_SHORT).show();
+                Intent ii = new Intent(this, MainActivity.class);
+                startActivity(ii);
+                break;
             case R.id.action_ch_info:
                 Intent i = new Intent().setClass(this, ContactProfile.class);
                 i.putExtra("number", ch_contact);
@@ -392,6 +401,37 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             editText.setText("");
             adapter.notifyDataSetChanged();
         }
+    }
+
+    private void sendDeleteFromUser(final String number) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg;
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(ChatView.this);
+                try {
+                    String id = String.valueOf(msgId());
+                    Bundle data = new Bundle();
+                    data.putString("Type", "DeleteUserFromGroup");
+                    data.putString("GCM_contactId", number);
+                    data.putString("contacts", new Gson().toJson(numbers));
+                    data.putString("GCM_groupId", ch_contact);
+                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                    msg = "Sent message";
+                } catch (IOException ex) {
+                    msg = "Message could not be sent";
+                }
+
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                if (!TextUtils.isEmpty(msg)) {
+                    isTypingCounter = 0;
+                }
+            }
+        }.execute(null, null, null);
     }
 
     /**
