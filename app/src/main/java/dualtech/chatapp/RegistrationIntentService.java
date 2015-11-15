@@ -16,6 +16,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.gms.gcm.GcmPubSub;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,6 @@ public class RegistrationIntentService extends IntentService {
     Intent registrationComplete = new Intent(QuickstartPreferences.REGISTRATION_COMPLETE);
     LocalBroadcastManager broadcastManager;
     SharedPreferences sharedPreferences;
-
     public RegistrationIntentService() {
         super(TAG);
     }
@@ -38,6 +38,7 @@ public class RegistrationIntentService extends IntentService {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         broadcastManager = LocalBroadcastManager.getInstance(this);
         String token;
+
         try {
             // In the (unlikely) event that multiple refresh operations occur simultaneously,
             // ensure that they are processed sequentially.

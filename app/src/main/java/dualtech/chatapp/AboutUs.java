@@ -1,6 +1,7 @@
 package dualtech.chatapp;
 
 import android.app.Activity;
+import com.matesnetwork.Cognalys.VerifyMobile;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +29,6 @@ public class AboutUs extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_us);
-
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.about_toolbar);
         setSupportActionBar(toolbar);

@@ -62,7 +62,6 @@ public class VerifyNumber extends Activity implements View.OnClickListener {
             Intent openMain = new Intent("dualtech.chatapp.REG").setClass(getApplicationContext(),MobileReg.class);
             startActivity(openMain);
         }
-
     }
 
     protected void sendSMSMessage() {
