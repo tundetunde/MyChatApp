@@ -120,7 +120,7 @@
             android:name="com.matesnetwork.Cognalys.VerifyMobile"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
-        <!--<receiver android:name="com.matesnetwork.cogdemov2.CognalysVerification" >
+ <!--       <receiver android:name="com.matesnetwork.cogdemov2.CognalysVerification" >
         <intent-filter>
             <action android:name="com.matesnetwork.cognalys" />
         </intent-filter>
