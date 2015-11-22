@@ -42,19 +42,19 @@ public class MobileReg extends Activity implements View.OnClickListener {
                 ApplicationInit.setMobile_number(phnNo);
                 ApplicationInit.setUser(user_Nm);
 
-                Intent in = new Intent(this, VerifyMobile.class);
+                /*Intent in = new Intent(this, VerifyMobile.class);
                 in.putExtra("app_id", "79717e0a828b47c9bbb7156");
                 in.putExtra("access_token","c944c1de46a398e7d305341b52f1027714ed6945");
                 in.putExtra("mobile", phnNo);
 
-                startActivityForResult(in, VerifyMobile.REQUEST_CODE);
+                startActivityForResult(in, VerifyMobile.REQUEST_CODE);*/
                 Log.d(TAG, phnNo);
-                /*Intent i = new Intent().setClass(getApplicationContext(), BroadcastActivity.class);
-                startActivity(i);*/
+                Intent i = new Intent().setClass(getApplicationContext(), BroadcastActivity.class);
+                startActivity(i);
         }
     }
 
-    protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+    /*protected void onActivityResult(int arg0, int arg1, Intent arg2) {
         // TODO Auto-generated method stub
         super.onActivityResult(arg0, arg1, arg2);
 
@@ -69,7 +69,7 @@ public class MobileReg extends Activity implements View.OnClickListener {
             Intent i = new Intent().setClass(getApplicationContext(), BroadcastActivity.class);
                 startActivity(i);
         }
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
