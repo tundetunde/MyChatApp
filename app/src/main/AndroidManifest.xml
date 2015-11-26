@@ -116,10 +116,10 @@
             android:name=".RegistrationIntentService"
             android:exported="false" >
         </service>
-        <activity
+        <!--<activity
             android:name="com.matesnetwork.Cognalys.VerifyMobile"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
-        </activity>
+        </activity>-->
  <!--       <receiver android:name="com.matesnetwork.cogdemov2.CognalysVerification" >
         <intent-filter>
             <action android:name="com.matesnetwork.cognalys" />

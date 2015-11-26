@@ -1,7 +1,6 @@
 package dualtech.chatapp;
 
 import android.app.Activity;
-import com.matesnetwork.Cognalys.VerifyMobile;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;

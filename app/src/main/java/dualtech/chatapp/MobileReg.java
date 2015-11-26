@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.matesnetwork.Cognalys.VerifyMobile;
-
 /**
 * Created by Jesz on 18-Jul-15.
 */
