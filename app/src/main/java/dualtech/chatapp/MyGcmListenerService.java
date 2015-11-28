@@ -166,7 +166,6 @@ public class MyGcmListenerService extends GcmListenerService {
                 db.deleteUserFromGroup(theContact, groupID);
                 db.insertGroupMessage("This contact has left the group: " + theContact, "", 0, groupID);
                 break;
-
         }
 
         /**
@@ -278,6 +277,32 @@ public class MyGcmListenerService extends GcmListenerService {
                     data.putString("Type", "Receipt");
                     data.putString("msgId", mid);
                     data.putString("GCM_number", number);
+                    gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
+                    msg = "Sent delivery message";
+                } catch (IOException ex) {
+                    msg = "Delivery Message could not be sent";
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {}
+        }.execute();
+    }
+
+    private void sendStatus(final String number){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(MyGcmListenerService.this);
+                String msg;
+                try {
+                    String id = String.valueOf(msgId());
+                    Bundle data = new Bundle();
+                    data.putString("Type", "DeviceGetsStatus");
+                    data.putString("number", number);
+                    data.putString("numberFrom", ApplicationInit.getMobile_number());
+                    data.putString("status", getSharedPreferences(ApplicationInit.SHARED_PREF, Context.MODE_PRIVATE).getString(ApplicationInit.PROPERTY_STATUS, null));
                     gcm.send(ApplicationInit.getProjectNO() + "@gcm.googleapis.com", id, data);
                     msg = "Sent delivery message";
                 } catch (IOException ex) {

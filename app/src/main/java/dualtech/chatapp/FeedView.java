@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -269,7 +270,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 Drawable profilePic;
                 profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
                 if(profilePic != null)
-                    holder.fh_smallDisplayPic.setImageDrawable(profilePic);
+                                        holder.fh_smallDisplayPic.setImageDrawable(profilePic);
                 feed_bubble = (RelativeLayout) cv.findViewById(R.id.fd_bubble);
                 feed_bubble.setBackgroundResource(R.drawable.box);
             }else{

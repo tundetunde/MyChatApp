@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -11,7 +12,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 //SQL CLASS HELPER
 public class DbManager extends SQLiteOpenHelper {
@@ -21,6 +24,7 @@ public class DbManager extends SQLiteOpenHelper {
     final static int DB_VERSION = 1;
     final static String TABLE_FEED = "feed";
     final static String TABLE_MESSAGES = "messages";
+    final static String TABLE_STATUS = "status";
     final static String TABLE_CONTACTS = "contacts";
     final static String TABLE_CHAT_LIST = "chat_list";
     final static String TABLE_GROUP_MSG = "group_msg";
@@ -243,6 +247,19 @@ public class DbManager extends SQLiteOpenHelper {
         if (cursor.getCount() < 1){check = true;}
         cursor.close();
         return check;
+    }
+
+    public String getStatus(String number){
+        String name = "";
+        // Select All Query
+        String selectQuery = "SELECT status FROM " + TABLE_FEED + " WHERE (user = '" + number + "') ORDER BY date_time DESC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            name = cursor.getString(0);
+        }
+        cursor.close();
+        return name;
     }
 
     public List<List<String>> getChatList(){

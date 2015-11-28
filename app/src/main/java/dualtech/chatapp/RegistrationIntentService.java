@@ -92,6 +92,7 @@ public class RegistrationIntentService extends IntentService {
                         broadcastManager.sendBroadcast(registrationComplete);
                         Toast.makeText(getApplicationContext(), "Server has received the RegID", Toast.LENGTH_SHORT).show();
                         ApplicationInit.setREGISTRATION_KEY(token);// Save the regid for global use - no need to register again.
+
                     }
                 }, new Response.ErrorListener() {
             @Override

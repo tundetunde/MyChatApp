@@ -37,8 +37,10 @@ public class ContactProfile extends AppCompatActivity {
     }
 
     public void initialize(){
+        DbManager db = new DbManager(this);
         ch_num.setText(contact);
         ch_name.setText(display_name);
+        ch_status.setText(db.getStatus(contact));
         setImage();
     }
 
