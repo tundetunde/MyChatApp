@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/C:/Users/Jesz/Documents/Android/MyChatApp/cognalys/build/intermediates/bundles/debug/res/values/values.xml -->
+    <!-- From: file:/C:/Users/tunde_000/Documents/theApps/MyChatApp/cognalys/build/intermediates/bundles/debug/res/values/values.xml -->
     <eat-comment/>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>

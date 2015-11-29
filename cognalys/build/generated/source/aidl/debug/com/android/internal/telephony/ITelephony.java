@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: C:\\Users\\Jesz\\Documents\\Android\\MyChatApp\\cognalys\\src\\main\\aidl\\com\\android\\internal\\telephony\\ITelephony.aidl
+ * Original file: C:\\Users\\tunde_000\\Documents\\theApps\\MyChatApp\\cognalys\\src\\main\\aidl\\com\\android\\internal\\telephony\\ITelephony.aidl
  */
 package com.android.internal.telephony;
 public interface ITelephony extends android.os.IInterface

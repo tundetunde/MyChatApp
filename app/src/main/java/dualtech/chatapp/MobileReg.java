@@ -15,19 +15,21 @@ import android.widget.Toast;
 public class MobileReg extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MobileReg";
-    static String phnNo, user_Nm;
-    EditText mobileNum, name;
+    static String phnNo, user_Nm, verificationCode;
+    EditText mobileNum, name, code;
     Button reg_next;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.registration);
-
+        Bundle bundle = getIntent().getExtras();
+        verificationCode = bundle.getString("verificationCode");
         mobileNum = (EditText) findViewById(R.id.phone_num);
         name = (EditText) findViewById(R.id.user_name);
         mobileNum.setText(VerifyNumber.getNO());
         reg_next = (Button) findViewById(R.id.bt_reg);
         reg_next.setOnClickListener(this);
+        code = (EditText) findViewById(R.id.act_code);
     }
 
     @Override
@@ -47,8 +49,17 @@ public class MobileReg extends Activity implements View.OnClickListener {
 
                 startActivityForResult(in, VerifyMobile.REQUEST_CODE);*/
                 Log.d(TAG, phnNo);
-                Intent i = new Intent().setClass(getApplicationContext(), BroadcastActivity.class);
-                startActivity(i);
+                /*Intent i = new Intent().setClass(getApplicationContext(), BroadcastActivity.class);
+                startActivity(i);*/
+                if(verificationCode.equals(code.getText().toString())){
+                    Intent i = new Intent().setClass(getApplicationContext(), BroadcastActivity.class);
+                    startActivity(i);
+                }else{
+                    Toast.makeText(getApplicationContext(), "Activation Code is Wrong", Toast.LENGTH_SHORT).show();
+                    Intent i = new Intent(this, VerifyNumber.class);
+                    startActivity(i);
+                }
+
         }
     }
 

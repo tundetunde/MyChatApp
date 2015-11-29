@@ -134,6 +134,8 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         tvSub = (TextView) findViewById(R.id.vActionStatus);
         if(!isGroup())
             tvSub.setText(db.getStatus(ch_contact));
+        else
+            tvSub.setVisibility(View.INVISIBLE);
         tvTitle = (TextView) findViewById(R.id.textViewTitle);
         tvTitle.setText(ch_display);
         /*if(group != "" || group != null)
