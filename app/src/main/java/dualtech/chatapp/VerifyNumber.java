@@ -65,8 +65,10 @@ public class VerifyNumber extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         P_NO = String.valueOf(mobile_Num.getText());
         spinner.setVisibility(View.VISIBLE);
+        String countryCode = country_list.getSelectedItem().toString();
+        countryCode = countryCode.substring(0, countryCode.length() - 3);
         //sendSMSMessage();
-        String number = P_NO;
+        String number = countryCode + P_NO.substring(1);
         VerifyNumber(number);
         if(sent){
             ApplicationInit.setMobile_number(P_NO);
