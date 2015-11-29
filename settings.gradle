@@ -1,2 +1,2 @@
-include ':cognalys',':app'
+include ':cognalys', ':app'
 
