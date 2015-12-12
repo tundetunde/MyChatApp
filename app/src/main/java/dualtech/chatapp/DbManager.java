@@ -357,14 +357,14 @@ public class DbManager extends SQLiteOpenHelper {
 
         List<ChatDbProvider> update = new ArrayList<>();
         // Select All Query
-        String selectQuery = "SELECT msg,sender, datetime, status FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
+        String selectQuery = "SELECT msg,sender, datetime, status, contact_id  FROM " + TABLE_MESSAGES + " WHERE (contact_id = '" + c + "')";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
                 // Adding contact to list
-                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2), cursor.getInt(3)));
+                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2), cursor.getInt(3), cursor.getString(4)));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -375,12 +375,12 @@ public class DbManager extends SQLiteOpenHelper {
     //Chat History for group chat
     public List<ChatDbProvider> getGroupChatHistory(String c, String groupName) {
         List<ChatDbProvider> update = new ArrayList<>();
-        String selectQuery = "SELECT msg,sender, datetime FROM " + TABLE_GROUP_MSG + " WHERE  (name = '" + groupName + "')";
+        String selectQuery = "SELECT msg,sender, datetime, contact_id FROM " + TABLE_GROUP_MSG + " WHERE  (name = '" + groupName + "')";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             do {
-                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2), 0));
+                update.add(new ChatDbProvider(cursor.getString(0),cursor.getInt(1), cursor.getString(2), 0, cursor.getString(3)));
             } while (cursor.moveToNext());
         }
         cursor.close();

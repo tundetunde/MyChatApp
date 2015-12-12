@@ -20,7 +20,7 @@ public class AboutUs extends AppCompatActivity {
             "many effects and filters to apply to photos. " +
             "PhoMix Filter also features the ability to share your photos on many different social networks.";
 
-    String text2 = "PhoMix Filter is created by two software developers, Oyetunde Awotunde and Jessica Adachi. " +
+    String text2 = "Chat app is created by two software developers, Oyetunde Awotunde and Jessica Adachi. " +
             "Both of us are in university currently studying Computer Science. This app was made as a project between " +
             "the both of us as a hobby. " +
             "We strive to produce the best photo editing app on the app store and will produce strong updates in order to achieve this.";

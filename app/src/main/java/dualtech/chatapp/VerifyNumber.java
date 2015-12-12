@@ -60,7 +60,7 @@ public class VerifyNumber extends Activity implements View.OnClickListener {
         country_list = (Spinner) findViewById(R.id.dial_code);
         mobile_Num = (EditText) findViewById(R.id.phone_number);
         info = (TextView) findViewById(R.id.tvInfo);
-        info.setText("Enter as you would locally. For Example: enter 07944447710 not +447944447710");
+        info.setText("Enter as you would locally. For Example: in UK you will enter 07944447710 not +447944447710");
         next = (Button) findViewById(R.id.bt_verify);
         next.setOnClickListener(this);
     }

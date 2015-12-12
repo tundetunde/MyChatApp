@@ -5,6 +5,7 @@
     <color name="tab_indicator">#ffff5202</color>
     <color name="tab_text">#000000</color>
     <color name="bg_image">#000000</color>
+    <color name="bg_ting">#FAFAFA</color>
     <color name="menu_top">#ffff5202</color>
     <color name="bg_colour">#d5ffb380</color>
     <color name="contact_row">#ffffd070</color>

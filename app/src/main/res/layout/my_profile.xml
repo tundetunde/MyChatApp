@@ -47,28 +47,28 @@
                 android:layout_margin="5dp"
                 android:gravity="start"
                 android:text="Display Name"
-                android:textSize="15sp"/>
+                android:textSize="20sp"/>
             <TextView
                 android:id="@+id/tvName"
-                android:layout_width="match_parent"
+                android:layout_width="41dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:gravity="center"
                 android:text="You"
-                android:textSize="20sp"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Mobile number: "
-                android:textSize="15sp"/>
+                android:textSize="20sp"/>
             <TextView
                 android:id="@+id/tvNum"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
                 android:text="07400000000"
-                android:textSize="20sp"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:layout_width="match_parent"

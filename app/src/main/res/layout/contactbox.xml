@@ -5,9 +5,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent" android:layout_height="match_parent"
-        android:layout_marginBottom="10dp" android:background="@color/contact_row"
-        android:paddingEnd="10dp" android:paddingLeft="10dp"
-        android:paddingRight="10dp" android:paddingStart="10dp">
+        android:layout_marginBottom="3dp"
+        android:background="@drawable/chat_list_bg"
+        android:paddingEnd="3dp" android:paddingLeft="3dp"
+        android:paddingRight="3dp" android:paddingStart="3dp">
 
     <ImageView
         android:id="@+id/childIMG"

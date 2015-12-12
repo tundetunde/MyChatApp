@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/relativeLayout"
         android:layout_below="@+id/chat_toolbar"
-        android:background="@android:color/darker_gray">
+        android:background="#ffffff">
 
         <ListView
             android:id="@+id/lvChatHistory"
@@ -23,7 +23,8 @@
             android:divider="@null"
             android:dividerHeight="0dp"
             android:stackFromBottom="true"
-            android:transcriptMode="alwaysScroll"/>
+            android:transcriptMode="alwaysScroll"
+            android:background="#ffffff" />
     </LinearLayout>
 
     <RelativeLayout

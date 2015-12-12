@@ -252,7 +252,7 @@ public class FeedView extends ListFragment implements View.OnClickListener {
             String Time = p.time;
             String number = p.number;
             int picture = p.picture;
-            String t = "... has changed their status to: '" + Message.trim() + "'";
+            String t = "Status has changed to: '" + Message.trim() + "'";
             String d = "Display Picture Changed";
 
             if(picture == 0){
@@ -270,7 +270,9 @@ public class FeedView extends ListFragment implements View.OnClickListener {
                 Drawable profilePic;
                 profilePic = Drawable.createFromPath(directory.toString() + "/profile_" + number + ".jpg");
                 if(profilePic != null)
-                                        holder.fh_smallDisplayPic.setImageDrawable(profilePic);
+                    holder.fh_smallDisplayPic.setImageDrawable(profilePic);
+                else
+                    holder.fh_smallDisplayPic.setImageResource(R.drawable.default_pic);
                 feed_bubble = (RelativeLayout) cv.findViewById(R.id.fd_bubble);
                 feed_bubble.setBackgroundResource(R.drawable.box);
             }else{

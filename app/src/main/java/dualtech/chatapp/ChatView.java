@@ -132,8 +132,13 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
     private void initialize() {
         ContextWrapper cw = this;
         tvSub = (TextView) findViewById(R.id.vActionStatus);
-        if(!isGroup())
-            tvSub.setText(db.getStatus(ch_contact));
+        if(!isGroup()) {
+            String status = db.getStatus(ch_contact);
+            if(status.isEmpty())
+                tvSub.setText("Hello There!");
+            else
+                tvSub.setText(status);
+        }
         else
             tvSub.setVisibility(View.INVISIBLE);
         tvTitle = (TextView) findViewById(R.id.textViewTitle);
@@ -247,7 +252,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 editText.setFocusable(false);
                 String msg = "You cannot send messages to your self";
                 String d = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
-                chatList.add(new ChatDbProvider(msg, 2, d, 0));
+                chatList.add(new ChatDbProvider(msg, 2, d, 0, ""));
                 adapter.notifyDataSetChanged();
             }
         }else{
@@ -400,7 +405,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 db.insertGroupMessage(et_msg, ApplicationInit.getMobile_number(), 1, ch_contact);
             else
                 db.insertMessage(et_msg, ch_contact, 1);
-            chatList.add(new ChatDbProvider(et_msg, 1, d, 0));
+            chatList.add(new ChatDbProvider(et_msg, 1, d, 0, "Me"));
             sendMsg(et_msg, d, db.getMsgCount());
             editText.setText("");
             adapter.notifyDataSetChanged();
@@ -467,6 +472,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
                 holder = new BHolder();
                 holder.vh_msg = (TextView) cv.findViewById(R.id.msg);
                 holder.vh_time = (TextView) cv.findViewById(R.id.msg_time);
+                holder.vh_Contact = (TextView) cv.findViewById(R.id.tvContactName);
                 cv.setTag(holder);
             } else {
                 holder = (BHolder) cv.getTag();
@@ -477,9 +483,14 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
             int sender = p.s_id;
             String Date = p.date;
             int stat = p.status;
+            String contact = p.contact;
 
             holder.vh_msg.setText(Message.trim());
             holder.vh_time.setText(Date);
+            if(isGroup())
+                holder.vh_Contact.setText(contact);
+            else
+                holder.vh_Contact.setText("");
 
             msg_bubble = (LinearLayout) cv.findViewById(R.id.ct_bubble);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) msg_bubble.getLayoutParams();
@@ -518,6 +529,7 @@ public class ChatView extends AppCompatActivity implements View.OnClickListener 
         private class BHolder {
             private TextView vh_msg;
             private TextView vh_time;
+            private TextView vh_Contact;
 
             BHolder() {
             }

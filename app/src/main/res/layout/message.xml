@@ -11,6 +11,14 @@
         android:id="@+id/ct_bubble">
 
         <TextView
+            android:id="@+id/tvContactName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@android:color/primary_text_light"
+            android:text="name" />
+
+        <TextView
             android:id="@+id/msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

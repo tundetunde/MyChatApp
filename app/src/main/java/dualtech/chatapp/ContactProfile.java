@@ -40,7 +40,11 @@ public class ContactProfile extends AppCompatActivity {
         DbManager db = new DbManager(this);
         ch_num.setText(contact);
         ch_name.setText(display_name);
-        ch_status.setText(db.getStatus(contact));
+        String status = db.getStatus(contact);
+        if(status.isEmpty())
+            ch_status.setText("Hello There!");
+        else
+            ch_status.setText(status);
         setImage();
     }
 

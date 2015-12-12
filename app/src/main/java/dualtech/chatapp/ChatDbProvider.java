@@ -10,11 +10,13 @@ public class ChatDbProvider {
     int s_id;
     String date;
     int status;
-    ChatDbProvider(String s, int i, String d, int sid){
+    String contact;
+    ChatDbProvider(String s, int i, String d, int sid, String user){
         msg = s;
         s_id = i;
         date = d;
         status = sid;
+        contact = user;
     }
 
 }

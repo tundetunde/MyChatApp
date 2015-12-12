@@ -243,7 +243,7 @@ public class ChatList extends ListFragment implements View.OnClickListener{
                 holder.fh_displayPic.setImageResource(R.drawable.default_pic);
 
             chat_list_bubble = (RelativeLayout) cv.findViewById(R.id.chatList_bubble);
-            chat_list_bubble.setBackgroundResource(R.drawable.box);
+            //chat_list_bubble.setBackgroundResource(R.drawable.box);
 
             return cv;
         }
